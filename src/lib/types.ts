@@ -1,6 +1,6 @@
 export type Role = "client" | "staff" | "admin";
 export type Locale = "tr" | "en";
-export type VisaFamily = "europe" | "america";
+export type VisaCountry = "schengen" | "usa" | "uae" | "china" | "russia" | "uk" | "canada";
 export type AppStatus = "draft" | "missing" | "review" | "revision" | "complete";
 export type DocStatus = "empty" | "uploaded" | "approved" | "rejected";
 
@@ -33,7 +33,7 @@ export type TimelineItem = {
 export type Application = {
   id: string;
   userId: string;
-  visaFamily: VisaFamily;
+  visaFamily: VisaCountry;
   visaTypeId: string;
   destinationTr: string;
   destinationEn: string;
@@ -52,9 +52,10 @@ export type Application = {
 export type AppointmentRequest = {
   id: string;
   name: string;
-  email: string;
   phone: string;
-  topic: string;
+  message: string;
+  email?: string;
+  topic?: string;
   locale: Locale;
   createdAt: string;
   status: "new" | "done";
@@ -88,8 +89,8 @@ export type BlogPost = {
 };
 
 export type VisaType = {
-  id: string;
-  family: VisaFamily;
+  id: VisaCountry;
+  family: VisaCountry;
   titleTr: string;
   titleEn: string;
   hintTr: string;

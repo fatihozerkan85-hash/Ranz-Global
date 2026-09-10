@@ -15,20 +15,17 @@ export default function ServicesView() {
         title={t(locale, "Vize danışmanlığı hizmetleri", "Visa consultancy services")}
         lead={t(
           locale,
-          "Önce yön, sonra evrak listesi. Konsolosluk formu burada yok; dosyanız panelde ilerler.",
-          "Destination first, then a document list. No consular form dump; your file moves in the portal.",
+          "Ülkeyi seçin, o ülkeye özel evrak listesi panelde açılsın.",
+          "Choose a country and its document list opens in the portal.",
         )}
       />
       <section className="mx-auto grid max-w-6xl gap-4 px-5 py-14 md:grid-cols-2">
         {VISA_TYPES.map((type) => (
           <article key={type.id} className="rounded-2xl border border-line bg-paper p-7">
-            <p className="text-xs uppercase tracking-[0.22em] text-gold-deep">
-              {type.family === "europe" ? t(locale, "Avrupa", "Europe") : t(locale, "Amerika", "United States")}
-            </p>
-            <h2 className="mt-3 font-serif text-2xl">{locale === "en" ? type.titleEn : type.titleTr}</h2>
+            <h2 className="font-serif text-2xl">{locale === "en" ? type.titleEn : type.titleTr}</h2>
             <p className="mt-2 text-sm text-ink-soft">{locale === "en" ? type.titleHintEn : type.hintTr}</p>
-            <p className="mt-4 text-sm text-muted">
-              {t(locale, "Danışmanlık bedeli", "Service fee")} · {type.feeTry.toLocaleString("tr-TR")} TL
+            <p className="mt-3 text-xs text-muted">
+              {type.documents.filter((d) => d.required).length} {t(locale, "zorunlu evrak", "required documents")}
             </p>
           </article>
         ))}

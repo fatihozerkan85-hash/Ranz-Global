@@ -58,14 +58,13 @@ export default function AdminHome() {
           </div>
         ))}
       </div>
-      <h2 className="mt-10 font-serif text-2xl">{t(locale, "Görüşme talepleri", "Meeting requests")}</h2>
+      <h2 className="mt-10 font-serif text-2xl">{t(locale, "İletişim formları", "Contact forms")}</h2>
       <div className="mt-4 space-y-2">
         {appts.map((a) => (
           <div key={a.id} className="rounded-xl border border-line bg-paper px-4 py-3 text-sm">
             <p className="font-medium">{a.name}</p>
-            <p className="text-xs text-muted">
-              {a.email} · {a.phone} · {a.topic}
-            </p>
+            <p className="text-xs text-muted">{a.phone}</p>
+            {a.message && <p className="mt-2 text-sm text-ink-soft">{a.message}</p>}
           </div>
         ))}
         {appts.length === 0 && <p className="text-sm text-muted">{t(locale, "Henüz talep yok.", "No requests yet.")}</p>}

@@ -31,7 +31,7 @@ export function SiteHeader({ solid = false }: { solid?: boolean }) {
             <Link href="/vize-rehberi">{t(locale, "Vize rehberi", "Visa guides")}</Link>
             <Link href="/blog">{t(locale, "Blog", "Blog")}</Link>
             <Link href="/hakkimizda">{t(locale, "Hakkımızda", "About")}</Link>
-            <Link href="/iletisim">{t(locale, "İletişim", "Contact")}</Link>
+            <Link href="/#iletisim">{t(locale, "İletişim", "Contact")}</Link>
           </nav>
         )}
         <div className="flex items-center gap-2">

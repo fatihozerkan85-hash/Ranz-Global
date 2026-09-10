@@ -2,7 +2,7 @@ import type { Application, AppointmentRequest, AppStatus, BlogPost, CmsPage, Doc
 import { DEFAULT_PAGES, DEFAULT_POSTS } from "./cms";
 import { visaTypeById } from "./visa-catalog";
 
-const KEY = "ranz-global-v2";
+const KEY = "ranz-global-v3";
 const EVENT = "ranz-store";
 
 const DEMO_USERS: User[] = [
@@ -16,10 +16,10 @@ function seedApplications(): Application[] {
     {
       id: "RG-2026-0142",
       userId: "u-ayse",
-      visaFamily: "europe",
-      visaTypeId: "schengen-tourist",
-      destinationTr: "Fransa · Schengen turistik",
-      destinationEn: "France · Schengen tourist",
+      visaFamily: "schengen",
+      visaTypeId: "schengen",
+      destinationTr: "Schengen ülkeleri",
+      destinationEn: "Schengen countries",
       status: "missing",
       createdAt: "2026-08-28",
       advisorName: "Elif Kaya",
@@ -42,7 +42,7 @@ function seedApplications(): Application[] {
         { key: "invite", labelTr: "Davet mektubu", labelEn: "Invitation letter", required: false, status: "empty" },
       ],
       timeline: [
-        { at: "2026-08-28 10:12", titleTr: "Dosya açıldı", titleEn: "File opened", bodyTr: "Schengen turistik dosyanız oluşturuldu.", bodyEn: "Your Schengen tourist file was created." },
+        { at: "2026-08-28 10:12", titleTr: "Dosya açıldı", titleEn: "File opened", bodyTr: "Schengen dosyanız oluşturuldu.", bodyEn: "Your Schengen file was created." },
         { at: "2026-08-29 16:40", titleTr: "İlk evraklar alındı", titleEn: "First documents received", bodyTr: "Pasaport ve fotoğraf onaylandı.", bodyEn: "Passport and photo were approved." },
         { at: "2026-09-04 11:05", titleTr: "Eksik bildirildi", titleEn: "Missing items flagged", bodyTr: "Banka dökümü revizyon, uçak rezervasyonu bekleniyor.", bodyEn: "Bank statement needs revision; flight reservation is missing." },
       ],
@@ -50,10 +50,10 @@ function seedApplications(): Application[] {
     {
       id: "RG-2026-0098",
       userId: "u-ayse",
-      visaFamily: "america",
-      visaTypeId: "us-b1b2",
-      destinationTr: "ABD · B1/B2",
-      destinationEn: "USA · B1/B2",
+      visaFamily: "usa",
+      visaTypeId: "usa",
+      destinationTr: "Amerika Birleşik Devletleri",
+      destinationEn: "United States",
       status: "complete",
       createdAt: "2026-06-02",
       advisorName: "Elif Kaya",
@@ -71,7 +71,7 @@ function seedApplications(): Application[] {
         { key: "itinerary", labelTr: "Seyahat planı", labelEn: "Travel itinerary", required: true, status: "approved", fileName: "plan.pdf" },
       ],
       timeline: [
-        { at: "2026-06-02 09:00", titleTr: "Dosya açıldı", titleEn: "File opened", bodyTr: "ABD B1/B2 dosyası oluşturuldu.", bodyEn: "USA B1/B2 file created." },
+        { at: "2026-06-02 09:00", titleTr: "Dosya açıldı", titleEn: "File opened", bodyTr: "ABD dosyası oluşturuldu.", bodyEn: "USA file created." },
         { at: "2026-06-18 14:20", titleTr: "İnceleme tamam", titleEn: "Review complete", bodyTr: "Tüm evraklar onaylandı.", bodyEn: "All documents approved." },
       ],
     },
@@ -114,7 +114,11 @@ function read(): Store {
         paidTry: a.paidTry ?? 0,
         assignedTo: a.assignedTo ?? "u-staff",
       })),
-      appointments: parsed.appointments ?? [],
+      appointments: (parsed.appointments ?? []).map((a) => ({
+        ...a,
+        phone: a.phone ?? "",
+        message: a.message ?? a.topic ?? "",
+      })),
       pages: parsed.pages?.length ? parsed.pages : DEFAULT_PAGES,
       posts: parsed.posts?.length ? parsed.posts : DEFAULT_POSTS,
     };

@@ -9,8 +9,24 @@ export function OrganizationJsonLd() {
     email: SITE.email,
     image: `${SITE.url}/logo.jpg`,
     slogan: "Travel & Visa",
-    areaServed: ["Europe", "United States"],
-    knowsAbout: ["Schengen visa", "US B1/B2 visa", "F-1 student visa"],
+    areaServed: [
+      "Schengen Area",
+      "United States",
+      "United Arab Emirates",
+      "China",
+      "Russia",
+      "United Kingdom",
+      "Canada",
+    ],
+    knowsAbout: [
+      "Schengen visa",
+      "US visa",
+      "UAE visa",
+      "China visa",
+      "Russia visa",
+      "UK visa",
+      "Canada visa",
+    ],
   };
   return (
     <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />

@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     template: "%s · Ranz Global",
   },
   description:
-    "Avrupa ve Amerika vizeleri için evrak yükleme, danışman incelemesi ve dosya takibi. Ranz Global Travel & Visa.",
+    "Schengen, ABD, BAE, Çin, Rusya, İngiltere ve Kanada vize danışmanlığı. Evrak yükleme ve dosya takibi. Ranz Global Travel & Visa.",
   openGraph: {
     type: "website",
     locale: "tr_TR",

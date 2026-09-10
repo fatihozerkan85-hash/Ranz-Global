@@ -7,64 +7,72 @@ import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { VISA_TYPES } from "@/lib/visa-catalog";
 import { createApplication } from "@/lib/store";
-import type { VisaFamily } from "@/lib/types";
+import type { VisaCountry } from "@/lib/types";
 
 export default function NewFilePage() {
   const { locale } = useLocale();
   const { user } = useAuth();
   const router = useRouter();
-  const [family, setFamily] = useState<VisaFamily | null>(null);
+  const [country, setCountry] = useState<VisaCountry | null>(null);
 
-  const types = VISA_TYPES.filter((v) => v.family === family);
+  const selected = VISA_TYPES.find((v) => v.id === country);
 
   return (
     <div>
       <h1 className="font-serif text-4xl">{t(locale, "Yeni dosya", "New file")}</h1>
       <p className="mt-2 text-sm text-ink-soft">
-        {t(locale, "Önce yön, sonra vize türü. Form yağmuru yok.", "Destination first, then visa type. No form dump.")}
+        {t(
+          locale,
+          "Başvuracağınız ülkeyi seçin. Evrak listesi o ülkeye göre açılır.",
+          "Choose the country you will apply for. The document list follows that country.",
+        )}
       </p>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        <button
-          type="button"
-          onClick={() => setFamily("europe")}
-          className={`rounded-2xl border p-6 text-left ${family === "europe" ? "border-gold bg-paper" : "border-line bg-paper"}`}
-        >
-          <p className="font-serif text-2xl">{t(locale, "Avrupa", "Europe")}</p>
-          <p className="mt-1 text-sm text-muted">{t(locale, "Schengen ve ilgili vizeler", "Schengen and related visas")}</p>
-        </button>
-        <button
-          type="button"
-          onClick={() => setFamily("america")}
-          className={`rounded-2xl border p-6 text-left ${family === "america" ? "border-gold bg-paper" : "border-line bg-paper"}`}
-        >
-          <p className="font-serif text-2xl">{t(locale, "Amerika", "United States")}</p>
-          <p className="mt-1 text-sm text-muted">{t(locale, "B1/B2 ve öğrenci", "B1/B2 and student")}</p>
-        </button>
+      <div className="mt-8 grid gap-3 sm:grid-cols-2">
+        {VISA_TYPES.map((type) => (
+          <button
+            key={type.id}
+            type="button"
+            onClick={() => setCountry(type.id)}
+            className={`rounded-2xl border p-5 text-left ${
+              country === type.id ? "border-gold bg-paper" : "border-line bg-paper"
+            }`}
+          >
+            <p className="font-serif text-2xl">{locale === "en" ? type.titleEn : type.titleTr}</p>
+            <p className="mt-1 text-sm text-muted">{locale === "en" ? type.titleHintEn : type.hintTr}</p>
+          </button>
+        ))}
       </div>
 
-      {family && (
-        <div className="mt-8 space-y-3">
-          {types.map((type) => (
-            <button
-              key={type.id}
-              type="button"
-              onClick={() => {
-                if (!user) return;
-                const app = createApplication(user.id, type.id);
-                if (app) router.push(`/panel/basvuru/${app.id}`);
-              }}
-              className="flex w-full items-center justify-between rounded-xl border border-line bg-paper px-5 py-4 text-left hover:border-gold"
-            >
-              <div>
-                <p className="font-medium">{locale === "en" ? type.titleEn : type.titleTr}</p>
-                <p className="mt-1 text-xs text-muted">
-                  {locale === "en" ? type.titleHintEn : type.hintTr}
-                </p>
-              </div>
-              <span className="text-xs text-gold-deep">{t(locale, "Aç", "Open")}</span>
-            </button>
-          ))}
+      {selected && (
+        <div className="mt-8 rounded-2xl border border-line bg-paper p-6">
+          <h2 className="font-serif text-2xl">
+            {t(locale, "Yüklenecek evraklar", "Documents to upload")}
+          </h2>
+          <p className="mt-1 text-sm text-muted">
+            {locale === "en" ? selected.titleEn : selected.titleTr}
+          </p>
+          <ul className="mt-4 space-y-2 text-sm">
+            {selected.documents.map((doc) => (
+              <li key={doc.key} className="flex items-start justify-between gap-3 border-b border-line py-2 last:border-0">
+                <span>{locale === "en" ? doc.labelEn : doc.labelTr}</span>
+                <span className="shrink-0 text-xs uppercase tracking-wider text-gold-deep">
+                  {doc.required ? t(locale, "Zorunlu", "Required") : t(locale, "İsteğe bağlı", "Optional")}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={() => {
+              if (!user) return;
+              const app = createApplication(user.id, selected.id);
+              if (app) router.push(`/panel/basvuru/${app.id}`);
+            }}
+            className="mt-6 rounded-full bg-ink px-6 py-3 text-sm text-cream"
+          >
+            {t(locale, "Bu ülkeyle dosya aç", "Open file for this country")}
+          </button>
         </div>
       )}
     </div>

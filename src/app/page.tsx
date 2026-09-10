@@ -5,6 +5,7 @@ import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { WhatsAppFloat } from "@/components/whatsapp-button";
+import { ContactLeadForm } from "@/components/contact-lead-form";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 
@@ -61,31 +62,31 @@ export default function HomePage() {
             <p className="text-xs uppercase tracking-[0.22em] text-muted">
               {t(locale, "Nereye gidiyorsunuz?", "Where are you going?")}
             </p>
-            <div className="mt-4 grid gap-3">
-              <Link
-                href="/giris"
-                className="group rounded-xl border border-line p-5 transition hover:border-gold"
-              >
-                <p className="font-serif text-2xl">{t(locale, "Avrupa", "Europe")}</p>
-                <p className="mt-1 text-sm text-muted">
-                  {t(locale, "Schengen turistik ve ticari", "Schengen tourist and business")}
-                </p>
-              </Link>
-              <Link
-                href="/giris"
-                className="group rounded-xl border border-line p-5 transition hover:border-gold"
-              >
-                <p className="font-serif text-2xl">{t(locale, "Amerika", "United States")}</p>
-                <p className="mt-1 text-sm text-muted">
-                  {t(locale, "B1/B2 ve öğrenci F-1", "B1/B2 and F-1 student")}
-                </p>
-              </Link>
+            <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+              {[
+                [t(locale, "Schengen", "Schengen"), t(locale, "Avrupa", "Europe")],
+                [t(locale, "ABD", "USA"), t(locale, "B1/B2", "B1/B2")],
+                [t(locale, "BAE", "UAE"), t(locale, "Dubai / Abu Dabi", "Dubai / Abu Dhabi")],
+                [t(locale, "Çin", "China"), t(locale, "Turistik", "Tourism")],
+                [t(locale, "Rusya", "Russia"), t(locale, "Davetiye", "Invitation")],
+                [t(locale, "İngiltere", "United Kingdom"), t(locale, "Ziyaretçi", "Visitor")],
+                [t(locale, "Kanada", "Canada"), t(locale, "Ziyaretçi", "Visitor")],
+              ].map(([title, hint]) => (
+                <Link
+                  key={title}
+                  href="/giris"
+                  className="rounded-xl border border-line p-3 transition hover:border-gold"
+                >
+                  <p className="font-medium">{title}</p>
+                  <p className="mt-0.5 text-xs text-muted">{hint}</p>
+                </Link>
+              ))}
             </div>
             <p className="mt-5 text-xs leading-5 text-muted">
               {t(
                 locale,
-                "iVisa ve VisaHQ’daki ülke seçimi gibi: önce yön, sonra evrak. Konsolosluk formu burada yok.",
-                "Like iVisa and VisaHQ: destination first, then documents. No consular form dump here.",
+                "Giriş yaptıktan sonra ülkeyi seçin; evrak listesi o ülkeye göre gelir.",
+                "After you sign in, choose the country; the document list follows it.",
               )}
             </p>
           </div>
@@ -98,8 +99,8 @@ export default function HomePage() {
               {[
                 {
                   n: "01",
-                  tr: ["Vize türünü seçin", "Avrupa veya Amerika. Size özel evrak listesi hemen açılır."],
-                  en: ["Choose the visa", "Europe or the US. Your checklist appears immediately."],
+                  tr: ["Ülkeyi seçin", "Schengen, ABD, BAE, Çin, Rusya, İngiltere veya Kanada. Evrak listesi o ülkeye göre açılır."],
+                  en: ["Choose the country", "Schengen, USA, UAE, China, Russia, UK or Canada. The checklist follows that country."],
                 },
                 {
                   n: "02",
@@ -132,45 +133,51 @@ export default function HomePage() {
           <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft">
             {t(
               locale,
-              "Avrupa (Schengen) ve Amerika vize başvurularınızı tek yerden yönetin. Size özel evrak listesi açılır; dosyanızı yükler, danışman incelemesini ve dosya durumunu panelden izlersiniz. Bu site yalnızca vize danışmanlığı içindir.",
-              "Manage your Europe (Schengen) and US visa applications in one place. A personal document list opens for you; you upload your file and follow advisor review and status in the portal. This site is for visa consultancy only.",
+              "Schengen, ABD, Birleşik Arap Emirlikleri, Çin, Rusya, İngiltere ve Kanada başvurularınızı tek yerden yönetin. Ülkeyi seçin; evrak listesi ona göre açılır.",
+              "Manage Schengen, USA, UAE, China, Russia, UK and Canada files in one place. Choose the country; the document list follows it.",
             )}
           </p>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            <article className="rounded-2xl bg-ink p-7 text-cream">
-              <h3 className="font-serif text-2xl">{t(locale, "Avrupa vizeleri", "Europe visas")}</h3>
-              <p className="mt-3 text-sm leading-6 text-cream/75">
-                {t(
-                  locale,
-                  "Schengen turistik ve ticari başvurular için güncel evrak listesi, yükleme ve danışman kontrolü.",
-                  "Up-to-date checklists, uploads and advisor review for Schengen tourist and business files.",
-                )}
-              </p>
-            </article>
-            <article className="rounded-2xl border border-line bg-paper p-7">
-              <h3 className="font-serif text-2xl">{t(locale, "Amerika vizeleri", "US visas")}</h3>
-              <p className="mt-3 text-sm leading-6 text-ink-soft">
-                {t(
-                  locale,
-                  "B1/B2 turistik-ticari ve F-1 öğrenci dosyalarında evrak tamamlama ve süreç takibi.",
-                  "Document completion and process tracking for B1/B2 visitor and F-1 student files.",
-                )}
-              </p>
-            </article>
-            <article className="rounded-2xl border border-line bg-paper p-7">
-              <h3 className="font-serif text-2xl">{t(locale, "Dosya takibi", "File tracking")}</h3>
-              <p className="mt-3 text-sm leading-6 text-ink-soft">
-                {t(
-                  locale,
-                  "Eksik evrak, revizyon ve onay notlarını tek ekrandan görün. Konsolosluk kararı resmi makamlara aittir.",
-                  "See missing documents, revisions and approval notes on one screen. Consular decisions belong to official authorities.",
-                )}
-              </p>
-            </article>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {[
+              [t(locale, "Schengen", "Schengen"), t(locale, "Avrupa kısa konaklama evrakları", "European short-stay documents")],
+              [t(locale, "ABD", "USA"), t(locale, "DS-160 ve mali belgeler", "DS-160 and financial evidence")],
+              [t(locale, "BAE", "UAE"), t(locale, "Pasaport, otel ve iş belgesi", "Passport, hotel and employment")],
+              [t(locale, "Çin", "China"), t(locale, "Form, davet ve program", "Form, invitation and itinerary")],
+              [t(locale, "Rusya", "Russia"), t(locale, "Davetiye ve sigorta", "Invitation and insurance")],
+              [t(locale, "İngiltere & Kanada", "UK & Canada"), t(locale, "Banka, iş ve bağ belgesi", "Bank, work and ties")],
+            ].map(([title, body]) => (
+              <article key={title} className="rounded-2xl border border-line bg-paper p-7">
+                <h3 className="font-serif text-2xl">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-ink-soft">{body}</p>
+              </article>
+            ))}
           </div>
         </section>
 
-        <section id="guven" className="mx-auto max-w-6xl px-5 pb-20">
+        <section id="iletisim" className="border-t border-line bg-paper">
+          <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 md:grid-cols-[0.95fr_1.05fr] md:items-start">
+            <div>
+              <p className="text-xs font-medium uppercase tracking-[0.32em] text-gold-deep">
+                {t(locale, "İletişim", "Contact")}
+              </p>
+              <h2 className="mt-3 font-serif text-3xl md:text-4xl">
+                {t(locale, "Bize yazın", "Get in touch")}
+              </h2>
+              <p className="mt-4 max-w-md text-sm leading-7 text-ink-soft">
+                {t(
+                  locale,
+                  "Yalnızca ad soyad, telefon ve mesajınız. Danışmanımız sizi arar.",
+                  "Just your name, phone and message. An advisor will call you.",
+                )}
+              </p>
+            </div>
+            <div className="rounded-2xl border border-line bg-cream p-6 md:p-8">
+              <ContactLeadForm source="/" />
+            </div>
+          </div>
+        </section>
+
+        <section id="guven" className="mx-auto max-w-6xl px-5 py-20">
           <div className="rounded-2xl border border-line bg-paper px-6 py-10 md:px-10">
             <h2 className="max-w-3xl font-serif text-3xl leading-snug">
               {t(
