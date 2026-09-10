@@ -29,33 +29,39 @@ export function PanelShell({
       router.replace("/giris");
       return;
     }
+    const seoRoute = pathname === "/yonetim/seo" || pathname.startsWith("/yonetim/seo/");
     if (mode === "staff" && user.role !== "staff" && user.role !== "admin") router.replace("/panel");
     if (mode === "admin" && user.role !== "admin") {
+      if (user.role === "staff" && seoRoute) return;
       router.replace(user.role === "staff" ? "/danisman" : "/panel");
     }
     if (mode === "client" && user.role !== "client") {
       router.replace(user.role === "admin" ? "/yonetim" : "/danisman");
     }
-  }, [ready, user, mode, router]);
+  }, [ready, user, mode, router, pathname]);
 
   if (!ready || !user) {
     return <div className="grid min-h-screen place-items-center text-muted">…</div>;
   }
 
+  const seoRoute = pathname === "/yonetim/seo" || pathname.startsWith("/yonetim/seo/");
   if (mode === "staff" && user.role !== "staff" && user.role !== "admin") return null;
-  if (mode === "admin" && user.role !== "admin") return null;
+  if (mode === "admin" && user.role !== "admin" && !(user.role === "staff" && seoRoute)) return null;
   if (mode === "client" && user.role !== "client") return null;
 
   const items =
-    mode === "admin"
+    user.role === "admin"
       ? [
           { href: "/yonetim", label: t(locale, "İstatistik", "Statistics"), icon: BarChart3 },
           { href: "/yonetim/cms", label: t(locale, "İçerik", "CMS"), icon: FileText },
           { href: "/yonetim/seo", label: t(locale, "SEO paneli", "SEO panel"), icon: Search },
           { href: "/danisman", label: t(locale, "Dosya kuyruğu", "Queue"), icon: LayoutDashboard },
         ]
-      : mode === "staff"
-        ? [{ href: "/danisman", label: t(locale, "Kuyruk", "Queue"), icon: LayoutDashboard }]
+      : mode === "staff" || user.role === "staff"
+        ? [
+            { href: "/danisman", label: t(locale, "Kuyruk", "Queue"), icon: LayoutDashboard },
+            { href: "/yonetim/seo", label: t(locale, "SEO paneli", "SEO panel"), icon: Search },
+          ]
         : [
           { href: "/panel", label: t(locale, "Özet", "Overview"), icon: LayoutDashboard },
           { href: "/panel/yeni", label: t(locale, "Yeni dosya", "New file"), icon: Plus },

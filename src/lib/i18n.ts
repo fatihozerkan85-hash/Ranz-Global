@@ -282,7 +282,7 @@ const DICT: Record<string, Pack> = {
   "Banka hesap dökümü (son 3 ay)": x("Bank statements (last 3 months)", "كشف حساب (آخر 3 أشهر)", "银行流水（近3个月）", "Выписка за 3 месяца", "Kontoauszüge (letzte 3 Monate)", "Relevés bancaires (3 derniers mois)", "Extractos bancarios (últimos 3 meses)"),
   "İş / gelir belgesi": x("Employment or income proof", "إثبات العمل أو الدخل", "在职或收入证明", "Справка о работе/доходе", "Arbeits- oder Einkommensnachweis", "Preuve d’emploi ou de revenus", "Prueba de empleo o ingresos"),
   "Davet mektubu": x("Invitation letter", "خطاب دعوة", "邀请函", "Приглашение", "Einladungsschreiben", "Lettre d’invitation", "Carta de invitación"),
-  Pasaport: x("Passport", "جواز السفر", "护照", "Паспорт", "Reisepass", "Passeport", "Pasaporte"),
+  "SEO paneli yükleniyor…": x("Loading SEO panel…", "جارٍ تحميل لوحة السيو…", "正在加载SEO面板…", "Загрузка SEO-панели…", "SEO-Panel wird geladen…", "Chargement du panneau SEO…", "Cargando panel SEO…"),
 };
 
 export function t(locale: Locale, tr: string, en: string) {

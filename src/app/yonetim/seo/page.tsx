@@ -15,7 +15,14 @@ export default function SeoOverview() {
     load();
     return subscribeSeo(load);
   }, []);
-  if (!seo) return null;
+  if (!seo) {
+    return (
+      <div>
+        <SeoNav />
+        <p className="text-sm text-muted">{t(locale, "SEO paneli yükleniyor…", "Loading SEO panel…")}</p>
+      </div>
+    );
+  }
   const last = seo.crawls[0];
   const open = seo.issues.filter((i) => i.status === "open").length;
   return (

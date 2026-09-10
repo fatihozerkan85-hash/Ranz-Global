@@ -97,6 +97,16 @@ function emptyStore(): Store {
   };
 }
 
+function mergeUsers(existing?: User[]) {
+  const list = existing?.length ? [...existing] : [...DEMO_USERS];
+  for (const demo of DEMO_USERS) {
+    if (!list.some((u) => u.email.toLowerCase() === demo.email.toLowerCase())) {
+      list.push(demo);
+    }
+  }
+  return list;
+}
+
 function read(): Store {
   if (typeof window === "undefined") return emptyStore();
   try {
@@ -108,7 +118,7 @@ function read(): Store {
     }
     const parsed = JSON.parse(raw) as Partial<Store>;
     return {
-      users: parsed.users?.length ? parsed.users : DEMO_USERS,
+      users: mergeUsers(parsed.users),
       applications: (parsed.applications ?? seedApplications()).map((a) => ({
         ...a,
         feeTry: a.feeTry ?? 0,

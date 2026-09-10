@@ -132,22 +132,44 @@ function seed(): SeoStore {
 }
 
 function read(): SeoStore {
-  if (typeof window === "undefined") return seed();
+  const base = seed();
+  if (typeof window === "undefined") return base;
   try {
     const raw = localStorage.getItem(KEY);
     if (!raw) {
-      const seeded = seed();
-      localStorage.setItem(KEY, JSON.stringify(seeded));
-      return seeded;
+      try {
+        localStorage.setItem(KEY, JSON.stringify(base));
+      } catch {
+        /* quota */
+      }
+      return base;
     }
-    return { ...seed(), ...(JSON.parse(raw) as SeoStore) };
+    const parsed = JSON.parse(raw) as Partial<SeoStore>;
+    return {
+      ...base,
+      ...parsed,
+      crawls: parsed.crawls ?? base.crawls,
+      issues: parsed.issues ?? base.issues,
+      queue: parsed.queue ?? base.queue,
+      keywords: parsed.keywords ?? base.keywords,
+      competitors: parsed.competitors ?? base.competitors,
+      bots: parsed.bots ?? base.bots,
+      uptime: parsed.uptime ?? base.uptime,
+      uptimeTargets: parsed.uptimeTargets ?? base.uptimeTargets,
+      engagement: parsed.engagement ?? base.engagement,
+      backlinks: parsed.backlinks ?? base.backlinks,
+    };
   } catch {
-    return seed();
+    return base;
   }
 }
 
 function write(store: SeoStore) {
-  localStorage.setItem(KEY, JSON.stringify(store));
+  try {
+    localStorage.setItem(KEY, JSON.stringify(store));
+  } catch {
+    /* quota */
+  }
   window.dispatchEvent(new Event(EVENT));
 }
 

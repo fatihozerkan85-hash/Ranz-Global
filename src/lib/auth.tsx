@@ -27,21 +27,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<PublicUser | null>(null);
   const [ready, setReady] = useState(false);
 
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) setUser(JSON.parse(raw) as PublicUser);
-    } catch {
-      /* ignore */
-    }
-    setReady(true);
-  }, []);
-
   const persist = (next: PublicUser | null) => {
     setUser(next);
     if (next) localStorage.setItem(KEY, JSON.stringify(next));
     else localStorage.removeItem(KEY);
   };
+
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) {
+        const saved = JSON.parse(raw) as PublicUser;
+        const fresh = findUser(saved.email);
+        persist(fresh ? strip(fresh) : saved);
+      }
+    } catch {
+      /* ignore */
+    }
+    setReady(true);
+  }, []);
 
   const login = (email: string, password: string) => {
     const found = findUser(email);
