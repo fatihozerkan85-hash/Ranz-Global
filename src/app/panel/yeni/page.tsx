@@ -38,8 +38,8 @@ export default function NewFilePage() {
               country === type.id ? "border-gold bg-paper" : "border-line bg-paper"
             }`}
           >
-            <p className="font-serif text-2xl">{locale === "en" ? type.titleEn : type.titleTr}</p>
-            <p className="mt-1 text-sm text-muted">{locale === "en" ? type.titleHintEn : type.hintTr}</p>
+            <p className="font-serif text-2xl">{t(locale, type.titleTr, type.titleEn)}</p>
+            <p className="mt-1 text-sm text-muted">{t(locale, type.hintTr, type.titleHintEn)}</p>
           </button>
         ))}
       </div>
@@ -50,12 +50,12 @@ export default function NewFilePage() {
             {t(locale, "Yüklenecek evraklar", "Documents to upload")}
           </h2>
           <p className="mt-1 text-sm text-muted">
-            {locale === "en" ? selected.titleEn : selected.titleTr}
+            {t(locale, selected.titleTr, selected.titleEn)}
           </p>
           <ul className="mt-4 space-y-2 text-sm">
             {selected.documents.map((doc) => (
               <li key={doc.key} className="flex items-start justify-between gap-3 border-b border-line py-2 last:border-0">
-                <span>{locale === "en" ? doc.labelEn : doc.labelTr}</span>
+                <span>{t(locale, doc.labelTr, doc.labelEn)}</span>
                 <span className="shrink-0 text-xs uppercase tracking-wider text-gold-deep">
                   {doc.required ? t(locale, "Zorunlu", "Required") : t(locale, "İsteğe bağlı", "Optional")}
                 </span>

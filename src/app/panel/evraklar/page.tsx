@@ -45,7 +45,7 @@ export default function VaultPage() {
             className="flex items-center justify-between py-4"
           >
             <div>
-              <p className="font-medium">{locale === "en" ? d.labelEn : d.labelTr}</p>
+              <p className="font-medium">{t(locale, d.labelTr, d.labelEn)}</p>
               <p className="mt-1 text-xs text-muted">
                 {app.id} · {d.fileName}
               </p>

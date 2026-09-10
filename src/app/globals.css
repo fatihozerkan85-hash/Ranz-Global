@@ -30,6 +30,14 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
+html[lang="ar"] body {
+  font-family: var(--font-arabic), var(--font-sans), system-ui, sans-serif;
+}
+
+html[lang="zh"] body {
+  font-family: var(--font-zh), var(--font-sans), system-ui, sans-serif;
+}
+
 ::selection {
   background: #ead9a8;
 }

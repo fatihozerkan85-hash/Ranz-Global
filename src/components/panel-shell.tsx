@@ -8,6 +8,7 @@ import { useLocale } from "@/lib/locale";
 import { whatsappHref } from "@/lib/contact";
 import { t } from "@/lib/i18n";
 import { BrandMark } from "@/components/site-chrome";
+import { LanguageSwitcher } from "@/components/language-switcher";
 import { BarChart3, FileStack, LayoutDashboard, LogOut, MessageCircle, Plus, Search, FileText } from "lucide-react";
 
 export function PanelShell({
@@ -18,7 +19,7 @@ export function PanelShell({
   mode: "client" | "staff" | "admin";
 }) {
   const { user, logout, ready } = useAuth();
-  const { locale, setLocale } = useLocale();
+  const { locale } = useLocale();
   const pathname = usePathname();
   const router = useRouter();
 
@@ -117,13 +118,7 @@ export function PanelShell({
                 <MessageCircle size={14} />
                 WhatsApp
               </a>
-              <button
-                type="button"
-                onClick={() => setLocale(locale === "tr" ? "en" : "tr")}
-                className="rounded-full border border-line px-3 py-1 text-[11px] uppercase tracking-wider text-muted"
-              >
-                {locale === "tr" ? "EN" : "TR"}
-              </button>
+              <LanguageSwitcher compact />
               <button
                 type="button"
                 onClick={() => {

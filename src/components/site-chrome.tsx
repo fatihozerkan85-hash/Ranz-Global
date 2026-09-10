@@ -7,11 +7,12 @@ import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { WhatsAppHeaderButton } from "@/components/whatsapp-button";
 import { BrandMark } from "@/components/brand-mark";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 export { BrandMark };
 
 export function SiteHeader({ solid = false }: { solid?: boolean }) {
-  const { locale, setLocale } = useLocale();
+  const { locale } = useLocale();
   const { user } = useAuth();
   const pathname = usePathname();
   const inApp =
@@ -36,13 +37,7 @@ export function SiteHeader({ solid = false }: { solid?: boolean }) {
         )}
         <div className="flex items-center gap-2">
           <WhatsAppHeaderButton locale={locale} />
-          <button
-            type="button"
-            onClick={() => setLocale(locale === "tr" ? "en" : "tr")}
-            className="rounded-full border border-line px-3 py-1 text-[11px] font-medium uppercase tracking-wider text-muted"
-          >
-            {locale === "tr" ? "EN" : "TR"}
-          </button>
+          <LanguageSwitcher compact />
           {user ? (
             <Link
               href={user.role === "admin" ? "/yonetim" : user.role === "staff" ? "/danisman" : "/panel"}

@@ -26,7 +26,7 @@ export default function StaffReviewPage() {
     <div>
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="font-serif text-4xl">
-          {locale === "en" ? app.destinationEn : app.destinationTr}
+          {t(locale, app.destinationTr, app.destinationEn)}
         </h1>
         <StatusBadge status={app.status} locale={locale} />
       </div>

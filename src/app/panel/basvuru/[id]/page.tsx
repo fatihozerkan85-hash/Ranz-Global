@@ -33,7 +33,7 @@ export default function ApplicationPage() {
         <p className="text-xs uppercase tracking-[0.22em] text-muted">{app.id}</p>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <h1 className="font-serif text-4xl">
-            {locale === "en" ? app.destinationEn : app.destinationTr}
+            {t(locale, app.destinationTr, app.destinationEn)}
           </h1>
           <StatusBadge status={app.status} locale={locale} />
         </div>
@@ -70,7 +70,7 @@ export default function ApplicationPage() {
           </p>
           <p className="mt-2 font-medium">{app.advisorName}</p>
           <p className="mt-3 text-sm leading-6 text-ink-soft">
-            {locale === "en" ? app.advisorNoteEn : app.advisorNoteTr}
+            {t(locale, app.advisorNoteTr, app.advisorNoteEn)}
           </p>
         </div>
         <div className="rounded-2xl border border-line bg-paper p-5">
@@ -81,8 +81,8 @@ export default function ApplicationPage() {
             {app.timeline.map((item) => (
               <li key={item.at} className="border-l border-gold pl-4">
                 <p className="text-xs text-muted">{item.at}</p>
-                <p className="text-sm font-medium">{locale === "en" ? item.titleEn : item.titleTr}</p>
-                <p className="mt-1 text-xs text-ink-soft">{locale === "en" ? item.bodyEn : item.bodyTr}</p>
+                <p className="text-sm font-medium">{t(locale, item.titleTr, item.titleEn)}</p>
+                <p className="mt-1 text-xs text-ink-soft">{t(locale, item.bodyTr, item.bodyEn)}</p>
               </li>
             ))}
           </ol>

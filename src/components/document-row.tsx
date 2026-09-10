@@ -18,7 +18,7 @@ export function DocumentRow({
   actions?: React.ReactNode;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const label = locale === "en" ? doc.labelEn : doc.labelTr;
+  const label = t(locale, doc.labelTr, doc.labelEn);
 
   return (
     <div className="flex flex-col gap-3 border-b border-line py-4 last:border-0 sm:flex-row sm:items-center sm:justify-between">

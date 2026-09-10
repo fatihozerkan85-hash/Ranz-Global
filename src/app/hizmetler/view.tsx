@@ -22,8 +22,8 @@ export default function ServicesView() {
       <section className="mx-auto grid max-w-6xl gap-4 px-5 py-14 md:grid-cols-2">
         {VISA_TYPES.map((type) => (
           <article key={type.id} className="rounded-2xl border border-line bg-paper p-7">
-            <h2 className="font-serif text-2xl">{locale === "en" ? type.titleEn : type.titleTr}</h2>
-            <p className="mt-2 text-sm text-ink-soft">{locale === "en" ? type.titleHintEn : type.hintTr}</p>
+            <h2 className="font-serif text-2xl">{t(locale, type.titleTr, type.titleEn)}</h2>
+            <p className="mt-2 text-sm text-ink-soft">{t(locale, type.hintTr, type.titleHintEn)}</p>
             <p className="mt-3 text-xs text-muted">
               {type.documents.filter((d) => d.required).length} {t(locale, "zorunlu evrak", "required documents")}
             </p>

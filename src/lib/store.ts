@@ -1,6 +1,7 @@
-import type { Application, AppointmentRequest, AppStatus, BlogPost, CmsPage, DocumentItem, User } from "./types";
+import type { Application, AppointmentRequest, AppStatus, BlogPost, CmsPage, DocumentItem, Locale, User } from "./types";
 import { DEFAULT_PAGES, DEFAULT_POSTS } from "./cms";
 import { visaTypeById } from "./visa-catalog";
+import { t } from "./i18n";
 
 const KEY = "ranz-global-v3";
 const EVENT = "ranz-store";
@@ -166,20 +167,18 @@ export function progressOf(app: Application) {
   return { done, total: required.length, missing: required.filter((d) => d.status === "empty" || d.status === "rejected") };
 }
 
-export function nextAction(app: Application, locale: "tr" | "en") {
+export function nextAction(app: Application, locale: Locale) {
   const missing = app.documents.filter((d) => d.required && (d.status === "empty" || d.status === "rejected"));
   if (missing.length) {
-    return locale === "tr"
-      ? `${missing.length} evrak sizi bekliyor`
-      : `${missing.length} documents need your attention`;
+    return `${missing.length} ${t(locale, "evrak sizi bekliyor", "documents need your attention")}`;
   }
   if (app.status === "review") {
-    return locale === "tr" ? "Danışmanınız inceliyor" : "Your advisor is reviewing";
+    return t(locale, "Danışmanınız inceliyor", "Your advisor is reviewing");
   }
   if (app.status === "complete") {
-    return locale === "tr" ? "Dosya tamamlandı" : "File completed";
+    return t(locale, "Dosya tamamlandı", "File completed");
   }
-  return locale === "tr" ? "Dosyanız güncel" : "Your file is up to date";
+  return t(locale, "Dosyanız güncel", "Your file is up to date");
 }
 
 function deriveStatus(docs: DocumentItem[]): AppStatus {

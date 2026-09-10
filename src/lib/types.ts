@@ -1,5 +1,5 @@
 export type Role = "client" | "staff" | "admin";
-export type Locale = "tr" | "en";
+export type Locale = "tr" | "en" | "ar" | "zh" | "ru" | "de" | "fr" | "es";
 export type VisaCountry = "schengen" | "usa" | "uae" | "china" | "russia" | "uk" | "canada";
 export type AppStatus = "draft" | "missing" | "review" | "revision" | "complete";
 export type DocStatus = "empty" | "uploaded" | "approved" | "rejected";

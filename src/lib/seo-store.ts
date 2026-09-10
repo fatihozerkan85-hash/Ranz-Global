@@ -200,9 +200,9 @@ export function draftContent(id: string) {
   const job = store.queue.find((j) => j.id === id);
   if (!job) return;
   const body =
-    job.locale === "en"
-      ? `# ${job.topic}\n\n## What you need\nRanz Global prepares a personal checklist for this topic. Upload documents in the portal; advisors review missing items.\n\n## Next step\nOpen an account and start a file. Consular decisions remain with official authorities.`
-      : `# ${job.topic}\n\n## Nelere bakılır\nRanz Global bu konuda size özel evrak listesi açar. Belgeleri panele yüklersiniz; danışman eksikleri işaretler.\n\n## Sonraki adım\nHesap açıp dosya başlatın. Konsolosluk kararı resmi makamlara aittir.`;
+    job.locale === "tr"
+      ? `# ${job.topic}\n\n## Nelere bakılır\nRanz Global bu konuda size özel evrak listesi açar. Belgeleri panele yüklersiniz; danışman eksikleri işaretler.\n\n## Sonraki adım\nHesap açıp dosya başlatın. Konsolosluk kararı resmi makamlara aittir.`
+      : `# ${job.topic}\n\n## What you need\nRanz Global prepares a personal checklist for this topic. Upload documents in the portal; advisors review missing items.\n\n## Next step\nOpen an account and start a file. Consular decisions remain with official authorities.`;
   job.body = body;
   job.words = body.split(/\s+/).length;
   job.status = "draft";

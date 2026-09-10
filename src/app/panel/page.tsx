@@ -47,7 +47,7 @@ export default function PanelHome() {
             {t(locale, "Sıradaki adım", "Next step")}
           </p>
           <h2 className="mt-3 font-serif text-3xl">
-            {locale === "en" ? active.destinationEn : active.destinationTr}
+            {t(locale, active.destinationTr, active.destinationEn)}
           </h2>
           <p className="mt-3 text-sm text-cream/75">{nextAction(active, locale)}</p>
           <p className="mt-6 inline-flex items-center gap-2 text-sm">
@@ -74,7 +74,7 @@ export default function PanelHome() {
             >
               <div>
                 <p className="font-medium">
-                  {locale === "en" ? app.destinationEn : app.destinationTr}
+                  {t(locale, app.destinationTr, app.destinationEn)}
                 </p>
                 <p className="mt-1 text-xs text-muted">
                   {app.id} · {p.done}/{p.total} {t(locale, "zorunlu evrak", "required documents")}

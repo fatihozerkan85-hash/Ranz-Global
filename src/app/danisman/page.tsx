@@ -38,7 +38,7 @@ export default function StaffQueuePage() {
             >
               <div>
                 <p className="font-medium">
-                  {locale === "en" ? app.destinationEn : app.destinationTr}
+                  {t(locale, app.destinationTr, app.destinationEn)}
                 </p>
                 <p className="mt-1 text-xs text-muted">
                   {app.id} · {waiting} {t(locale, "kontrol bekliyor", "awaiting review")} · {p.done}/
