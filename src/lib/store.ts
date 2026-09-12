@@ -252,6 +252,23 @@ export function uploadDocument(appId: string, key: string, fileName: string) {
   write(store);
 }
 
+export function assignApplication(appId: string, staffId: string) {
+  const store = read();
+  const app = store.applications.find((a) => a.id === appId);
+  const staff = store.users.find((u) => u.id === staffId && u.role === "staff");
+  if (!app || !staff) return;
+  app.assignedTo = staff.id;
+  app.advisorName = staff.name;
+  app.timeline.unshift({
+    at: nowStamp(),
+    titleTr: "Danışman atandı",
+    titleEn: "Advisor assigned",
+    bodyTr: `Dosya ${staff.name} adlı danışmana atandı.`,
+    bodyEn: `File assigned to ${staff.name}.`,
+  });
+  write(store);
+}
+
 export function reviewDocument(appId: string, key: string, status: "approved" | "rejected", note?: string) {
   const store = read();
   const app = store.applications.find((a) => a.id === appId);

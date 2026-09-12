@@ -30,7 +30,15 @@ export function PanelShell({
       return;
     }
     const seoRoute = pathname === "/yonetim/seo" || pathname.startsWith("/yonetim/seo/");
-    if (mode === "staff" && user.role !== "staff" && user.role !== "admin") router.replace("/panel");
+    if (mode === "staff" && user.role === "admin") {
+      if (pathname === "/danisman" || pathname === "/danisman/") {
+        router.replace("/yonetim/kuyruk");
+      } else if (pathname.startsWith("/danisman/")) {
+        router.replace(`/yonetim${pathname.slice("/danisman".length)}`);
+      }
+      return;
+    }
+    if (mode === "staff" && user.role !== "staff") router.replace("/panel");
     if (mode === "admin" && user.role !== "admin") {
       if (user.role === "staff" && seoRoute) return;
       router.replace(user.role === "staff" ? "/danisman" : "/panel");
@@ -45,7 +53,7 @@ export function PanelShell({
   }
 
   const seoRoute = pathname === "/yonetim/seo" || pathname.startsWith("/yonetim/seo/");
-  if (mode === "staff" && user.role !== "staff" && user.role !== "admin") return null;
+  if (mode === "staff" && user.role !== "staff") return null;
   if (mode === "admin" && user.role !== "admin" && !(user.role === "staff" && seoRoute)) return null;
   if (mode === "client" && user.role !== "client") return null;
 
@@ -56,7 +64,7 @@ export function PanelShell({
           { href: "/yonetim/danismanlar", label: t(locale, "Danışmanlar", "Advisors"), icon: Users },
           { href: "/yonetim/site", label: t(locale, "Site içeriği", "Site content"), icon: FileText },
           { href: "/yonetim/seo", label: t(locale, "SEO paneli", "SEO panel"), icon: Search },
-          { href: "/danisman", label: t(locale, "Dosya kuyruğu", "Queue"), icon: LayoutDashboard },
+          { href: "/yonetim/kuyruk", label: t(locale, "Dosya kuyruğu", "Queue"), icon: LayoutDashboard },
         ]
       : mode === "staff" || user.role === "staff"
         ? [
@@ -118,11 +126,6 @@ export function PanelShell({
               {t(locale, "Bugün yalnızca sıradaki adıma bakın.", "Focus on the next step only.")}
             </p>
             <div className="ml-auto flex items-center gap-2">
-              {mode === "staff" && user.role === "admin" ? (
-                <Link href="/yonetim/erp" className="btn btn-sm">
-                  {t(locale, "Yönetim", "Admin")}
-                </Link>
-              ) : null}
               <a
                 href={whatsappHref(locale)}
                 target="_blank"

@@ -12,7 +12,7 @@ export default function LoginPage() {
   const { locale } = useLocale();
   const { login } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState("ayse@ranz.demo");
+  const [email, setEmail] = useState("yonetici@ranz.demo");
   const [password, setPassword] = useState("ranz2026");
   const [error, setError] = useState<string | null>(null);
 

@@ -2,6 +2,6 @@
 
 import { ReviewFile } from "@/components/review-file";
 
-export default function StaffReviewPage() {
+export default function AdminReviewPage() {
   return <ReviewFile />;
 }
