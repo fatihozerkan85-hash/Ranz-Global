@@ -41,7 +41,7 @@ export default function PanelHome() {
       {active && (
         <Link
           href={`/panel/basvuru/${active.id}`}
-          className="mt-8 block rounded-2xl bg-ink p-6 text-cream transition hover:opacity-95 md:p-8"
+          className="mt-8 block rounded-2xl bg-navy p-6 text-cream transition hover:opacity-95 md:p-8"
         >
           <p className="text-xs uppercase tracking-[0.22em] text-gold">
             {t(locale, "Sıradaki adım", "Next step")}

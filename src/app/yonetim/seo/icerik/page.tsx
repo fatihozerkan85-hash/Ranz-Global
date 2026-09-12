@@ -32,7 +32,7 @@ export default function ContentQueue() {
       </p>
       <form onSubmit={onSubmit} className="mt-6 flex gap-2">
         <input name="topic" placeholder={t(locale, "Konu veya kelime", "Topic or keyword")} className="flex-1 rounded-full border border-line bg-paper px-4 py-2 text-sm" />
-        <button className="rounded-full bg-ink px-4 py-2 text-sm text-cream">{t(locale, "Kuyruğa al", "Queue")}</button>
+        <button className="rounded-full bg-navy px-4 py-2 text-sm text-cream">{t(locale, "Kuyruğa al", "Queue")}</button>
       </form>
       <div className="mt-8 space-y-3">
         {seo?.queue.map((job) => (
@@ -43,10 +43,10 @@ export default function ContentQueue() {
                 <p className="text-xs text-muted">{job.locale.toUpperCase()} · {job.status} · {job.words} {t(locale, "kelime", "words")}</p>
               </div>
               <div className="flex gap-2">
-                <button type="button" className="rounded-full border border-line px-3 py-1.5 text-xs" onClick={() => draftContent(job.id)}>
+                <button type="button" className="btn btn-sm" onClick={() => draftContent(job.id)}>
                   {t(locale, "AI yazsın", "AI draft")}
                 </button>
-                <button type="button" className="rounded-full bg-ink px-3 py-1.5 text-xs text-cream" onClick={() => publishContent(job.id)}>
+                <button type="button" className="rounded-full bg-navy px-3 py-1.5 text-xs text-cream" onClick={() => publishContent(job.id)}>
                   {t(locale, "Yayınla", "Publish")}
                 </button>
               </div>

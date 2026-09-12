@@ -105,7 +105,7 @@ export default function AdvisorsAdminPage() {
         </label>
         {error && <p className="text-sm text-[#8a3b24] md:col-span-2">{error}</p>}
         <div className="md:col-span-2">
-          <button type="submit" className="rounded-full bg-ink px-6 py-3 text-sm text-cream">
+          <button type="submit" className="btn">
             {t(locale, "Danışman ekle", "Add advisor")}
           </button>
         </div>
@@ -155,7 +155,7 @@ export default function AdvisorsAdminPage() {
                   placeholder={t(locale, "Yeni şifre", "New password")}
                   className="min-w-[12rem] flex-1 rounded-lg border border-line bg-cream px-3 py-2 text-sm outline-none focus:border-gold"
                 />
-                <button type="submit" className="rounded-full bg-ink px-4 py-2 text-xs text-cream">
+                <button type="submit" className="btn btn-sm">
                   {t(locale, "Kaydet", "Save")}
                 </button>
               </form>

@@ -10,10 +10,13 @@
   --color-foreground: var(--foreground);
   --color-ink: #0c1a2a;
   --color-ink-soft: #2a3648;
+  --color-navy: #0f2744;
+  --color-navy-hover: #163454;
   --color-cream: #f6f1e8;
   --color-paper: #fffdf8;
   --color-gold: #c4a056;
   --color-gold-deep: #8c6d28;
+  --color-gold-hover: #d4b36a;
   --color-line: #e6dcc8;
   --color-muted: #6d675c;
   --font-sans: var(--font-manrope);
@@ -28,6 +31,74 @@ body {
   background: var(--color-cream);
   color: var(--color-ink);
   font-family: var(--font-sans), system-ui, sans-serif;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  background: var(--color-navy);
+  color: var(--color-cream);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1;
+  padding: 0.75rem 1.35rem;
+  transition: background 0.15s ease;
+}
+
+.btn:hover {
+  background: var(--color-navy-hover);
+}
+
+.btn-sm {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.75rem;
+}
+
+.btn-header {
+  height: 2.25rem;
+  min-width: 5.5rem;
+  padding: 0 1.1rem;
+  font-size: 0.75rem;
+}
+
+.header-chip {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 2.25rem;
+  min-width: 5.5rem;
+  border-radius: 9999px;
+  padding: 0 1.85rem 0 1.1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1;
+  appearance: none;
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 10px 7px;
+}
+
+.header-chip-gold {
+  background-color: var(--color-gold);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%230c1a2a' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+}
+
+.header-chip-navy {
+  background-color: var(--color-navy);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23f6f1e8' d='M1 1.5 6 6.5 11 1.5'/%3E%3C/svg%3E");
+}
+
+.btn-gold {
+  background: var(--color-gold);
+  color: var(--color-ink);
+}
+
+.btn-gold:hover {
+  background: var(--color-gold-hover);
 }
 
 html[lang="ar"] body {

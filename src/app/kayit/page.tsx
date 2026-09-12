@@ -64,7 +64,7 @@ export default function RegisterPage() {
               />
             </label>
             {error && <p className="text-sm text-[#8a3b24]">{error}</p>}
-            <button type="submit" className="w-full rounded-full bg-ink py-3 text-sm text-cream">
+            <button type="submit" className="btn w-full">
               {t(locale, "Kayıt ol", "Register")}
             </button>
           </form>

@@ -50,6 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="tr"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${manrope.variable} ${cormorant.variable} ${arabic.variable} ${chinese.variable} h-full antialiased`}
     >

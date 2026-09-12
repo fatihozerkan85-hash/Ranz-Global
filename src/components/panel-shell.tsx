@@ -88,7 +88,7 @@ export function PanelShell({
                   key={item.href}
                   href={item.href}
                   className={`flex items-center gap-2 rounded-md px-3 py-2.5 text-sm ${
-                    active ? "bg-ink text-cream" : "text-ink-soft hover:bg-cream"
+                    active ? "bg-navy text-cream" : "text-ink-soft hover:bg-cream"
                   }`}
                 >
                   <Icon size={16} />
@@ -112,7 +112,7 @@ export function PanelShell({
             </p>
             <div className="ml-auto flex items-center gap-2">
               {mode === "staff" && user.role === "admin" ? (
-                <Link href="/yonetim" className="rounded-full border border-line px-3 py-1.5 text-xs text-ink-soft">
+                <Link href="/yonetim" className="btn btn-sm">
                   {t(locale, "Yönetim", "Admin")}
                 </Link>
               ) : null}
@@ -120,10 +120,9 @@ export function PanelShell({
                 href={whatsappHref(locale)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hidden items-center gap-1.5 rounded-full border border-line px-3 py-1.5 text-xs text-ink-soft sm:flex"
+                className="hidden h-9 w-9 items-center justify-center rounded-full bg-[#25D366] text-white sm:flex"
               >
                 <MessageCircle size={14} />
-                WhatsApp
               </a>
               <LanguageSwitcher compact />
               <button
@@ -132,7 +131,7 @@ export function PanelShell({
                   logout();
                   router.push("/");
                 }}
-                className="rounded-full p-2 text-muted hover:bg-cream"
+                className="grid h-9 w-9 place-items-center rounded-full bg-navy text-cream hover:bg-navy-hover"
                 aria-label="logout"
               >
                 <LogOut size={16} />

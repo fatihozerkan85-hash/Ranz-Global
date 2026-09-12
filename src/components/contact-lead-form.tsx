@@ -65,7 +65,7 @@ export function ContactLeadForm({ source }: { source: string }) {
           className="mt-1 w-full rounded-lg border border-line bg-cream px-3 py-2.5 outline-none focus:border-gold"
         />
       </label>
-      <button type="submit" className="w-full rounded-full bg-ink py-3 text-sm text-cream">
+      <button type="submit" className="btn w-full">
         {t(locale, "Gönder", "Send")}
       </button>
     </form>

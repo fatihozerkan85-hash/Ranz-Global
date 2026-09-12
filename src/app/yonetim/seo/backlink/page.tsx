@@ -38,14 +38,14 @@ export default function BacklinkPage() {
       </p>
       <form onSubmit={onSubmit} className="mt-6 flex gap-2">
         <input name="url" placeholder="https://" className="flex-1 rounded-full border border-line bg-paper px-4 py-2 text-sm" />
-        <button className="rounded-full bg-ink px-4 py-2 text-sm text-cream">{t(locale, "Ekle", "Add")}</button>
+        <button className="rounded-full bg-navy px-4 py-2 text-sm text-cream">{t(locale, "Ekle", "Add")}</button>
       </form>
       <div className="mt-8 space-y-3">
         {seo?.backlinks.map((b) => (
           <article key={b.url} className="rounded-xl border border-line bg-paper p-5">
             <p className="break-all text-sm">{b.url}</p>
             <p className="mt-1 text-xs text-muted">{b.live === null ? t(locale, "Kontrol edilmedi", "Not checked") : b.live ? t(locale, "Canlı", "Live") : t(locale, "Kırık", "Broken")}</p>
-            <button type="button" className="mt-3 rounded-full border border-line px-3 py-1.5 text-xs" onClick={() => check(b.url)}>
+            <button type="button" className="mt-3 btn btn-sm" onClick={() => check(b.url)}>
               {t(locale, "Canlılık", "Check")}
             </button>
             <pre className="mt-3 whitespace-pre-wrap text-xs text-ink-soft">

@@ -52,7 +52,7 @@ export function DocumentRow({
             <button
               type="button"
               onClick={() => inputRef.current?.click()}
-              className="inline-flex items-center gap-1.5 rounded-full border border-ink/15 bg-paper px-3 py-1.5 text-xs font-medium text-ink hover:border-gold"
+              className="btn btn-sm"
             >
               <Upload size={13} />
               {doc.status === "empty" ? t(locale, "Yükle", "Upload") : t(locale, "Yeniden yükle", "Replace")}

@@ -26,14 +26,14 @@ export default function GscPage() {
         <div className="rounded-2xl border border-line bg-paper p-6">
           <h2 className="font-serif text-2xl">Google Search Console</h2>
           <p className="mt-2 text-sm text-muted">{seo?.gscConnected ? t(locale, "Bağlı (demo)", "Connected (demo)") : t(locale, "Bağlı değil", "Not connected")}</p>
-          <button type="button" className="mt-4 rounded-full bg-ink px-4 py-2 text-sm text-cream" onClick={() => setIntegrations(true, seo?.ga4Connected ?? false)}>
+          <button type="button" className="mt-4 rounded-full bg-navy px-4 py-2 text-sm text-cream" onClick={() => setIntegrations(true, seo?.ga4Connected ?? false)}>
             {t(locale, "OAuth bağla", "Connect OAuth")}
           </button>
         </div>
         <div className="rounded-2xl border border-line bg-paper p-6">
           <h2 className="font-serif text-2xl">GA4</h2>
           <p className="mt-2 text-sm text-muted">{seo?.ga4Connected ? t(locale, "Bağlı (demo)", "Connected (demo)") : t(locale, "Bağlı değil", "Not connected")}</p>
-          <button type="button" className="mt-4 rounded-full bg-ink px-4 py-2 text-sm text-cream" onClick={() => setIntegrations(seo?.gscConnected ?? false, true)}>
+          <button type="button" className="mt-4 rounded-full bg-navy px-4 py-2 text-sm text-cream" onClick={() => setIntegrations(seo?.gscConnected ?? false, true)}>
             {t(locale, "OAuth bağla", "Connect OAuth")}
           </button>
         </div>

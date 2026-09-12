@@ -32,10 +32,10 @@ export default function FixesPage() {
                 <p className="mt-1 text-sm text-ink-soft">{issue.suggestion}</p>
               </div>
               <div className="flex gap-2">
-                <button type="button" className="rounded-full bg-ink px-3 py-1.5 text-xs text-cream" onClick={() => setIssueStatus(issue.id, "applied")}>
+                <button type="button" className="rounded-full bg-navy px-3 py-1.5 text-xs text-cream" onClick={() => setIssueStatus(issue.id, "applied")}>
                   {t(locale, "Onayla ve uygula", "Approve & apply")}
                 </button>
-                <button type="button" className="rounded-full border border-line px-3 py-1.5 text-xs" onClick={() => setIssueStatus(issue.id, "ignored")}>
+                <button type="button" className="btn btn-sm" onClick={() => setIssueStatus(issue.id, "ignored")}>
                   {t(locale, "Yoksay", "Ignore")}
                 </button>
               </div>

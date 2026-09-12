@@ -38,8 +38,8 @@ export default function KeywordsPage() {
       </p>
       <form onSubmit={onSubmit} className="mt-6 flex gap-2">
         <input name="q" className="flex-1 rounded-full border border-line bg-paper px-4 py-2 text-sm" placeholder={t(locale, "Kelime ekle", "Add keyword")} />
-        <button className="rounded-full bg-ink px-4 py-2 text-sm text-cream">{t(locale, "Ekle", "Add")}</button>
-        <button type="button" onClick={csv} className="rounded-full border border-line px-4 py-2 text-sm">CSV</button>
+        <button className="rounded-full bg-navy px-4 py-2 text-sm text-cream">{t(locale, "Ekle", "Add")}</button>
+        <button type="button" onClick={csv} className="btn">CSV</button>
       </form>
       <div className="mt-8 overflow-x-auto rounded-2xl border border-line bg-paper">
         <table className="w-full text-left text-sm">

@@ -29,7 +29,7 @@ export default function BotsPage() {
               <p>{b.ua}</p>
               <p className="text-xs text-muted">{b.path} · {b.at}</p>
             </div>
-            <span className={`rounded-full px-2 py-0.5 text-[10px] uppercase ${b.tag === "ai" ? "bg-ink text-cream" : "bg-[#f6e4dc] text-[#8a3b24]"}`}>
+            <span className={`rounded-full px-2 py-0.5 text-[10px] uppercase ${b.tag === "ai" ? "bg-navy text-cream" : "bg-[#f6e4dc] text-[#8a3b24]"}`}>
               {b.tag}
             </span>
           </div>

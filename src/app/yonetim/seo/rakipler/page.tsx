@@ -28,7 +28,7 @@ export default function CompetitorsPage() {
       <p className="mt-2 text-sm text-ink-soft">{t(locale, "En fazla 10 rakip domain. Konu boşluğunu kuyruğa gönderin.", "Up to 10 competitor domains. Send topic gaps to the queue.")}</p>
       <form onSubmit={onSubmit} className="mt-6 flex gap-2">
         <input name="d" placeholder="ornek.com" className="flex-1 rounded-full border border-line bg-paper px-4 py-2 text-sm" />
-        <button className="rounded-full bg-ink px-4 py-2 text-sm text-cream">{t(locale, "Ekle", "Add")}</button>
+        <button className="rounded-full bg-navy px-4 py-2 text-sm text-cream">{t(locale, "Ekle", "Add")}</button>
       </form>
       <div className="mt-8 space-y-3">
         {seo?.competitors.map((c) => (
@@ -39,7 +39,7 @@ export default function CompetitorsPage() {
                 <button
                   key={topic}
                   type="button"
-                  className="rounded-full border border-line px-3 py-1 text-xs"
+                  className="btn btn-sm"
                   onClick={() => addContentJob(topic, locale)}
                 >
                   {topic} → {t(locale, "kuyruk", "queue")}

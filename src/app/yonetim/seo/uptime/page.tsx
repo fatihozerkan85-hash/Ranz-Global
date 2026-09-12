@@ -39,7 +39,7 @@ export default function UptimePage() {
       <p className="mt-2 text-sm text-ink-soft">
         {t(locale, "Seçilen URL’ler hafif HTTP kontrolü. Üretimde 5 dakikada bir; kesintide e-posta.", "Light HTTP checks on selected URLs. In production every 5 minutes; email on outage.")}
       </p>
-      <button type="button" disabled={busy} onClick={ping} className="mt-6 rounded-full bg-ink px-5 py-2.5 text-sm text-cream">
+      <button type="button" disabled={busy} onClick={ping} className="mt-6 rounded-full bg-navy px-5 py-2.5 text-sm text-cream">
         {t(locale, "Şimdi kontrol et", "Check now")}
       </button>
       <div className="mt-8 space-y-2">

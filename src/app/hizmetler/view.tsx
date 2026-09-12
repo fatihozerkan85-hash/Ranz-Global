@@ -38,7 +38,7 @@ export default function ServicesView() {
         ))}
       </section>
       <section className="mx-auto max-w-6xl px-5 pb-16">
-        <Link href="/kayit" className="inline-flex rounded-full bg-ink px-6 py-3 text-sm text-cream">
+        <Link href="/kayit" className="btn">
           {t(locale, "Dosya açın", "Open a file")}
         </Link>
       </section>

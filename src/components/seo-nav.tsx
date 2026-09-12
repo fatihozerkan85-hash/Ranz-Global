@@ -30,7 +30,7 @@ export function SeoNav() {
           <Link
             key={l.href}
             href={l.href}
-            className={`rounded-full px-3 py-1.5 text-xs ${active ? "bg-ink text-cream" : "border border-line bg-paper text-ink-soft"}`}
+            className={`rounded-full px-3 py-1.5 text-xs ${active ? "bg-navy text-cream" : "bg-navy/55 text-cream"}`}
           >
             {t(locale, l.tr, l.en)}
           </Link>

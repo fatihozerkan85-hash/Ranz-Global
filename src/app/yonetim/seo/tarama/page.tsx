@@ -35,7 +35,7 @@ export default function CrawlPage() {
         type="button"
         onClick={run}
         disabled={busy}
-        className="mt-6 rounded-full bg-ink px-5 py-2.5 text-sm text-cream disabled:opacity-50"
+        className="mt-6 rounded-full bg-navy px-5 py-2.5 text-sm text-cream disabled:opacity-50"
       >
         {busy ? t(locale, "Taranıyor…", "Crawling…") : t(locale, "Şimdi tara", "Run crawl")}
       </button>

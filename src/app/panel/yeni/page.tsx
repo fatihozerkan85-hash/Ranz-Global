@@ -69,7 +69,7 @@ export default function NewFilePage() {
               const app = createApplication(user.id, selected.id);
               if (app) router.push(`/panel/basvuru/${app.id}`);
             }}
-            className="mt-6 rounded-full bg-ink px-6 py-3 text-sm text-cream"
+            className="mt-6 btn"
           >
             {t(locale, "Bu ülkeyle dosya aç", "Open file for this country")}
           </button>

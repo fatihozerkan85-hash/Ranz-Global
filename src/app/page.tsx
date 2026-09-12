@@ -17,38 +17,38 @@ export default function HomePage() {
     <div className="flex min-h-screen flex-col">
       <SiteHeader />
       <main className="flex-1">
-        <section className="mx-auto grid max-w-6xl gap-12 px-5 pb-20 pt-10 md:grid-cols-[1.15fr_0.85fr] md:items-end md:pt-16">
+        <section className="relative overflow-hidden">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gold/40" />
+          <div className="mx-auto grid max-w-6xl gap-12 px-5 pb-20 pt-12 md:grid-cols-[1.15fr_0.85fr] md:items-center md:pt-20">
           <div>
-            <h1 className="max-w-xl font-serif text-5xl leading-[1.05] text-ink md:text-7xl">
+            <div className="mb-6 h-px w-16 bg-gold" />
+            <h1 className="max-w-xl font-serif text-5xl leading-[1.02] tracking-tight text-ink md:text-7xl">
               {t(locale, home.heroTitleTr, home.heroTitleEn)}
             </h1>
             <p className="mt-6 max-w-lg text-base leading-7 text-ink-soft">
               {t(locale, home.heroLeadTr, home.heroLeadEn)}
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/giris"
-                className="inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm text-cream"
-              >
+              <Link href="/giris" className="btn">
                 {t(locale, home.ctaPrimaryTr, home.ctaPrimaryEn)}
                 <ArrowRight size={16} />
               </Link>
-              <a
-                href="#surec"
-                className="inline-flex items-center rounded-full border border-ink/15 px-6 py-3 text-sm text-ink"
-              >
+              <a href="#surec" className="btn">
                 {t(locale, home.ctaSecondaryTr, home.ctaSecondaryEn)}
               </a>
             </div>
           </div>
-          <div className="rounded-2xl border border-line bg-paper p-6 shadow-[0_20px_60px_-40px_rgba(12,26,42,0.45)]">
+          <div className="overflow-hidden rounded-2xl border border-line bg-paper shadow-[0_24px_60px_-36px_rgba(12,26,42,0.5)]">
+            <div className="bg-navy px-6 py-4">
+              <p className="text-[11px] uppercase tracking-[0.22em] text-gold">
+                {t(locale, home.destTitleTr, home.destTitleEn)}
+              </p>
+            </div>
+            <div className="p-6">
             {home.heroImageId ? (
               <CmsImg id={home.heroImageId} alt="" className="mb-5 h-40 w-full rounded-xl object-cover" />
             ) : null}
-            <p className="text-xs uppercase tracking-[0.22em] text-muted">
-              {t(locale, home.destTitleTr, home.destTitleEn)}
-            </p>
-            <div className="mt-4 grid grid-cols-2 gap-2 text-sm">
+            <div className="grid grid-cols-2 gap-2 text-sm">
               {home.destCards.map((card) => (
                 <Link
                   key={card.id}
@@ -61,6 +61,8 @@ export default function HomePage() {
               ))}
             </div>
             <p className="mt-5 text-xs leading-5 text-muted">{t(locale, home.destNoteTr, home.destNoteEn)}</p>
+            </div>
+          </div>
           </div>
         </section>
 
@@ -78,8 +80,8 @@ export default function HomePage() {
             <div className="mt-10 grid gap-8 md:grid-cols-3">
               {home.steps.map((step) => (
                 <div key={step.id}>
-                  <p className="text-xs tracking-[0.3em] text-gold-deep">{step.n}</p>
-                  <h3 className="mt-3 font-serif text-2xl">{t(locale, step.titleTr, step.titleEn)}</h3>
+                  <p className="grid h-9 w-9 place-items-center rounded-sm bg-navy font-serif text-sm text-gold">{step.n}</p>
+                  <h3 className="mt-4 font-serif text-2xl">{t(locale, step.titleTr, step.titleEn)}</h3>
                   <p className="mt-3 text-sm leading-6 text-ink-soft">{t(locale, step.bodyTr, step.bodyEn)}</p>
                 </div>
               ))}
@@ -127,11 +129,12 @@ export default function HomePage() {
         </section>
 
         <section id="guven" className="mx-auto max-w-6xl px-5 py-20">
-          <div className="rounded-2xl border border-line bg-paper px-6 py-10 md:px-10">
-            <h2 className="max-w-3xl font-serif text-3xl leading-snug">
+          <div className="rounded-2xl bg-navy px-6 py-12 text-cream md:px-12">
+            <p className="text-[11px] uppercase tracking-[0.28em] text-gold">{t(locale, "Güven", "Trust")}</p>
+            <h2 className="mt-4 max-w-3xl font-serif text-3xl leading-snug text-cream">
               {t(locale, home.trustTitleTr, home.trustTitleEn)}
             </h2>
-            <p className="mt-6 max-w-2xl text-sm leading-7 text-ink-soft">
+            <p className="mt-6 max-w-2xl text-sm leading-7 text-cream/70">
               {t(locale, home.trustBodyTr, home.trustBodyEn)}
             </p>
           </div>

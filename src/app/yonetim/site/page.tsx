@@ -201,7 +201,7 @@ function PageEditor({
       <Field label={t(locale, "Metin TR", "Body TR")} value={draft.bodyTr} onChange={(v) => set({ bodyTr: v })} rows={6} />
       <Field label={t(locale, "Metin EN", "Body EN")} value={draft.bodyEn} onChange={(v) => set({ bodyEn: v })} rows={6} />
       <ImagePick label={t(locale, "Görsel", "Image")} value={draft.imageId} onChange={(imageId) => set({ imageId })} />
-      <button type="button" className="rounded-full bg-ink px-4 py-2 text-sm text-cream" onClick={() => onSave(draft)}>
+      <button type="button" className="rounded-full bg-navy px-4 py-2 text-sm text-cream" onClick={() => onSave(draft)}>
         {t(locale, "Kaydet", "Save")}
       </button>
     </article>
@@ -293,7 +293,7 @@ export default function SiteContentPage() {
             key={item.id}
             type="button"
             onClick={() => setTab(item.id)}
-            className={`rounded-full px-3 py-1.5 text-xs ${tab === item.id ? "bg-ink text-cream" : "border border-line bg-paper"}`}
+            className={`btn btn-sm ${tab === item.id ? "" : "opacity-55"}`}
           >
             {t(locale, item.tr, item.en)}
           </button>
@@ -400,7 +400,7 @@ export default function SiteContentPage() {
           <p className="text-xs text-muted">
             {t(locale, "Galerideki görseller:", "Gallery images:")} {current.galleryIds.length}
           </p>
-          <button type="button" className="rounded-full bg-ink px-6 py-3 text-sm text-cream" onClick={() => saveHome(current)}>
+          <button type="button" className="rounded-full bg-navy px-6 py-3 text-sm text-cream" onClick={() => saveHome(current)}>
             {t(locale, "Anasayfayı kaydet", "Save homepage")}
           </button>
         </div>
@@ -496,7 +496,7 @@ export default function SiteContentPage() {
               {t(locale, "Görsel yükle", "Upload image")}
               <input name="file" type="file" accept="image/*" required className="mt-1 block text-sm" />
             </label>
-            <button className="rounded-full bg-ink px-4 py-2 text-sm text-cream">{t(locale, "Ekle", "Add")}</button>
+            <button className="rounded-full bg-navy px-4 py-2 text-sm text-cream">{t(locale, "Ekle", "Add")}</button>
           </form>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             {media.map((m) => (

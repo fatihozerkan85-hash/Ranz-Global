@@ -3,8 +3,15 @@
 import { LOCALES, LOCALE_META } from "@/lib/i18n";
 import { useLocale } from "@/lib/locale";
 
-export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
+export function LanguageSwitcher({
+  compact = false,
+  tone = "navy",
+}: {
+  compact?: boolean;
+  tone?: "navy" | "gold";
+}) {
   const { locale, setLocale } = useLocale();
+  const gold = tone === "gold";
   return (
     <label className="inline-flex items-center gap-1">
       <span className="sr-only">{LOCALE_META[locale].native}</span>
@@ -12,12 +19,12 @@ export function LanguageSwitcher({ compact = false }: { compact?: boolean }) {
         value={locale}
         onChange={(e) => setLocale(e.target.value as typeof locale)}
         aria-label="Language"
-        className={`rounded-full border border-line bg-paper px-2 py-1 text-[11px] font-medium uppercase tracking-wider text-muted ${
-          compact ? "max-w-[4.5rem]" : "max-w-[7.5rem]"
+        className={`header-chip border ${
+          gold ? "header-chip-gold border-gold text-ink" : "header-chip-navy border-navy text-cream"
         }`}
       >
         {LOCALES.map((code) => (
-          <option key={code} value={code}>
+          <option key={code} value={code} className="bg-paper text-ink">
             {compact ? LOCALE_META[code].short : LOCALE_META[code].native}
           </option>
         ))}
