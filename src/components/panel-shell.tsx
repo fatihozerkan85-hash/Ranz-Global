@@ -9,7 +9,7 @@ import { whatsappHref } from "@/lib/contact";
 import { t } from "@/lib/i18n";
 import { BrandMark } from "@/components/site-chrome";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { BarChart3, FileStack, LayoutDashboard, LogOut, MessageCircle, Plus, Search, FileText, Users } from "lucide-react";
+import { FileStack, LayoutDashboard, LogOut, MessageCircle, Plus, Search, FileText, Users, Wallet } from "lucide-react";
 
 export function PanelShell({
   children,
@@ -36,7 +36,7 @@ export function PanelShell({
       router.replace(user.role === "staff" ? "/danisman" : "/panel");
     }
     if (mode === "client" && user.role !== "client") {
-      router.replace(user.role === "admin" ? "/yonetim" : "/danisman");
+      router.replace(user.role === "admin" ? "/yonetim/erp" : "/danisman");
     }
   }, [ready, user, mode, router, pathname]);
 
@@ -52,7 +52,7 @@ export function PanelShell({
   const items =
     user.role === "admin"
       ? [
-          { href: "/yonetim", label: t(locale, "İstatistik", "Statistics"), icon: BarChart3 },
+          { href: "/yonetim/erp", label: t(locale, "Mini ERP", "Mini ERP"), icon: Wallet },
           { href: "/yonetim/danismanlar", label: t(locale, "Danışmanlar", "Advisors"), icon: Users },
           { href: "/yonetim/site", label: t(locale, "Site içeriği", "Site content"), icon: FileText },
           { href: "/yonetim/seo", label: t(locale, "SEO paneli", "SEO panel"), icon: Search },
@@ -98,7 +98,14 @@ export function PanelShell({
             })}
           </nav>
           <div className="border-t border-line p-4 text-xs text-muted">
-            <p className="font-medium text-ink">{user.name}</p>
+            <p className="text-[10px] uppercase tracking-[0.18em] text-gold-deep">
+              {user.role === "admin"
+                ? t(locale, "Yönetici", "Admin")
+                : user.role === "staff"
+                  ? t(locale, "Danışman", "Advisor")
+                  : t(locale, "Müşteri", "Client")}
+            </p>
+            <p className="mt-1 font-medium text-ink">{user.name}</p>
             <p>{user.email}</p>
           </div>
         </aside>
@@ -112,7 +119,7 @@ export function PanelShell({
             </p>
             <div className="ml-auto flex items-center gap-2">
               {mode === "staff" && user.role === "admin" ? (
-                <Link href="/yonetim" className="btn btn-sm">
+                <Link href="/yonetim/erp" className="btn btn-sm">
                   {t(locale, "Yönetim", "Admin")}
                 </Link>
               ) : null}

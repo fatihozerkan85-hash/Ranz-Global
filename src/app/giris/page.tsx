@@ -23,7 +23,7 @@ export default function LoginPage() {
       setError(err);
       return;
     }
-    router.push(logged.role === "admin" ? "/yonetim" : logged.role === "staff" ? "/danisman" : "/panel");
+    router.push(logged.role === "admin" ? "/yonetim/erp" : logged.role === "staff" ? "/danisman" : "/panel");
   };
 
   return (

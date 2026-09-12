@@ -47,7 +47,7 @@ export function SiteHeader({ solid: _solid = false }: { solid?: boolean }) {
           <LanguageSwitcher compact tone="gold" />
           {user ? (
             <Link
-              href={user.role === "admin" ? "/yonetim" : user.role === "staff" ? "/danisman" : "/panel"}
+              href={user.role === "admin" ? "/yonetim/erp" : user.role === "staff" ? "/danisman" : "/panel"}
               className="btn btn-sm btn-gold btn-header"
             >
               {t(locale, "Panelim", "My portal")}
