@@ -104,7 +104,7 @@ export const DISCLAIMER_EN =
   "Ranz Global is a private consultancy, independent of consulates and official visa application centres. The final visa decision belongs to the competent authorities of the destination country. Ranz Global does not guarantee visa approval.";
 
 export const UPLOAD_NOTICE_TR =
-  "Belgeleriniz vize danışmanlık sürecini yürütmek için işlenir. Bu panelde şu an dosyanın adı ve inceleme durumu kaydedilir; belgenin kendisi henüz uzak bir sunucuya yüklenmez. Şifreleme iddiası kullanmıyoruz.";
+  "Belgeleriniz vize danışmanlık sürecini yürütmek için işlenir. Dosya HTTPS ile Vercel Blob deposuna (özel erişim) yüklenir; panelde ad, durum ve dosya yolu tarayıcı deposunda kalır. Giriş çerezi olmadığı için indirme adresi rastgele sonek ile korunur; şifreleme iddiası kullanmıyoruz.";
 
 export const UPLOAD_NOTICE_EN =
-  "Your documents are processed to run the visa consultancy. This portal currently stores the file name and review status; the file itself is not yet uploaded to a remote server. We do not claim encryption.";
+  "Your documents are processed to run the visa consultancy. Files are uploaded over HTTPS to a private Vercel Blob store; the portal keeps the name, status and file path in browser storage. There is no login cookie, so downloads rely on a random filename suffix. We do not claim encryption.";

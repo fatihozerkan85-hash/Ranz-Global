@@ -53,9 +53,9 @@ export const DEFAULT_PAGES: CmsPage[] = [
     descriptionTr: "Kişisel verilerinizin işlenmesine ilişkin aydınlatma metni.",
     descriptionEn: "Notice on the processing of your personal data.",
     bodyTr:
-      "Ranz Global, vize danışmanlığı kapsamında ad, iletişim ve dosya durumunu işler. Bu sürümde veriler tarayıcınızdaki yerel depoda (localStorage) durur; uzak sunucuya belgenin kendisi yüklenmez.\n\nŞifreleme iddiası kullanmıyoruz. Amaç yalnızca danışmanlık sürecini yürütmektir. Resmi aydınlatma metni ayrıca iletilebilir.",
+      "Ranz Global, vize danışmanlığı kapsamında ad, iletişim, dosya durumu ve yüklenen evrakları işler. Hesap ve dosya özeti tarayıcınızdaki yerel depoda (localStorage) durur. Yüklediğiniz PDF/JPEG/PNG belgeler Vercel Blob özel deposuna HTTPS ile aktarılır; doğrudan herkese açık bir bağlantı verilmez, indirme site üzerinden yapılır.\n\nŞifreleme iddiası kullanmıyoruz. Amaç yalnızca danışmanlık sürecini yürütmektir. Resmi aydınlatma metni ayrıca iletilebilir.",
     bodyEn:
-      "Ranz Global processes name, contact and file status for visa consultancy. In this version data sits in your browser’s localStorage; the document file itself is not uploaded to a remote server.\n\nWe do not claim encryption. The purpose is to run the consultancy. A formal notice can be issued separately.",
+      "Ranz Global processes name, contact, file status and uploaded documents for visa consultancy. Account and file summaries sit in your browser’s localStorage. PDF/JPEG/PNG files you upload go over HTTPS to a private Vercel Blob store; they are not given a public URL and are opened through this site.\n\nWe do not claim encryption. The purpose is to run the consultancy. A formal notice can be issued separately.",
     status: "published",
   },
   {
@@ -65,9 +65,9 @@ export const DEFAULT_PAGES: CmsPage[] = [
     descriptionTr: "Ranz Global gizlilik politikası.",
     descriptionEn: "Ranz Global privacy policy.",
     bodyTr:
-      "Dil ve oturum için tarayıcı depolaması kullanılır. İletişim formu kayıtları bu tarayıcıdaki yerel depoda tutulur. Üçüncü taraf reklam çerezi yok. Analitik bağlanırsa ayrıca bildirilir.",
+      "Dil ve oturum için tarayıcı depolaması kullanılır. İletişim formu kayıtları bu tarayıcıdaki yerel depoda tutulur. Yüklenen evraklar Vercel Blob özel deposunda saklanır. Üçüncü taraf reklam çerezi yok. Analitik bağlanırsa ayrıca bildirilir.",
     bodyEn:
-      "Browser storage is used for language and session. Contact form records stay in local storage on this browser. No third-party ad cookies. Analytics, if added, will be disclosed.",
+      "Browser storage is used for language and session. Contact form records stay in local storage on this browser. Uploaded documents are stored in a private Vercel Blob store. No third-party ad cookies. Analytics, if added, will be disclosed.",
     status: "published",
   },
 ];

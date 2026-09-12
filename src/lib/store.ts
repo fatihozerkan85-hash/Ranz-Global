@@ -133,6 +133,18 @@ function mergeBySlug<T extends { slug: string }>(existing: T[] | undefined, defa
   return list;
 }
 
+function patchLegalPages(pages: CmsPage[]) {
+  return pages.map((page) => {
+    if (page.slug === "kvkk" && page.bodyTr.includes("yüklenmez")) {
+      return DEFAULT_PAGES.find((item) => item.slug === "kvkk") ?? page;
+    }
+    if (page.slug === "gizlilik" && !page.bodyTr.includes("Vercel Blob")) {
+      return DEFAULT_PAGES.find((item) => item.slug === "gizlilik") ?? page;
+    }
+    return page;
+  });
+}
+
 function read(): Store {
   if (typeof window === "undefined") return emptyStore();
   try {
@@ -156,7 +168,7 @@ function read(): Store {
         phone: a.phone ?? "",
         message: a.message ?? a.topic ?? "",
       })),
-      pages: mergeBySlug(parsed.pages, DEFAULT_PAGES),
+      pages: patchLegalPages(mergeBySlug(parsed.pages, DEFAULT_PAGES)),
       posts: mergeBySlug(parsed.posts, DEFAULT_POSTS),
       guides: mergeBySlug(parsed.guides, DEFAULT_GUIDES),
       home: {
@@ -240,7 +252,12 @@ function deriveStatus(docs: DocumentItem[]): AppStatus {
   return "review";
 }
 
-export function uploadDocument(appId: string, key: string, fileName: string) {
+export function uploadDocument(
+  appId: string,
+  key: string,
+  fileName: string,
+  file?: { pathname?: string; url?: string },
+) {
   const store = read();
   const app = store.applications.find((a) => a.id === appId);
   if (!app) return;
@@ -248,6 +265,8 @@ export function uploadDocument(appId: string, key: string, fileName: string) {
   if (!doc) return;
   doc.status = "uploaded";
   doc.fileName = fileName;
+  doc.filePathname = file?.pathname;
+  doc.fileUrl = file?.url;
   doc.note = undefined;
   app.status = deriveStatus(app.documents);
   app.timeline.unshift({

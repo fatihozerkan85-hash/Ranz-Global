@@ -9,6 +9,7 @@ import { StatusBadge } from "@/components/badges";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { getApplication, nextAction, progressOf, subscribeStore, uploadDocument } from "@/lib/store";
+import { uploadEvrakFile } from "@/lib/upload-evrak";
 import type { Application } from "@/lib/types";
 
 export default function ApplicationPage() {
@@ -65,7 +66,13 @@ export default function ApplicationPage() {
               key={doc.key}
               doc={doc}
               locale={locale}
-              onUpload={(file) => uploadDocument(app.id, doc.key, file.name)}
+              onUpload={async (file) => {
+                const blob = await uploadEvrakFile(app.id, doc.key, file);
+                uploadDocument(app.id, doc.key, file.name, {
+                  pathname: blob.pathname,
+                  url: blob.url,
+                });
+              }}
             />
           ))}
         </div>

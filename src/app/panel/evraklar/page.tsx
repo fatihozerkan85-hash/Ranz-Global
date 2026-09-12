@@ -6,6 +6,7 @@ import { DocBadge } from "@/components/badges";
 import { useAuth } from "@/lib/auth";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
+import { documentOpenHref } from "@/lib/blob-evrak";
 import { getApplications, subscribeStore } from "@/lib/store";
 import type { Application } from "@/lib/types";
 
@@ -38,21 +39,27 @@ export default function VaultPage() {
         )}
       </p>
       <div className="mt-8 divide-y divide-line rounded-2xl border border-line bg-paper px-5">
-        {docs.map(({ app, d }) => (
-          <Link
-            key={`${app.id}-${d.key}`}
-            href={`/panel/basvuru/${app.id}`}
-            className="flex items-center justify-between py-4"
-          >
-            <div>
-              <p className="font-medium">{t(locale, d.labelTr, d.labelEn)}</p>
-              <p className="mt-1 text-xs text-muted">
-                {app.id} · {d.fileName}
-              </p>
+        {docs.map(({ app, d }) => {
+          const openHref = documentOpenHref(d.filePathname);
+          return (
+            <div key={`${app.id}-${d.key}`} className="flex items-center justify-between gap-3 py-4">
+              <Link href={`/panel/basvuru/${app.id}`} className="min-w-0">
+                <p className="font-medium">{t(locale, d.labelTr, d.labelEn)}</p>
+                <p className="mt-1 truncate text-xs text-muted">
+                  {app.id} · {d.fileName}
+                </p>
+              </Link>
+              <div className="flex shrink-0 items-center gap-2">
+                {openHref && (
+                  <a href={openHref} target="_blank" rel="noreferrer" className="text-xs text-gold-deep">
+                    {t(locale, "Aç", "Open")}
+                  </a>
+                )}
+                <DocBadge status={d.status} locale={locale} />
+              </div>
             </div>
-            <DocBadge status={d.status} locale={locale} />
-          </Link>
-        ))}
+          );
+        })}
         {docs.length === 0 && (
           <p className="py-8 text-sm text-muted">{t(locale, "Henüz yüklenmiş evrak yok.", "No documents yet.")}</p>
         )}

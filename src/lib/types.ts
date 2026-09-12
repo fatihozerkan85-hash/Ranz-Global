@@ -19,6 +19,8 @@ export type DocumentItem = {
   required: boolean;
   status: DocStatus;
   fileName?: string;
+  filePathname?: string;
+  fileUrl?: string;
   note?: string;
 };
 
@@ -168,5 +170,5 @@ export type VisaType = {
   hintTr: string;
   titleHintEn: string;
   feeTry: number;
-  documents: Omit<DocumentItem, "status" | "fileName" | "note">[];
+  documents: Omit<DocumentItem, "status" | "fileName" | "filePathname" | "fileUrl" | "note">[];
 };
