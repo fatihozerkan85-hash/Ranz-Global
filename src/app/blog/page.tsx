@@ -1,10 +1,5 @@
-import type { Metadata } from "next";
-import { SITE } from "@/lib/cms";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Ranz Global vize ve evrak yazıları.",
-  alternates: { canonical: `${SITE.url}/blog` },
-};
-
-export { default } from "./view";
+export default function BlogIndex() {
+  redirect("/vize-rehberi");
+}

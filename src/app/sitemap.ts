@@ -10,7 +10,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/iletisim",
     "/randevu",
     "/vize-rehberi",
-    "/blog",
+    "/vize-reddi",
+    "/mesafeli-hizmet",
+    "/cerez-politikasi",
     "/kvkk",
     "/gizlilik",
   ];

@@ -7,10 +7,10 @@ export const DEFAULT_HOME: HomeContent = {
     "Türkiye ve KKTC’den İngiltere, ABD, Kanada, Schengen ve diğer ülke vize başvurularınızda profesyonel danışmanlık.\n\nBaşvurunuzu değerlendiriyor, kişiye özel evrak listenizi hazırlıyor ve dosyanızı başvuruya hazır hale getiriyoruz.",
   heroLeadEn:
     "Professional consultancy for UK, US, Canada, Schengen and other visa applications from Türkiye and the TRNC.\n\nWe assess your case, prepare a document list for you, and get the file ready to apply.",
-  ctaPrimaryTr: "Vize danışmanlığı al",
-  ctaPrimaryEn: "Get visa consultancy",
-  ctaSecondaryTr: "Mevcut müşteriyim — dosyama gir",
-  ctaSecondaryEn: "I’m a client — open my file",
+  ctaPrimaryTr: "Vize Başvurumu Başlat",
+  ctaPrimaryEn: "Start My Visa Application",
+  ctaSecondaryTr: "Dosyama Gir",
+  ctaSecondaryEn: "Open My File",
   destTitleTr: "Nereye gitmek istiyorsunuz?",
   destTitleEn: "Where do you want to go?",
   destNoteTr: "Ülkeyi seçin; ücret, kapsam ve başvuru adımı o sayfada açılır.",
@@ -24,8 +24,8 @@ export const DEFAULT_HOME: HomeContent = {
     { id: "cin", titleTr: "Çin", titleEn: "China", hintTr: "Turistik", hintEn: "Tourism" },
     { id: "rusya", titleTr: "Rusya", titleEn: "Russia", hintTr: "Davetiye", hintEn: "Invitation" },
   ],
-  stepsTitleTr: "Üç adım. Fazlası yok.",
-  stepsTitleEn: "Three steps. Nothing extra.",
+  stepsTitleTr: "Nasıl Çalışıyoruz?",
+  stepsTitleEn: "How Do We Work?",
   steps: [
     {
       id: "s1",
@@ -86,6 +86,8 @@ export const DEFAULT_HOME: HomeContent = {
   phone: "+90 (212) 000 00 00",
   cityTr: "İstanbul, Türkiye",
   cityEn: "Istanbul, Turkey",
-  footerNoteTr: "Ranz Global özel bir danışmanlık firmasıdır; konsolosluk veya devlet kurumu değildir.",
-  footerNoteEn: "Ranz Global is a private consultancy, not a government or consular office.",
+  footerNoteTr:
+    "Ranz Global, konsolosluklar ve resmi vize başvuru merkezlerinden bağımsız özel bir danışmanlık şirketidir. Nihai vize kararı ilgili ülkenin yetkili makamlarına aittir. Ranz Global vize onayı garantisi vermez.",
+  footerNoteEn:
+    "Ranz Global is a private consultancy, independent of consulates and official visa application centres. The final visa decision belongs to the competent authorities. Ranz Global does not guarantee visa approval.",
 };

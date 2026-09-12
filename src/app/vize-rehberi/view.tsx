@@ -4,17 +4,22 @@ import Link from "next/link";
 import { MarketingShell, PageHero } from "@/components/marketing-shell";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
-import { CmsImg, useGuides } from "@/lib/use-site";
+import { CmsImg, useGuides, usePosts } from "@/lib/use-site";
 
 export default function GuidesView() {
   const { locale } = useLocale();
   const guides = useGuides().filter((g) => g.status === "published");
+  const posts = usePosts().filter((p) => p.status === "published");
   return (
     <MarketingShell>
       <PageHero
-        eyebrow={t(locale, "Rehber", "Guides")}
-        title={t(locale, "Vize rehberi", "Visa guides")}
-        lead={t(locale, "Schengen ve ABD dosyalarında izlenen evrak çerçevesi.", "Document framework for Schengen and US files.")}
+        eyebrow={t(locale, "Bilgi", "Guides")}
+        title={t(locale, "Ranz Global Vize Rehberi", "Ranz Global Visa Guide")}
+        lead={t(
+          locale,
+          "Google’da aranan gerçek sorular: evrak, banka, ret, sponsor ve mülakat.",
+          "Real search questions: documents, funds, refusal, sponsors and interviews.",
+        )}
       />
       <section className="mx-auto grid max-w-6xl gap-4 px-5 py-14 md:grid-cols-2">
         {guides.map((g) => (
@@ -26,7 +31,12 @@ export default function GuidesView() {
             </div>
           </Link>
         ))}
-        {guides.length === 0 && <p className="text-sm text-muted">{t(locale, "Henüz rehber yok.", "No guides yet.")}</p>}
+        {posts.map((p) => (
+          <Link key={p.slug} href={`/blog/${p.slug}`} className="rounded-2xl border border-line bg-paper p-7 hover:border-gold">
+            <h2 className="font-serif text-2xl">{t(locale, p.titleTr, p.titleEn)}</h2>
+            <p className="mt-2 text-sm text-ink-soft">{t(locale, p.excerptTr, p.excerptEn)}</p>
+          </Link>
+        ))}
       </section>
     </MarketingShell>
   );

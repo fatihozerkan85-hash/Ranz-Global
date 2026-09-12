@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     template: "%s · Ranz Global",
   },
   description:
-    "Türkiye ve KKTC’den İngiltere, ABD, Kanada, Schengen ve diğer vize başvurularında danışmanlık. Ranz Global Travel & Visa.",
+    "Dijital vize yönetim platformu ve uzman danışmanlık. Ranz Global vize onayı garantisi vermez.",
   openGraph: {
     type: "website",
     locale: "tr_TR",

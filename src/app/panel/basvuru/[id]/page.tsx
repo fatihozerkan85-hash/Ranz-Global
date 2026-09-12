@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { DocumentRow } from "@/components/document-row";
 import { FilePipeline } from "@/components/file-pipeline";
+import { UPLOAD_NOTICE_EN, UPLOAD_NOTICE_TR } from "@/lib/faq";
 import { StatusBadge } from "@/components/badges";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
@@ -52,7 +53,13 @@ export default function ApplicationPage() {
           </div>
         </div>
 
-        <div className="mt-8 rounded-2xl border border-line bg-paper px-5">
+        <div className="mt-8 rounded-2xl border border-line bg-cream px-5 py-4 text-xs leading-5 text-ink-soft">
+          {t(locale, UPLOAD_NOTICE_TR, UPLOAD_NOTICE_EN)}{" "}
+          <a href="/kvkk" className="text-gold-deep">
+            KVKK
+          </a>
+        </div>
+        <div className="mt-4 rounded-2xl border border-line bg-paper px-5">
           {app.documents.map((doc) => (
             <DocumentRow
               key={doc.key}

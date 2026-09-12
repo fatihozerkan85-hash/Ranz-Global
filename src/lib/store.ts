@@ -15,7 +15,7 @@ import { DEFAULT_HOME } from "./site-content";
 import { visaTypeById } from "./visa-catalog";
 import { t } from "./i18n";
 
-const KEY = "ranz-global-v4";
+const KEY = "ranz-global-v5";
 const EVENT = "ranz-store";
 
 const DEMO_USERS: User[] = [
@@ -125,6 +125,14 @@ function mergeUsers(existing?: User[]) {
   return list;
 }
 
+function mergeBySlug<T extends { slug: string }>(existing: T[] | undefined, defaults: T[]) {
+  const list = existing?.length ? [...existing] : [...defaults];
+  for (const item of defaults) {
+    if (!list.some((row) => row.slug === item.slug)) list.push(item);
+  }
+  return list;
+}
+
 function read(): Store {
   if (typeof window === "undefined") return emptyStore();
   try {
@@ -148,9 +156,9 @@ function read(): Store {
         phone: a.phone ?? "",
         message: a.message ?? a.topic ?? "",
       })),
-      pages: parsed.pages?.length ? parsed.pages : DEFAULT_PAGES,
-      posts: parsed.posts?.length ? parsed.posts : DEFAULT_POSTS,
-      guides: parsed.guides?.length ? parsed.guides : DEFAULT_GUIDES,
+      pages: mergeBySlug(parsed.pages, DEFAULT_PAGES),
+      posts: mergeBySlug(parsed.posts, DEFAULT_POSTS),
+      guides: mergeBySlug(parsed.guides, DEFAULT_GUIDES),
       home: {
         ...DEFAULT_HOME,
         ...parsed.home,

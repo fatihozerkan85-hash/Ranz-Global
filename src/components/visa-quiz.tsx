@@ -98,10 +98,10 @@ export function VisaQuiz() {
           {t(locale, "60 saniye", "60 seconds")}
         </p>
         <h2 className="mt-3 font-serif text-3xl md:text-4xl">
-          {t(locale, "Hangi vize size uygun?", "Which visa fits you?")}
+          {t(locale, "60 Saniyede Vize Ön Değerlendirmesi", "A 60-Second Visa Pre-Check")}
         </h2>
         <p className="mt-3 max-w-xl text-sm leading-7 text-ink-soft">
-          {t(locale, "60 saniyede ön değerlendirme yapın.", "Get a preliminary read in 60 seconds.")}
+          {t(locale, "Kısa sorularla dosyanızın yönünü görün.", "See the direction of your file in a few questions.")}
         </p>
 
         {!done && current && (
