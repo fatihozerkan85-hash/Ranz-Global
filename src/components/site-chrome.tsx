@@ -8,6 +8,7 @@ import { t } from "@/lib/i18n";
 import { WhatsAppHeaderButton } from "@/components/whatsapp-button";
 import { BrandMark } from "@/components/brand-mark";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { useHome } from "@/lib/use-site";
 
 export { BrandMark };
 
@@ -58,6 +59,7 @@ export function SiteHeader({ solid = false }: { solid?: boolean }) {
 
 export function SiteFooter() {
   const { locale } = useLocale();
+  const home = useHome();
   return (
     <footer className="border-t border-line bg-paper">
       <div className="mx-auto flex max-w-6xl flex-col gap-3 px-5 py-8 text-sm text-muted md:flex-row md:items-center md:justify-between">
@@ -71,11 +73,13 @@ export function SiteFooter() {
           <Link href="/randevu">{t(locale, "Görüşme talebi", "Request a meeting")}</Link>
         </div>
         <p className="max-w-sm text-xs">
-          {t(
-            locale,
-            "Ranz Global özel bir danışmanlık firmasıdır; konsolosluk veya devlet kurumu değildir.",
-            "Ranz Global is a private consultancy, not a government or consular office.",
-          )}
+          {home
+            ? t(locale, home.footerNoteTr, home.footerNoteEn)
+            : t(
+                locale,
+                "Ranz Global özel bir danışmanlık firmasıdır; konsolosluk veya devlet kurumu değildir.",
+                "Ranz Global is a private consultancy, not a government or consular office.",
+              )}
         </p>
       </div>
     </footer>

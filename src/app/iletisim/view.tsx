@@ -4,11 +4,14 @@ import { MarketingShell, PageHero } from "@/components/marketing-shell";
 import { ContactLeadForm } from "@/components/contact-lead-form";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
-import { SITE } from "@/lib/cms";
 import { whatsappHref } from "@/lib/contact";
+import { useHome } from "@/lib/use-site";
 
 export default function ContactView() {
   const { locale } = useLocale();
+  const home = useHome();
+  const email = home?.email ?? "info@ranzglobal.com";
+  const city = home ? t(locale, home.cityTr, home.cityEn) : t(locale, "İstanbul, Türkiye", "Istanbul, Turkey");
   return (
     <MarketingShell>
       <PageHero
@@ -26,10 +29,16 @@ export default function ContactView() {
         <div className="space-y-4">
           <article className="rounded-2xl border border-line bg-paper p-6">
             <h2 className="font-serif text-2xl">E-posta</h2>
-            <a href={`mailto:${SITE.email}`} className="mt-3 block text-sm text-gold-deep">
-              {SITE.email}
+            <a href={`mailto:${email}`} className="mt-3 block text-sm text-gold-deep">
+              {email}
             </a>
           </article>
+          {home?.phone && (
+            <article className="rounded-2xl border border-line bg-paper p-6">
+              <h2 className="font-serif text-2xl">{t(locale, "Telefon", "Phone")}</h2>
+              <p className="mt-3 text-sm text-ink-soft">{home.phone}</p>
+            </article>
+          )}
           <article className="rounded-2xl border border-line bg-paper p-6">
             <h2 className="font-serif text-2xl">WhatsApp</h2>
             <a href={whatsappHref(locale)} target="_blank" rel="noopener noreferrer" className="mt-3 block text-sm text-gold-deep">
@@ -38,7 +47,7 @@ export default function ContactView() {
           </article>
           <article className="rounded-2xl border border-line bg-paper p-6">
             <h2 className="font-serif text-2xl">{t(locale, "Ofis", "Office")}</h2>
-            <p className="mt-3 text-sm text-ink-soft">{t(locale, SITE.cityTr, SITE.cityEn)}</p>
+            <p className="mt-3 text-sm text-ink-soft">{city}</p>
           </article>
         </div>
       </section>

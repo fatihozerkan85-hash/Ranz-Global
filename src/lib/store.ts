@@ -1,5 +1,17 @@
-import type { Application, AppointmentRequest, AppStatus, BlogPost, CmsPage, DocumentItem, Locale, User } from "./types";
-import { DEFAULT_PAGES, DEFAULT_POSTS } from "./cms";
+import type {
+  Application,
+  AppointmentRequest,
+  AppStatus,
+  BlogPost,
+  CmsPage,
+  DocumentItem,
+  HomeContent,
+  Locale,
+  SiteMedia,
+  User,
+} from "./types";
+import { DEFAULT_GUIDES, DEFAULT_PAGES, DEFAULT_POSTS } from "./cms";
+import { DEFAULT_HOME } from "./site-content";
 import { visaTypeById } from "./visa-catalog";
 import { t } from "./i18n";
 
@@ -85,6 +97,9 @@ type Store = {
   appointments: AppointmentRequest[];
   pages: CmsPage[];
   posts: BlogPost[];
+  guides: CmsPage[];
+  home: HomeContent;
+  media: SiteMedia[];
 };
 
 function emptyStore(): Store {
@@ -94,6 +109,9 @@ function emptyStore(): Store {
     appointments: [],
     pages: DEFAULT_PAGES,
     posts: DEFAULT_POSTS,
+    guides: DEFAULT_GUIDES,
+    home: DEFAULT_HOME,
+    media: [],
   };
 }
 
@@ -132,6 +150,16 @@ function read(): Store {
       })),
       pages: parsed.pages?.length ? parsed.pages : DEFAULT_PAGES,
       posts: parsed.posts?.length ? parsed.posts : DEFAULT_POSTS,
+      guides: parsed.guides?.length ? parsed.guides : DEFAULT_GUIDES,
+      home: {
+        ...DEFAULT_HOME,
+        ...parsed.home,
+        destCards: parsed.home?.destCards ?? DEFAULT_HOME.destCards,
+        steps: parsed.home?.steps ?? DEFAULT_HOME.steps,
+        visaCards: parsed.home?.visaCards ?? DEFAULT_HOME.visaCards,
+        galleryIds: parsed.home?.galleryIds ?? DEFAULT_HOME.galleryIds,
+      },
+      media: parsed.media ?? [],
     };
   } catch {
     return emptyStore();
@@ -139,8 +167,14 @@ function read(): Store {
 }
 
 function write(store: Store) {
-  localStorage.setItem(KEY, JSON.stringify(store));
-  window.dispatchEvent(new Event(EVENT));
+  try {
+    localStorage.setItem(KEY, JSON.stringify(store));
+    window.dispatchEvent(new Event(EVENT));
+    return true;
+  } catch {
+    window.alert("Depolama dolu. Daha küçük görsel kullanın veya bir görseli silin.");
+    return false;
+  }
 }
 
 export function subscribeStore(cb: () => void) {
@@ -283,6 +317,82 @@ export function addUser(name: string, email: string, password: string): User {
   return user;
 }
 
+export function getStaffUsers() {
+  return getUsers().filter((u) => u.role === "staff");
+}
+
+function slugEmailLocal(firstName: string, lastName: string) {
+  const map: Record<string, string> = {
+    ç: "c",
+    ğ: "g",
+    ı: "i",
+    ö: "o",
+    ş: "s",
+    ü: "u",
+    â: "a",
+    î: "i",
+    û: "u",
+  };
+  const fold = (s: string) =>
+    s
+      .toLowerCase()
+      .split("")
+      .map((ch) => map[ch] ?? ch)
+      .join("")
+      .replace(/[^a-z0-9]+/g, ".")
+      .replace(/^\.+|\.+$/g, "");
+  const local = [fold(firstName), fold(lastName)].filter(Boolean).join(".") || "danisman";
+  return local;
+}
+
+export function addStaffAdvisor(input: {
+  firstName: string;
+  lastName: string;
+  password: string;
+  email?: string;
+}): { user: User; error?: undefined } | { user?: undefined; error: string } {
+  const firstName = input.firstName.trim();
+  const lastName = input.lastName.trim();
+  const password = input.password;
+  if (!firstName || !lastName) return { error: "Ad ve soyad gerekli." };
+  if (password.length < 6) return { error: "Şifre en az 6 karakter olmalı." };
+
+  const store = read();
+  let email = (input.email || "").trim().toLowerCase();
+  if (!email) {
+    const local = slugEmailLocal(firstName, lastName);
+    email = `${local}@ranz.staff`;
+    let n = 2;
+    while (store.users.some((u) => u.email.toLowerCase() === email)) {
+      email = `${local}${n}@ranz.staff`;
+      n += 1;
+    }
+  } else if (store.users.some((u) => u.email.toLowerCase() === email)) {
+    return { error: "Bu e-posta zaten kayıtlı." };
+  }
+
+  const user: User = {
+    id: `u-staff-${Date.now()}`,
+    name: `${firstName} ${lastName}`.replace(/\s+/g, " ").trim(),
+    email,
+    role: "staff",
+    password,
+  };
+  store.users.push(user);
+  write(store);
+  return { user };
+}
+
+export function setStaffPassword(userId: string, password: string): string | null {
+  if (password.length < 6) return "Şifre en az 6 karakter olmalı.";
+  const store = read();
+  const user = store.users.find((u) => u.id === userId && u.role === "staff");
+  if (!user) return "Danışman bulunamadı.";
+  user.password = password;
+  write(store);
+  return null;
+}
+
 function nowStamp() {
   const d = new Date();
   const pad = (n: number) => String(n).padStart(2, "0");
@@ -339,6 +449,73 @@ export function savePost(post: BlogPost) {
   const i = store.posts.findIndex((p) => p.slug === post.slug);
   if (i >= 0) store.posts[i] = post;
   else store.posts.unshift(post);
+  write(store);
+}
+
+export function deletePage(slug: string) {
+  const store = read();
+  store.pages = store.pages.filter((p) => p.slug !== slug);
+  write(store);
+}
+
+export function deletePost(slug: string) {
+  const store = read();
+  store.posts = store.posts.filter((p) => p.slug !== slug);
+  write(store);
+}
+
+export function getGuides() {
+  return read().guides;
+}
+
+export function getGuide(slug: string) {
+  return getGuides().find((p) => p.slug === slug);
+}
+
+export function saveGuide(page: CmsPage) {
+  const store = read();
+  const i = store.guides.findIndex((p) => p.slug === page.slug);
+  if (i >= 0) store.guides[i] = page;
+  else store.guides.push(page);
+  write(store);
+}
+
+export function deleteGuide(slug: string) {
+  const store = read();
+  store.guides = store.guides.filter((p) => p.slug !== slug);
+  write(store);
+}
+
+export function getHome() {
+  return read().home;
+}
+
+export function saveHome(home: HomeContent) {
+  const store = read();
+  store.home = home;
+  write(store);
+}
+
+export function getMedia() {
+  return read().media;
+}
+
+export function getMediaById(id?: string) {
+  if (!id) return undefined;
+  return getMedia().find((m) => m.id === id);
+}
+
+export function addMedia(item: SiteMedia) {
+  const store = read();
+  store.media.unshift(item);
+  write(store);
+}
+
+export function deleteMedia(id: string) {
+  const store = read();
+  store.media = store.media.filter((m) => m.id !== id);
+  if (store.home.heroImageId === id) store.home.heroImageId = undefined;
+  store.home.galleryIds = store.home.galleryIds.filter((g) => g !== id);
   write(store);
 }
 

@@ -71,6 +71,7 @@ export type CmsPage = {
   bodyEn: string;
   ogTitle?: string;
   ogDescription?: string;
+  imageId?: string;
   status: "published" | "draft";
 };
 
@@ -84,8 +85,76 @@ export type BlogPost = {
   bodyEn: string;
   coverAltTr: string;
   coverAltEn: string;
+  imageId?: string;
   publishedAt: string;
   status: "published" | "draft" | "scheduled";
+};
+
+export type SiteMedia = {
+  id: string;
+  name: string;
+  dataUrl: string;
+};
+
+export type HomeCard = {
+  id: string;
+  titleTr: string;
+  titleEn: string;
+  hintTr: string;
+  hintEn: string;
+};
+
+export type HomeStep = {
+  id: string;
+  n: string;
+  titleTr: string;
+  titleEn: string;
+  bodyTr: string;
+  bodyEn: string;
+};
+
+export type HomeContent = {
+  heroTitleTr: string;
+  heroTitleEn: string;
+  heroLeadTr: string;
+  heroLeadEn: string;
+  heroImageId?: string;
+  ctaPrimaryTr: string;
+  ctaPrimaryEn: string;
+  ctaSecondaryTr: string;
+  ctaSecondaryEn: string;
+  destTitleTr: string;
+  destTitleEn: string;
+  destNoteTr: string;
+  destNoteEn: string;
+  destCards: HomeCard[];
+  stepsTitleTr: string;
+  stepsTitleEn: string;
+  steps: HomeStep[];
+  visaEyebrowTr: string;
+  visaEyebrowEn: string;
+  visaTitleTr: string;
+  visaTitleEn: string;
+  visaLeadTr: string;
+  visaLeadEn: string;
+  visaCards: HomeCard[];
+  contactEyebrowTr: string;
+  contactEyebrowEn: string;
+  contactTitleTr: string;
+  contactTitleEn: string;
+  contactLeadTr: string;
+  contactLeadEn: string;
+  trustTitleTr: string;
+  trustTitleEn: string;
+  trustBodyTr: string;
+  trustBodyEn: string;
+  galleryIds: string[];
+  email: string;
+  phone: string;
+  cityTr: string;
+  cityEn: string;
+  footerNoteTr: string;
+  footerNoteEn: string;
 };
 
 export type VisaType = {
