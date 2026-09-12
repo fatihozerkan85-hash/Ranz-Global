@@ -3,16 +3,20 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { DocumentRow } from "@/components/document-row";
+import { AdminFeeField } from "@/components/admin-fee-field";
 import { StatusBadge } from "@/components/badges";
+import { useAuth } from "@/lib/auth";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
-import { getApplication, reviewDocument, subscribeStore } from "@/lib/store";
+import { getApplication, reviewDocument, setAdvisorNote, subscribeStore } from "@/lib/store";
 import type { Application } from "@/lib/types";
 
 export function ReviewFile() {
   const params = useParams<{ id: string }>();
   const { locale } = useLocale();
+  const { user } = useAuth();
   const [app, setApp] = useState<Application | undefined>();
+  const [note, setNote] = useState("");
 
   useEffect(() => {
     const load = () => setApp(getApplication(params.id));
@@ -29,8 +33,36 @@ export function ReviewFile() {
         <StatusBadge status={app.status} locale={locale} />
       </div>
       <p className="mt-2 text-sm text-muted">
-        {app.id} · {app.advisorName}
+        {app.id} · {app.advisorName} · {app.feeTry.toLocaleString("tr-TR")} TL
       </p>
+      {user?.role === "admin" && (
+        <div className="mt-4 max-w-xs">
+          <AdminFeeField appId={app.id} feeTry={app.feeTry} locale={locale} />
+        </div>
+      )}
+      {(user?.role === "admin" || user?.role === "staff") && (
+        <form
+          className="mt-6 max-w-xl rounded-2xl border border-line bg-paper p-5"
+          onSubmit={(e) => {
+            e.preventDefault();
+            setAdvisorNote(app.id, note);
+            setNote("");
+          }}
+        >
+          <label className="block text-xs text-muted">
+            {t(locale, "Müşteriye not / uyarı (e-posta gider)", "Note to client (sends email)")}
+            <textarea
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              rows={3}
+              className="mt-1 w-full rounded-lg border border-line bg-cream px-3 py-2 text-sm text-ink outline-none focus:border-gold"
+            />
+          </label>
+          <button type="submit" className="btn btn-sm mt-3">
+            {t(locale, "Gönder", "Send")}
+          </button>
+        </form>
+      )}
       <div className="mt-8 rounded-2xl border border-line bg-paper px-5">
         {app.documents.map((doc) => (
           <DocumentRow

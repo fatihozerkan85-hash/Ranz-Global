@@ -6,6 +6,7 @@ import { StatusBadge } from "@/components/badges";
 import { useAuth } from "@/lib/auth";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
+import { AdminFeeField } from "@/components/admin-fee-field";
 import { assignApplication, getApplications, getStaffUsers, progressOf, subscribeStore } from "@/lib/store";
 import type { Application, User } from "@/lib/types";
 
@@ -47,27 +48,42 @@ export function ReviewQueue({ basePath }: { basePath: "/danisman" | "/yonetim" }
                 <Link href={`${basePath}/basvuru/${app.id}`} className="min-w-0 hover:text-gold-deep">
                   <p className="font-medium">{t(locale, app.destinationTr, app.destinationEn)}</p>
                   <p className="mt-1 text-xs text-muted">
-                    {app.id} · {app.advisorName} · {waiting} {t(locale, "kontrol bekliyor", "awaiting review")} · {p.done}/
-                    {p.total}
+                    {app.id} · {app.advisorName} · {app.feeTry.toLocaleString("tr-TR")} TL · {waiting}{" "}
+                    {t(locale, "kontrol bekliyor", "awaiting review")} · {p.done}/{p.total}
                   </p>
                 </Link>
                 <StatusBadge status={app.status} locale={locale} />
               </div>
               {admin && (
-                <label className="mt-3 block text-xs text-muted">
-                  {t(locale, "Danışman", "Advisor")}
-                  <select
-                    className="mt-1 w-full rounded-lg border border-line bg-cream px-3 py-2 text-sm text-ink md:max-w-xs"
-                    value={app.assignedTo}
-                    onChange={(e) => assignApplication(app.id, e.target.value)}
-                  >
-                    {staff.map((person) => (
-                      <option key={person.id} value={person.id}>
-                        {person.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <div className="mt-3 grid gap-3 sm:grid-cols-2 md:max-w-xl">
+                  <AdminFeeField appId={app.id} feeTry={app.feeTry} locale={locale} />
+                  <label className="block text-xs text-muted">
+                    {t(locale, "Danışman", "Advisor")}
+                    {staff.length === 0 ? (
+                      <p className="mt-1 text-sm text-ink-soft">
+                        {t(locale, "Önce Danışmanlar’dan hesap açın.", "Create an advisor account first.")}{" "}
+                        <Link href="/yonetim/danismanlar" className="text-gold-deep">
+                          {t(locale, "Danışmanlar", "Advisors")}
+                        </Link>
+                      </p>
+                    ) : (
+                      <select
+                        className="mt-1 w-full rounded-lg border border-line bg-cream px-3 py-2 text-sm text-ink"
+                        value={app.assignedTo}
+                        onChange={(e) => {
+                          if (e.target.value) assignApplication(app.id, e.target.value);
+                        }}
+                      >
+                        <option value="">{t(locale, "Atanmadı", "Unassigned")}</option>
+                        {staff.map((person) => (
+                          <option key={person.id} value={person.id}>
+                            {person.name}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </label>
+                </div>
               )}
             </div>
           );

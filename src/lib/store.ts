@@ -10,85 +10,29 @@ import type {
   SiteMedia,
   User,
 } from "./types";
-import { DEFAULT_GUIDES, DEFAULT_PAGES, DEFAULT_POSTS } from "./cms";
+import { DEFAULT_GUIDES, DEFAULT_PAGES, DEFAULT_POSTS, SITE } from "./cms";
 import { DEFAULT_HOME } from "./site-content";
 import { visaTypeById } from "./visa-catalog";
 import { t } from "./i18n";
+import { defaultMailSettings, MAIL_EVENTS, type MailEventId, type MailSettings } from "./mail-catalog";
+import { notifyMail } from "./notify";
 
-const KEY = "ranz-global-v5";
+const KEY = "ranz-global-v6";
+const LEGACY_KEYS = ["ranz-global-v5"];
 const EVENT = "ranz-store";
+const DEMO_APP_IDS = new Set(["RG-2026-0142", "RG-2026-0098"]);
 
 const DEMO_USERS: User[] = [
   { id: "u-ayse", name: "Ayşe Demir", email: "ayse@ranz.demo", role: "client", password: "ranz2026" },
-  { id: "u-staff", name: "Elif Kaya", email: "danisman@ranz.demo", role: "staff", password: "ranz2026" },
   { id: "u-admin", name: "Işıl Yıldırım", email: "yonetici@ranz.demo", role: "admin", password: "ranz2026" },
 ];
 
-function seedApplications(): Application[] {
-  return [
-    {
-      id: "RG-2026-0142",
-      userId: "u-ayse",
-      visaFamily: "schengen",
-      visaTypeId: "schengen",
-      destinationTr: "Schengen ülkeleri",
-      destinationEn: "Schengen countries",
-      status: "missing",
-      createdAt: "2026-08-28",
-      advisorName: "Elif Kaya",
-      advisorNoteTr:
-        "Pasaport ve sigorta uygun. Banka dökümünde son 3 ayın tamamı görünmüyor; lütfen eksik ayı yükleyin. Uçak rezervasyonu henüz yok.",
-      advisorNoteEn:
-        "Passport and insurance look good. Bank statements are missing a month. Please upload the missing month and a flight reservation.",
-      feeTry: 18500,
-      paidTry: 9250,
-      assignedTo: "u-staff",
-      documents: [
-        { key: "passport", labelTr: "Pasaport (son 10 yıl, 2 boş sayfa)", labelEn: "Passport", required: true, status: "approved", fileName: "pasaport.pdf" },
-        { key: "photo", labelTr: "Biyometrik fotoğraf", labelEn: "Biometric photo", required: true, status: "approved", fileName: "foto.jpg" },
-        { key: "form", labelTr: "Başvuru formu", labelEn: "Application form", required: true, status: "uploaded", fileName: "form.pdf" },
-        { key: "flight", labelTr: "Uçak rezervasyonu", labelEn: "Flight reservation", required: true, status: "empty" },
-        { key: "hotel", labelTr: "Konaklama rezervasyonu", labelEn: "Hotel reservation", required: true, status: "uploaded", fileName: "otel.pdf" },
-        { key: "insurance", labelTr: "Seyahat sağlık sigortası", labelEn: "Travel medical insurance", required: true, status: "approved", fileName: "sigorta.pdf" },
-        { key: "bank", labelTr: "Banka hesap dökümü (son 3 ay)", labelEn: "Bank statements", required: true, status: "rejected", fileName: "hesap-ocak.pdf", note: "Haziran–Ağustos eksik." },
-        { key: "work", labelTr: "İş / gelir belgesi", labelEn: "Employment proof", required: true, status: "uploaded", fileName: "sgk.pdf" },
-        { key: "invite", labelTr: "Davet mektubu", labelEn: "Invitation letter", required: false, status: "empty" },
-      ],
-      timeline: [
-        { at: "2026-08-28 10:12", titleTr: "Dosya açıldı", titleEn: "File opened", bodyTr: "Schengen dosyanız oluşturuldu.", bodyEn: "Your Schengen file was created." },
-        { at: "2026-08-29 16:40", titleTr: "İlk evraklar alındı", titleEn: "First documents received", bodyTr: "Pasaport ve fotoğraf onaylandı.", bodyEn: "Passport and photo were approved." },
-        { at: "2026-09-04 11:05", titleTr: "Eksik bildirildi", titleEn: "Missing items flagged", bodyTr: "Banka dökümü revizyon, uçak rezervasyonu bekleniyor.", bodyEn: "Bank statement needs revision; flight reservation is missing." },
-      ],
-    },
-    {
-      id: "RG-2026-0098",
-      userId: "u-ayse",
-      visaFamily: "usa",
-      visaTypeId: "usa",
-      destinationTr: "Amerika Birleşik Devletleri",
-      destinationEn: "United States",
-      status: "complete",
-      createdAt: "2026-06-02",
-      advisorName: "Elif Kaya",
-      advisorNoteTr: "Dosya kapatıldı. Randevu hazırlığı tamam.",
-      advisorNoteEn: "File closed. Interview preparation is complete.",
-      feeTry: 24500,
-      paidTry: 24500,
-      assignedTo: "u-staff",
-      documents: [
-        { key: "passport", labelTr: "Pasaport", labelEn: "Passport", required: true, status: "approved", fileName: "pasaport.pdf" },
-        { key: "ds160", labelTr: "DS-160 onay sayfası", labelEn: "DS-160 confirmation", required: true, status: "approved", fileName: "ds160.pdf" },
-        { key: "photo", labelTr: "Fotoğraf (5×5 cm)", labelEn: "Photo", required: true, status: "approved", fileName: "foto.jpg" },
-        { key: "appointment", labelTr: "Randevu teyidi", labelEn: "Appointment confirmation", required: true, status: "approved", fileName: "randevu.pdf" },
-        { key: "finance", labelTr: "Mali durum belgesi", labelEn: "Financial evidence", required: true, status: "approved", fileName: "mali.pdf" },
-        { key: "itinerary", labelTr: "Seyahat planı", labelEn: "Travel itinerary", required: true, status: "approved", fileName: "plan.pdf" },
-      ],
-      timeline: [
-        { at: "2026-06-02 09:00", titleTr: "Dosya açıldı", titleEn: "File opened", bodyTr: "ABD dosyası oluşturuldu.", bodyEn: "USA file created." },
-        { at: "2026-06-18 14:20", titleTr: "İnceleme tamam", titleEn: "Review complete", bodyTr: "Tüm evraklar onaylandı.", bodyEn: "All documents approved." },
-      ],
-    },
-  ];
+function withoutDemoApplications(apps: Application[] | undefined) {
+  return (apps ?? []).filter((app) => !DEMO_APP_IDS.has(app.id));
+}
+
+function isRemovedStaff(user: User) {
+  return user.id === "u-staff" || user.email.toLowerCase() === "danisman@ranz.demo";
 }
 
 type Store = {
@@ -100,23 +44,25 @@ type Store = {
   guides: CmsPage[];
   home: HomeContent;
   media: SiteMedia[];
+  mailSettings: MailSettings;
 };
 
 function emptyStore(): Store {
   return {
     users: DEMO_USERS,
-    applications: seedApplications(),
+    applications: [],
     appointments: [],
     pages: DEFAULT_PAGES,
     posts: DEFAULT_POSTS,
     guides: DEFAULT_GUIDES,
     home: DEFAULT_HOME,
     media: [],
+    mailSettings: defaultMailSettings(),
   };
 }
 
 function mergeUsers(existing?: User[]) {
-  const list = existing?.length ? [...existing] : [...DEMO_USERS];
+  const list = (existing?.length ? [...existing] : [...DEMO_USERS]).filter((user) => !isRemovedStaff(user));
   for (const demo of DEMO_USERS) {
     if (!list.some((u) => u.email.toLowerCase() === demo.email.toLowerCase())) {
       list.push(demo);
@@ -145,42 +91,61 @@ function patchLegalPages(pages: CmsPage[]) {
   });
 }
 
+function hydrateStore(parsed: Partial<Store>): Store {
+  const users = mergeUsers(parsed.users);
+  const staffIds = new Set(users.filter((u) => u.role === "staff").map((u) => u.id));
+  return {
+    users,
+    applications: withoutDemoApplications(parsed.applications).map((a) => {
+      const assignedTo = a.assignedTo && staffIds.has(a.assignedTo) ? a.assignedTo : "";
+      const advisor = users.find((u) => u.id === assignedTo);
+      return {
+        ...a,
+        feeTry: a.feeTry ?? 0,
+        paidTry: a.paidTry ?? 0,
+        assignedTo,
+        advisorName: advisor?.name ?? (assignedTo ? a.advisorName : "Atanmadı"),
+      };
+    }),
+    appointments: (parsed.appointments ?? []).map((a) => ({
+      ...a,
+      phone: a.phone ?? "",
+      message: a.message ?? a.topic ?? "",
+    })),
+    pages: patchLegalPages(mergeBySlug(parsed.pages, DEFAULT_PAGES)),
+    posts: mergeBySlug(parsed.posts, DEFAULT_POSTS),
+    guides: mergeBySlug(parsed.guides, DEFAULT_GUIDES),
+    home: {
+      ...DEFAULT_HOME,
+      ...parsed.home,
+      destCards: parsed.home?.destCards ?? DEFAULT_HOME.destCards,
+      steps: parsed.home?.steps ?? DEFAULT_HOME.steps,
+      visaCards: parsed.home?.visaCards ?? DEFAULT_HOME.visaCards,
+      galleryIds: parsed.home?.galleryIds ?? DEFAULT_HOME.galleryIds,
+    },
+    media: parsed.media ?? [],
+    mailSettings: { ...defaultMailSettings(), ...(parsed.mailSettings ?? {}) },
+  };
+}
+
 function read(): Store {
   if (typeof window === "undefined") return emptyStore();
   try {
     const raw = localStorage.getItem(KEY);
-    if (!raw) {
-      const seeded = emptyStore();
-      localStorage.setItem(KEY, JSON.stringify(seeded));
-      return seeded;
+    if (raw) return hydrateStore(JSON.parse(raw) as Partial<Store>);
+
+    for (const legacyKey of LEGACY_KEYS) {
+      const legacy = localStorage.getItem(legacyKey);
+      if (!legacy) continue;
+      const migrated = hydrateStore(JSON.parse(legacy) as Partial<Store>);
+      localStorage.setItem(KEY, JSON.stringify(migrated));
+      localStorage.removeItem(legacyKey);
+      return migrated;
     }
-    const parsed = JSON.parse(raw) as Partial<Store>;
-    return {
-      users: mergeUsers(parsed.users),
-      applications: (parsed.applications ?? seedApplications()).map((a) => ({
-        ...a,
-        feeTry: a.feeTry ?? 0,
-        paidTry: a.paidTry ?? 0,
-        assignedTo: a.assignedTo ?? "u-staff",
-      })),
-      appointments: (parsed.appointments ?? []).map((a) => ({
-        ...a,
-        phone: a.phone ?? "",
-        message: a.message ?? a.topic ?? "",
-      })),
-      pages: patchLegalPages(mergeBySlug(parsed.pages, DEFAULT_PAGES)),
-      posts: mergeBySlug(parsed.posts, DEFAULT_POSTS),
-      guides: mergeBySlug(parsed.guides, DEFAULT_GUIDES),
-      home: {
-        ...DEFAULT_HOME,
-        ...parsed.home,
-        destCards: parsed.home?.destCards ?? DEFAULT_HOME.destCards,
-        steps: parsed.home?.steps ?? DEFAULT_HOME.steps,
-        visaCards: parsed.home?.visaCards ?? DEFAULT_HOME.visaCards,
-        galleryIds: parsed.home?.galleryIds ?? DEFAULT_HOME.galleryIds,
-      },
-      media: parsed.media ?? [],
-    };
+
+    const seeded = emptyStore();
+    localStorage.setItem(KEY, JSON.stringify(seeded));
+    return seeded;
   } catch {
     return emptyStore();
   }
@@ -205,6 +170,31 @@ export function subscribeStore(cb: () => void) {
     window.removeEventListener(EVENT, handler);
     window.removeEventListener("storage", handler);
   };
+}
+
+export function getMailSettings() {
+  return read().mailSettings;
+}
+
+export function setMailEventEnabled(id: MailEventId, enabled: boolean) {
+  const meta = MAIL_EVENTS.find((item) => item.id === id);
+  if (meta?.locked && !enabled) return;
+  const store = read();
+  store.mailSettings[id] = enabled;
+  write(store);
+}
+
+function mailOn(id: MailEventId) {
+  return read().mailSettings[id] !== false;
+}
+
+function adminNotifyEmails() {
+  return [...read().users.filter((u) => u.role === "admin").map((u) => u.email), SITE.email];
+}
+
+function userById(id?: string) {
+  if (!id) return undefined;
+  return read().users.find((u) => u.id === id);
 }
 
 export function getUsers() {
@@ -277,6 +267,26 @@ export function uploadDocument(
     bodyEn: `${doc.labelEn} uploaded.`,
   });
   write(store);
+  const client = userById(app.userId);
+  const staff = userById(app.assignedTo);
+  void notifyMail("doc_status", [client?.email], {
+    fileId: app.id,
+    docLabel: doc.labelTr,
+    status: "uploaded",
+    statusLabel: "yüklendi",
+    audience: "client",
+  });
+  void notifyMail("doc_status", [staff?.email], {
+    fileId: app.id,
+    docLabel: doc.labelTr,
+    status: "uploaded",
+    statusLabel: "yüklendi",
+    audience: "staff",
+  });
+  const required = app.documents.filter((d) => d.required);
+  if (mailOn("all_docs_uploaded") && required.length > 0 && required.every((d) => d.status !== "empty")) {
+    void notifyMail("all_docs_uploaded", [staff?.email], { fileId: app.id });
+  }
 }
 
 export function assignApplication(appId: string, staffId: string) {
@@ -284,6 +294,7 @@ export function assignApplication(appId: string, staffId: string) {
   const app = store.applications.find((a) => a.id === appId);
   const staff = store.users.find((u) => u.id === staffId && u.role === "staff");
   if (!app || !staff) return;
+  const previous = userById(app.assignedTo);
   app.assignedTo = staff.id;
   app.advisorName = staff.name;
   app.timeline.unshift({
@@ -294,6 +305,15 @@ export function assignApplication(appId: string, staffId: string) {
     bodyEn: `File assigned to ${staff.name}.`,
   });
   write(store);
+  const client = userById(app.userId);
+  void notifyMail("advisor_assigned", [staff.email], {
+    fileId: app.id,
+    destination: app.destinationTr,
+    clientName: client?.name || "",
+  });
+  if (mailOn("assignment_left") && previous && previous.id !== staff.id) {
+    void notifyMail("assignment_left", [previous.email], { fileId: app.id });
+  }
 }
 
 export function reviewDocument(appId: string, key: string, status: "approved" | "rejected", note?: string) {
@@ -313,12 +333,47 @@ export function reviewDocument(appId: string, key: string, status: "approved" | 
     bodyEn: note || doc.labelEn,
   });
   write(store);
+  const client = userById(app.userId);
+  const staff = userById(app.assignedTo);
+  const statusLabel = status === "approved" ? "onaylandı" : "revizyon";
+  void notifyMail("doc_status", [client?.email], {
+    fileId: app.id,
+    docLabel: doc.labelTr,
+    status,
+    statusLabel,
+    note: note || "",
+    audience: "client",
+  });
+  void notifyMail("doc_status", [staff?.email], {
+    fileId: app.id,
+    docLabel: doc.labelTr,
+    status,
+    statusLabel,
+    note: note || "",
+    audience: "staff",
+  });
+  if (status === "rejected" && note) {
+    void notifyMail("advisor_note", [client?.email], { fileId: app.id, note });
+  }
+  if (mailOn("file_complete") && app.status === "complete") {
+    void notifyMail("file_complete", [client?.email], {
+      fileId: app.id,
+      destination: app.destinationTr,
+      audience: "client",
+    });
+    void notifyMail("file_complete", adminNotifyEmails(), {
+      fileId: app.id,
+      destination: app.destinationTr,
+      audience: "admin",
+    });
+  }
 }
 
 export function createApplication(userId: string, visaTypeId: string) {
   const type = visaTypeById(visaTypeId);
   if (!type) return null;
   const store = read();
+  const staff = store.users.find((u) => u.role === "staff");
   const id = `RG-2026-${String(1000 + store.applications.length).slice(-4)}`;
   const app: Application = {
     id,
@@ -329,12 +384,12 @@ export function createApplication(userId: string, visaTypeId: string) {
     destinationEn: type.titleEn,
     status: "draft",
     createdAt: new Date().toISOString().slice(0, 10),
-    advisorName: "Elif Kaya",
+    advisorName: staff?.name ?? "Atanmadı",
     advisorNoteTr: "Evrak listenizi yükledikçe kontrol edeceğiz. Zorunlu olanlarla başlayın.",
     advisorNoteEn: "We will review as you upload. Start with the required documents.",
     feeTry: type.feeTry,
     paidTry: 0,
-    assignedTo: "u-staff",
+    assignedTo: staff?.id ?? "",
     documents: type.documents.map((d) => ({ ...d, status: "empty" as const })),
     timeline: [
       {
@@ -348,6 +403,14 @@ export function createApplication(userId: string, visaTypeId: string) {
   };
   store.applications.unshift(app);
   write(store);
+  if (mailOn("file_opened")) {
+    const client = userById(userId);
+    void notifyMail("file_opened", [staff?.email, ...adminNotifyEmails()], {
+      fileId: app.id,
+      destination: app.destinationTr,
+      clientName: client?.name || "",
+    });
+  }
   return app;
 }
 
@@ -358,6 +421,7 @@ export function addUser(name: string, email: string, password: string): User {
   const user: User = { id: `u-${Date.now()}`, name, email, role: "client", password };
   store.users.push(user);
   write(store);
+  void notifyMail("signup", [email], { name });
   return user;
 }
 
@@ -424,6 +488,13 @@ export function addStaffAdvisor(input: {
   };
   store.users.push(user);
   write(store);
+  if (mailOn("staff_created")) {
+    void notifyMail("staff_created", [user.email], {
+      name: user.name,
+      email: user.email,
+      password,
+    });
+  }
   return { user };
 }
 
@@ -434,6 +505,13 @@ export function setStaffPassword(userId: string, password: string): string | nul
   if (!user) return "Danışman bulunamadı.";
   user.password = password;
   write(store);
+  if (mailOn("staff_created")) {
+    void notifyMail("staff_created", [user.email], {
+      name: user.name,
+      email: user.email,
+      password,
+    });
+  }
   return null;
 }
 
@@ -454,6 +532,14 @@ export function addAppointment(data: Omit<AppointmentRequest, "id" | "createdAt"
     status: "new",
   });
   write(store);
+  if (mailOn("contact_form")) {
+    void notifyMail("contact_form", adminNotifyEmails(), {
+      name: data.name,
+      phone: data.phone,
+      email: data.email || "",
+      message: data.message,
+    });
+  }
 }
 
 export function getAppointments() {
@@ -563,10 +649,46 @@ export function deleteMedia(id: string) {
   write(store);
 }
 
-export function setApplicationFee(appId: string, paidTry: number) {
+export function setApplicationFee(appId: string, feeTry: number) {
   const store = read();
   const app = store.applications.find((a) => a.id === appId);
   if (!app) return;
-  app.paidTry = paidTry;
+  const next = Math.max(0, Math.round(feeTry));
+  if (app.feeTry === next) return;
+  app.feeTry = next;
+  if (app.paidTry > next) app.paidTry = next;
+  app.timeline.unshift({
+    at: nowStamp(),
+    titleTr: "Hizmet bedeli güncellendi",
+    titleEn: "Service fee updated",
+    bodyTr: `Hizmet bedeli ${next.toLocaleString("tr-TR")} TL olarak kaydedildi.`,
+    bodyEn: `Service fee set to ${next.toLocaleString("tr-TR")} TL.`,
+  });
   write(store);
+  if (mailOn("fee_changed")) {
+    void notifyMail("fee_changed", adminNotifyEmails(), {
+      fileId: app.id,
+      fee: String(next),
+    });
+  }
+}
+
+export function setAdvisorNote(appId: string, note: string) {
+  const text = note.trim();
+  if (!text) return;
+  const store = read();
+  const app = store.applications.find((a) => a.id === appId);
+  if (!app) return;
+  app.advisorNoteTr = text;
+  app.advisorNoteEn = text;
+  app.timeline.unshift({
+    at: nowStamp(),
+    titleTr: "Danışman notu",
+    titleEn: "Advisor note",
+    bodyTr: text,
+    bodyEn: text,
+  });
+  write(store);
+  const client = userById(app.userId);
+  void notifyMail("advisor_note", [client?.email], { fileId: app.id, note: text });
 }

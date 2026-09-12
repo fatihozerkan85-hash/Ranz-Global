@@ -11,15 +11,7 @@ npm run dev
 
 [http://localhost:3000](http://localhost:3000)
 
-## Demo hesaplar
-
-| Rol | E-posta | Şifre |
-| --- | --- | --- |
-| Müşteri | `ayse@ranz.demo` | `ranz2026` |
-| Danışman | `danisman@ranz.demo` | `ranz2026` |
-| Yönetici | `yonetici@ranz.demo` | `ranz2026` |
-
-Yönetici: `/yonetim` (istatistik, CMS) ve `/yonetim/seo`.
+Yönetici: `/yonetim` (istatistik, CMS, danışman hesapları) ve `/yonetim/seo`. Danışman hesaplarını yönetici açar.
 
 Veriler tarayıcıda (localStorage) durur. GSC/GA4 OAuth, SERP API ve gerçek dosya deposu sonraki entegrasyon fazındadır.
 

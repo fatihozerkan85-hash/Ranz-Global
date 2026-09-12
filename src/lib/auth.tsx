@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (raw) {
         const saved = JSON.parse(raw) as PublicUser;
         const fresh = findUser(saved.email);
-        persist(fresh ? strip(fresh) : saved);
+        persist(fresh ? strip(fresh) : null);
       }
     } catch {
       /* ignore */

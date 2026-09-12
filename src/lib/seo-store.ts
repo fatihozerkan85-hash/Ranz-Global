@@ -1,6 +1,6 @@
 import type { Locale } from "./types";
 
-const KEY = "ranz-seo-v1";
+const KEY = "ranz-seo-v2";
 const EVENT = "ranz-seo";
 
 export type SeoIssue = {
@@ -96,36 +96,14 @@ function seed(): SeoStore {
   return {
     crawls: [],
     issues: [],
-    queue: [
-      {
-        id: "q-1",
-        topic: "Schengen sigorta tutarı 2026",
-        locale: "tr",
-        status: "queued",
-        words: 0,
-        createdAt: "2026-09-08",
-        body: "",
-      },
-    ],
-    keywords: [
-      { query: "schengen vize danışmanlığı", locale: "TR", position: 18, clicks: 42, impressions: 2100, volume: 2400, kd: 28 },
-      { query: "abd b1 b2 evrak", locale: "TR", position: 12, clicks: 31, impressions: 980, volume: 880, kd: 22 },
-      { query: "f1 öğrenci vizesi", locale: "TR", position: 24, clicks: 11, impressions: 640, volume: 1600, kd: 35 },
-      { query: "schengen visa consultant istanbul", locale: "US", position: 31, clicks: 4, impressions: 220, volume: 320, kd: 41 },
-    ],
-    competitors: [
-      { domain: "ivisa.com", topics: ["Schengen checklist", "US visitor visa"] },
-      { domain: "atlys.com", topics: ["Visa tracker", "Document upload"] },
-    ],
-    bots: [
-      { ua: "GPTBot", path: "/vize-rehberi/schengen", at: "2026-09-09 08:11", tag: "ai" },
-      { ua: "ClaudeBot", path: "/", at: "2026-09-09 10:02", tag: "ai" },
-      { ua: "Mozilla/5.0 (compatible; FakeGPT/1.0)", path: "/blog", at: "2026-09-09 11:40", tag: "suspect" },
-    ],
+    queue: [],
+    keywords: [],
+    competitors: [],
+    bots: [],
     uptime: [],
     uptimeTargets: ["/", "/giris", "/hizmetler", "/iletisim"],
     engagement: [],
-    backlinks: [{ url: "https://example.com/ranz-global", live: null }],
+    backlinks: [],
     gscConnected: false,
     ga4Connected: false,
   };

@@ -12,8 +12,8 @@ export default function LoginPage() {
   const { locale } = useLocale();
   const { login } = useAuth();
   const router = useRouter();
-  const [email, setEmail] = useState("yonetici@ranz.demo");
-  const [password, setPassword] = useState("ranz2026");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
   const onSubmit = (e: FormEvent) => {
@@ -61,12 +61,6 @@ export default function LoginPage() {
               {t(locale, "Devam", "Continue")}
             </button>
           </form>
-          <p className="mt-6 text-xs leading-5 text-muted">
-            {t(locale, "Demo müşteri:", "Demo client:")} ayse@ranz.demo · {t(locale, "Danışman:", "Advisor:")}{" "}
-            danisman@ranz.demo · {t(locale, "Yönetici:", "Admin:")} yonetici@ranz.demo
-            <br />
-            {t(locale, "Şifre", "Password")}: ranz2026
-          </p>
           <p className="mt-4 text-sm">
             <Link href="/kayit" className="text-gold-deep">
               {t(locale, "Hesap oluştur", "Create an account")}

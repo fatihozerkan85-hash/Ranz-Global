@@ -9,7 +9,7 @@ import { whatsappHref } from "@/lib/contact";
 import { t } from "@/lib/i18n";
 import { BrandMark } from "@/components/site-chrome";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { FileStack, LayoutDashboard, LogOut, MessageCircle, Plus, Search, FileText, Users, Wallet } from "lucide-react";
+import { FileStack, LayoutDashboard, LogOut, Mail, MessageCircle, Plus, Search, FileText, Users, Wallet } from "lucide-react";
 
 export function PanelShell({
   children,
@@ -62,6 +62,7 @@ export function PanelShell({
       ? [
           { href: "/yonetim/erp", label: t(locale, "Mini ERP", "Mini ERP"), icon: Wallet },
           { href: "/yonetim/danismanlar", label: t(locale, "Danışmanlar", "Advisors"), icon: Users },
+          { href: "/yonetim/bildirimler", label: t(locale, "Bildirimler", "Notifications"), icon: Mail },
           { href: "/yonetim/site", label: t(locale, "Site içeriği", "Site content"), icon: FileText },
           { href: "/yonetim/seo", label: t(locale, "SEO paneli", "SEO panel"), icon: Search },
           { href: "/yonetim/kuyruk", label: t(locale, "Dosya kuyruğu", "Queue"), icon: LayoutDashboard },
