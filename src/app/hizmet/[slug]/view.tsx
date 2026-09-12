@@ -4,6 +4,7 @@ import Link from "next/link";
 import { MarketingShell } from "@/components/marketing-shell";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
+import { CountryFlag } from "@/components/country-flag";
 import { FEE_DISCLAIMER_EN, FEE_DISCLAIMER_TR, SCOPE_EN, SCOPE_TR, serviceBySlug } from "@/lib/services";
 
 export function ServiceView({ slug }: { slug: string }) {
@@ -16,11 +17,9 @@ export function ServiceView({ slug }: { slug: string }) {
     <MarketingShell>
       <section className="border-b border-gold/30 bg-paper">
         <div className="mx-auto max-w-6xl px-5 py-14 md:py-20">
-          <p className="text-4xl" aria-hidden>
-            {service.flag}
-          </p>
+          <CountryFlag code={service.flag} title={t(locale, service.titleTr, service.titleEn)} size="lg" />
           <h1 className="mt-4 font-serif text-4xl leading-tight md:text-6xl">{t(locale, service.titleTr, service.titleEn)}</h1>
-          <p className="mt-4 font-serif text-2xl text-ink-soft">{t(locale, service.visaTr, service.visaEn)}</p>
+          <h2 className="mt-4 font-serif text-2xl text-ink-soft">{t(locale, service.visaTr, service.visaEn)}</h2>
           <p className="mt-6 text-lg">
             {t(locale, "Ranz Global danışmanlık ücreti", "Ranz Global consultancy fee")}:{" "}
             <strong>{service.fee || t(locale, "Fiyat al", "Request a fee")}</strong>

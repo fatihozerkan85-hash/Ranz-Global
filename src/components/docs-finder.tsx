@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
+import { CountryFlag } from "@/components/country-flag";
 import {
   docsFor,
   HOME_DEST_SLUGS,
@@ -39,9 +40,10 @@ export function DocsFinder() {
             key={s.slug}
             type="button"
             onClick={() => setSlug(s.slug)}
-            className={`rounded-full border px-4 py-2 text-sm ${slug === s.slug ? "border-navy bg-navy text-cream" : "border-line bg-paper"}`}
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm ${slug === s.slug ? "border-navy bg-navy text-cream" : "border-line bg-paper"}`}
           >
-            {s.flag} {t(locale, s.titleTr.replace(" Vizesi", " evrak listesi"), `${s.titleEn} list`)}
+            <CountryFlag code={s.flag} title={t(locale, s.titleTr, s.titleEn)} />
+            {t(locale, s.titleTr.replace(" Vizesi", " Evrak Listesi"), `${s.titleEn} List`)}
           </button>
         ))}
       </div>

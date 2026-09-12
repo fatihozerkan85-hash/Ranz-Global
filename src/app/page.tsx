@@ -8,6 +8,7 @@ import { VisaQuiz } from "@/components/visa-quiz";
 import { DocsFinder } from "@/components/docs-finder";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
+import { CountryFlag } from "@/components/country-flag";
 import { CmsImg, useHome } from "@/lib/use-site";
 import {
   FEE_DISCLAIMER_EN,
@@ -62,7 +63,12 @@ export default function HomePage() {
                 const href = serviceBySlug(card.id) ? `/hizmet/${card.id}` : "/hizmetler";
                 return (
                   <Link key={card.id} href={href} className="rounded-2xl border border-line bg-cream p-5 transition hover:border-gold">
-                    <p className="font-serif text-xl">{t(locale, card.titleTr, card.titleEn)}</p>
+                    <span className="flex items-center gap-2">
+                      {serviceBySlug(card.id) ? (
+                        <CountryFlag code={serviceBySlug(card.id)!.flag} title={t(locale, card.titleTr, card.titleEn)} />
+                      ) : null}
+                      <h3 className="font-serif text-xl">{t(locale, card.titleTr, card.titleEn)}</h3>
+                    </span>
                     <p className="mt-1 text-xs text-muted">{t(locale, card.hintTr, card.hintEn)}</p>
                   </Link>
                 );
@@ -120,8 +126,9 @@ export default function HomePage() {
             <div className="mt-8 divide-y divide-line rounded-2xl border border-line bg-cream">
               {priced.map((s) => (
                 <Link key={s.slug} href={`/hizmet/${s.slug}`} className="flex items-center justify-between px-5 py-4 hover:bg-paper">
-                  <span>
-                    {s.flag} {t(locale, s.titleTr.replace(" Vizesi", ""), s.titleEn.replace(" Visa", ""))}
+                  <span className="flex items-center gap-2">
+                    <CountryFlag code={s.flag} title={t(locale, s.titleTr, s.titleEn)} />
+                    {t(locale, s.titleTr.replace(" Vizesi", ""), s.titleEn.replace(" Visa", ""))}
                   </span>
                   <strong>{s.fee}</strong>
                 </Link>

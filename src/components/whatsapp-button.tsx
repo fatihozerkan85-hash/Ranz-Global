@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { Locale } from "@/lib/types";
 import { whatsappHref } from "@/lib/contact";
 import { t } from "@/lib/i18n";
+import { CountryFlag } from "@/components/country-flag";
 import { HOME_DEST_SLUGS, SERVICES } from "@/lib/services";
 
 function WhatsAppGlyph({ className }: { className?: string }) {
@@ -54,9 +55,10 @@ export function WhatsAppFloat({ locale }: { locale: Locale }) {
                 href={whatsappHref(locale, t(locale, `Ülke: ${s.titleTr}`, `Country: ${s.titleEn}`))}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="rounded-xl border border-line px-3 py-2 text-sm hover:border-gold"
+                className="flex items-center gap-2 rounded-xl border border-line px-3 py-2 text-sm hover:border-gold"
               >
-                {s.flag} {t(locale, s.titleTr, s.titleEn)}
+                <CountryFlag code={s.flag} title={t(locale, s.titleTr, s.titleEn)} />
+                {t(locale, s.titleTr, s.titleEn)}
               </a>
             ))}
           </div>

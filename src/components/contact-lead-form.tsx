@@ -58,7 +58,7 @@ export function ContactLeadForm({ source }: { source: string }) {
           <option value="">{t(locale, "Seçin", "Select")}</option>
           {countries.map((s) => (
             <option key={s.slug} value={t(locale, s.titleTr, s.titleEn)}>
-              {s.flag} {t(locale, s.titleTr, s.titleEn)}
+              {t(locale, s.titleTr, s.titleEn)}
             </option>
           ))}
         </select>

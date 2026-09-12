@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { HOME_DEST_SLUGS, serviceBySlug, SERVICES, type ServiceSlug } from "@/lib/services";
+import { CountryFlag } from "@/components/country-flag";
 
 const PURPOSE = [
   { id: "tourist", tr: "Turistik", en: "Tourism" },
@@ -43,7 +44,8 @@ export function VisaQuiz() {
         q: t(locale, "Nereye seyahat edeceksiniz?", "Where will you travel?"),
         options: quizCountries.map((s) => ({
           id: s.slug,
-          label: `${s.flag} ${t(locale, s.titleTr.replace(" Vizesi", ""), s.titleEn.replace(" Visa", ""))}`,
+          label: t(locale, s.titleTr.replace(" Vizesi", ""), s.titleEn.replace(" Visa", "")),
+          flag: s.flag,
         })),
         key: "country" as const,
       },
@@ -119,6 +121,7 @@ export function VisaQuiz() {
                     setStep((s) => s + 1);
                   }}
                 >
+                  {"flag" in opt && opt.flag ? <CountryFlag code={opt.flag} title={opt.label} /> : null}
                   {opt.label}
                 </button>
               ))}
@@ -128,13 +131,13 @@ export function VisaQuiz() {
 
         {done && service && (
           <div className="mt-10 max-w-2xl rounded-2xl border border-line bg-cream p-6 md:p-8">
-            <p className="font-serif text-2xl leading-snug">
+            <h3 className="font-serif text-2xl leading-snug">
               {t(
                 locale,
                 `${service.titleTr.replace(" Vizesi", "")} ${service.visaTr} başvurusu sizin için uygun görünüyor.`,
                 `${service.visaEn} looks like a fit for your trip.`,
               )}
-            </p>
+            </h3>
             <p className="mt-4 text-sm leading-7 text-ink-soft">
               {t(
                 locale,

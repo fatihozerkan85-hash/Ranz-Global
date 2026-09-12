@@ -27,6 +27,13 @@ html {
   scroll-behavior: smooth;
 }
 
+h1,
+h2,
+h3,
+h4 {
+  text-transform: capitalize;
+}
+
 body {
   background: var(--color-cream);
   color: var(--color-ink);

@@ -54,7 +54,7 @@ export type Service = {
 export const SERVICES: Service[] = [
   {
     slug: "ingiltere",
-    flag: "🇬🇧",
+    flag: "gb",
     titleTr: "İngiltere Vizesi",
     titleEn: "UK Visa",
     visaTr: "Ziyaretçi Vizesi (Standard Visitor)",
@@ -65,7 +65,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "abd",
-    flag: "🇺🇸",
+    flag: "us",
     titleTr: "ABD Vizesi",
     titleEn: "USA Visa",
     visaTr: "B1/B2 Ziyaretçi Vizesi",
@@ -76,7 +76,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "kanada",
-    flag: "🇨🇦",
+    flag: "ca",
     titleTr: "Kanada Vizesi",
     titleEn: "Canada Visa",
     visaTr: "Ziyaretçi Vizesi",
@@ -87,7 +87,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "schengen",
-    flag: "🇪🇺",
+    flag: "eu",
     titleTr: "Schengen Vizesi",
     titleEn: "Schengen Visa",
     visaTr: "Kısa Konaklama (C tipi)",
@@ -98,7 +98,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "almanya",
-    flag: "🇩🇪",
+    flag: "de",
     titleTr: "Almanya Vizesi",
     titleEn: "Germany Visa",
     visaTr: "Schengen kısa konaklama",
@@ -109,7 +109,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "danimarka",
-    flag: "🇩🇰",
+    flag: "dk",
     titleTr: "Danimarka Vizesi",
     titleEn: "Denmark Visa",
     visaTr: "Schengen kısa konaklama",
@@ -120,7 +120,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "dubai",
-    flag: "🇦🇪",
+    flag: "ae",
     titleTr: "BAE / Dubai Vizesi",
     titleEn: "UAE / Dubai Visa",
     visaTr: "Turistik vize",
@@ -131,7 +131,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "cin",
-    flag: "🇨🇳",
+    flag: "cn",
     titleTr: "Çin Vizesi",
     titleEn: "China Visa",
     visaTr: "Turistik vize",
@@ -142,7 +142,7 @@ export const SERVICES: Service[] = [
   },
   {
     slug: "rusya",
-    flag: "🇷🇺",
+    flag: "ru",
     titleTr: "Rusya Vizesi",
     titleEn: "Russia Visa",
     visaTr: "Turistik vize",
