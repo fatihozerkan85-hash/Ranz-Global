@@ -8,7 +8,7 @@ export const SITE = {
   phoneDisplay: "+90 (212) 000 00 00",
   cityTr: "İstanbul, Türkiye",
   cityEn: "Istanbul, Turkey",
-  url: "https://ranzglobal.com",
+  url: "https://www.ranzglobal.com",
 };
 
 export const DEFAULT_PAGES: CmsPage[] = [
