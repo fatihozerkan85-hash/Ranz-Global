@@ -29,8 +29,8 @@ export default function AdvisorsAdminPage() {
     const email = String(data.get("email") || "");
     const password = String(data.get("password") || "");
     const result = addStaffAdvisor({ firstName, lastName, email, password });
-    if (result.error) {
-      setError(result.error);
+    if (!result.user) {
+      setError(result.error ?? t(locale, "Danışman eklenemedi.", "Could not add advisor."));
       setCreated(null);
       return;
     }
