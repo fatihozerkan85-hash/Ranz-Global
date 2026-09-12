@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import type { Locale } from "@/lib/types";
 import { whatsappHref } from "@/lib/contact";
 import { t } from "@/lib/i18n";
+import { HOME_DEST_SLUGS, SERVICES } from "@/lib/services";
 
 function WhatsAppGlyph({ className }: { className?: string }) {
   return (
@@ -31,18 +33,47 @@ export function WhatsAppHeaderButton({ locale }: { locale: Locale }) {
 }
 
 export function WhatsAppFloat({ locale }: { locale: Locale }) {
+  const [open, setOpen] = useState(false);
+  const countries = SERVICES.filter((s) => HOME_DEST_SLUGS.includes(s.slug));
+
   return (
-    <a
-      href={whatsappHref(locale)}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="fixed bottom-6 right-5 z-50 flex items-center gap-2 rounded-full bg-[#25D366] py-3 pl-3 pr-4 text-white shadow-[0_12px_30px_-8px_rgba(37,211,102,0.7)] transition hover:brightness-95"
-      aria-label={t(locale, "WhatsApp ile yazın", "Chat on WhatsApp")}
-    >
-      <WhatsAppGlyph className="h-7 w-7" />
-      <span className="pr-1 text-sm font-medium">
-        {t(locale, "WhatsApp", "WhatsApp")}
-      </span>
-    </a>
+    <div className="fixed bottom-5 right-4 z-50 flex max-w-[min(100%-2rem,20rem)] flex-col items-end gap-2">
+      {open && (
+        <div className="w-full rounded-2xl border border-line bg-paper p-4 shadow-[0_16px_40px_-20px_rgba(12,26,42,0.45)]">
+          <p className="text-sm leading-6 text-ink-soft">
+            {t(
+              locale,
+              "Merhaba, Ranz Global’e hoş geldiniz. Size daha hızlı yardımcı olabilmemiz için başvurmak istediğiniz ülkeyi seçiniz:",
+              "Welcome to Ranz Global. Choose the country you want to apply for so we can help faster:",
+            )}
+          </p>
+          <div className="mt-3 grid gap-2">
+            {countries.slice(0, 4).map((s) => (
+              <a
+                key={s.slug}
+                href={whatsappHref(locale, t(locale, `Ülke: ${s.titleTr}`, `Country: ${s.titleEn}`))}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-xl border border-line px-3 py-2 text-sm hover:border-gold"
+              >
+                {s.flag} {t(locale, s.titleTr, s.titleEn)}
+              </a>
+            ))}
+          </div>
+        </div>
+      )}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-2 rounded-full bg-[#25D366] py-3 pl-3 pr-4 text-left text-white shadow-[0_12px_30px_-8px_rgba(37,211,102,0.7)] transition hover:brightness-95"
+        aria-expanded={open}
+        aria-label={t(locale, "WhatsApp’tan vize uzmanına sor", "Ask a visa advisor on WhatsApp")}
+      >
+        <WhatsAppGlyph className="h-7 w-7 shrink-0" />
+        <span className="pr-1 text-sm font-medium leading-tight">
+          {t(locale, "WhatsApp’tan vize uzmanına sor", "Ask on WhatsApp")}
+        </span>
+      </button>
+    </div>
   );
 }

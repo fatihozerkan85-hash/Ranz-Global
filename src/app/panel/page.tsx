@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { FilePipeline } from "@/components/file-pipeline";
 import { StatusBadge } from "@/components/badges";
 import { useAuth } from "@/lib/auth";
 import { useLocale } from "@/lib/locale";
@@ -39,22 +40,25 @@ export default function PanelHome() {
       </p>
 
       {active && (
-        <Link
-          href={`/panel/basvuru/${active.id}`}
-          className="mt-8 block rounded-2xl bg-navy p-6 text-cream transition hover:opacity-95 md:p-8"
-        >
-          <p className="text-xs uppercase tracking-[0.22em] text-gold">
-            {t(locale, "Sıradaki adım", "Next step")}
-          </p>
-          <h2 className="mt-3 font-serif text-3xl">
-            {t(locale, active.destinationTr, active.destinationEn)}
-          </h2>
-          <p className="mt-3 text-sm text-cream/75">{nextAction(active, locale)}</p>
-          <p className="mt-6 inline-flex items-center gap-2 text-sm">
-            {t(locale, "Dosyayı aç", "Open file")}
-            <ArrowRight size={16} />
-          </p>
-        </Link>
+        <div className="mt-8 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+          <Link
+            href={`/panel/basvuru/${active.id}`}
+            className="block rounded-2xl bg-navy p-6 text-cream transition hover:opacity-95 md:p-8"
+          >
+            <p className="text-xs uppercase tracking-[0.22em] text-gold">
+              {t(locale, "Sıradaki adım", "Next step")}
+            </p>
+            <h2 className="mt-3 font-serif text-3xl">
+              {t(locale, active.destinationTr, active.destinationEn)}
+            </h2>
+            <p className="mt-3 text-sm text-cream/75">{nextAction(active, locale)}</p>
+            <p className="mt-6 inline-flex items-center gap-2 text-sm">
+              {t(locale, "Dosyayı aç", "Open file")}
+              <ArrowRight size={16} />
+            </p>
+          </Link>
+          <FilePipeline app={active} locale={locale} />
+        </div>
       )}
 
       <div className="mt-10 flex items-end justify-between">

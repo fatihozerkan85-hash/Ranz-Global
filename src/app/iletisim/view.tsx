@@ -17,7 +17,7 @@ export default function ContactView() {
       <PageHero
         eyebrow={t(locale, "İletişim", "Contact")}
         title={t(locale, "Danışmanınızla konuşun", "Talk to an advisor")}
-        lead={t(locale, "Adınızı, telefonunuzu ve mesajınızı bırakın.", "Leave your name, phone and message.")}
+        lead={t(locale, "Ülke, başvuru yeri ve iletişim bilgilerinizi bırakın; uzmanımız sizi arasın.", "Leave country, where you apply from and your details; an advisor will call.")}
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-5 py-14 md:grid-cols-[1fr_0.9fr]">
         <div className="rounded-2xl border border-line bg-paper p-8">

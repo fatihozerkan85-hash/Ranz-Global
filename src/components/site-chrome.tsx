@@ -28,6 +28,9 @@ export function SiteHeader({ solid: _solid = false }: { solid?: boolean }) {
             <Link href="/hizmetler" className="hover:text-gold">
               {t(locale, "Hizmetler", "Services")}
             </Link>
+            <Link href="/#ucret" className="hover:text-gold">
+              {t(locale, "Ücretler", "Fees")}
+            </Link>
             <Link href="/vize-rehberi" className="hover:text-gold">
               {t(locale, "Vize rehberi", "Visa guides")}
             </Link>

@@ -27,15 +27,28 @@ export default function ServicesView() {
         </section>
       )}
       <section className="mx-auto grid max-w-6xl gap-4 px-5 py-14 md:grid-cols-2">
-        {VISA_TYPES.map((type) => (
-          <article key={type.id} className="rounded-2xl border border-line bg-paper p-7">
-            <h2 className="font-serif text-2xl">{t(locale, type.titleTr, type.titleEn)}</h2>
-            <p className="mt-2 text-sm text-ink-soft">{t(locale, type.hintTr, type.titleHintEn)}</p>
-            <p className="mt-3 text-xs text-muted">
-              {type.documents.filter((d) => d.required).length} {t(locale, "zorunlu evrak", "required documents")}
-            </p>
-          </article>
-        ))}
+        {VISA_TYPES.map((type) => {
+          const slug =
+            type.id === "usa"
+              ? "abd"
+              : type.id === "uk"
+                ? "ingiltere"
+                : type.id === "canada"
+                  ? "kanada"
+                  : type.id === "uae"
+                    ? "dubai"
+                    : type.id === "china"
+                      ? "cin"
+                      : type.id === "russia"
+                        ? "rusya"
+                        : "schengen";
+          return (
+            <Link key={type.id} href={`/hizmet/${slug}`} className="rounded-2xl border border-line bg-paper p-7 hover:border-gold">
+              <h2 className="font-serif text-2xl">{t(locale, type.titleTr, type.titleEn)}</h2>
+              <p className="mt-2 text-sm text-ink-soft">{t(locale, type.hintTr, type.titleHintEn)}</p>
+            </Link>
+          );
+        })}
       </section>
       <section className="mx-auto max-w-6xl px-5 pb-16">
         <Link href="/kayit" className="btn">

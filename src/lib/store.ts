@@ -15,7 +15,7 @@ import { DEFAULT_HOME } from "./site-content";
 import { visaTypeById } from "./visa-catalog";
 import { t } from "./i18n";
 
-const KEY = "ranz-global-v3";
+const KEY = "ranz-global-v4";
 const EVENT = "ranz-store";
 
 const DEMO_USERS: User[] = [

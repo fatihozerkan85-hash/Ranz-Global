@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { DocumentRow } from "@/components/document-row";
+import { FilePipeline } from "@/components/file-pipeline";
 import { StatusBadge } from "@/components/badges";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
@@ -64,6 +65,7 @@ export default function ApplicationPage() {
       </div>
 
       <aside className="space-y-4">
+        <FilePipeline app={app} locale={locale} />
         <div className="rounded-2xl border border-line bg-paper p-5">
           <p className="text-xs uppercase tracking-[0.2em] text-muted">
             {t(locale, "Danışman notu", "Advisor note")}

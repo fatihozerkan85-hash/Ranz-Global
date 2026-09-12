@@ -55,6 +55,9 @@ export type AppointmentRequest = {
   phone: string;
   message: string;
   email?: string;
+  country?: string;
+  origin?: string;
+  travelDate?: string;
   topic?: string;
   locale: Locale;
   createdAt: string;
