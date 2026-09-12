@@ -43,7 +43,11 @@ export const metadata: Metadata = {
     siteName: "Ranz Global",
     images: [{ url: "/logo.jpg", width: 1200, height: 1200, alt: "Ranz Global" }],
   },
-  icons: { icon: "/logo.jpg" },
+  icons: {
+    icon: [{ url: "/logo.jpg", type: "image/jpeg" }],
+    apple: "/logo.jpg",
+    shortcut: "/logo.jpg",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
