@@ -8,7 +8,7 @@ import { StatusBadge } from "@/components/badges";
 import { useAuth } from "@/lib/auth";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
-import { getApplication, reviewDocument, setAdvisorNote, subscribeStore } from "@/lib/store";
+import { getApplication, markFileOutcome, reviewDocument, setAdvisorNote, setFileAppointment, subscribeStore } from "@/lib/store";
 import type { Application } from "@/lib/types";
 
 export function ReviewFile() {
@@ -21,6 +21,7 @@ export function ReviewFile() {
   useEffect(() => {
     const load = () => setApp(getApplication(params.id));
     load();
+    void import("@/lib/ops-client").then((mod) => mod.pullOps().then(load));
     return subscribeStore(load);
   }, [params.id]);
 
@@ -41,27 +42,72 @@ export function ReviewFile() {
         </div>
       )}
       {(user?.role === "admin" || user?.role === "staff") && (
-        <form
-          className="mt-6 max-w-xl rounded-2xl border border-line bg-paper p-5"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setAdvisorNote(app.id, note);
-            setNote("");
-          }}
-        >
-          <label className="block text-xs text-muted">
-            {t(locale, "Müşteriye not / uyarı (e-posta gider)", "Note to client (sends email)")}
-            <textarea
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              rows={3}
-              className="mt-1 w-full rounded-lg border border-line bg-cream px-3 py-2 text-sm text-ink outline-none focus:border-gold"
-            />
-          </label>
-          <button type="submit" className="btn btn-sm mt-3">
-            {t(locale, "Gönder", "Send")}
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <form
+            className="rounded-2xl border border-line bg-paper p-5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              setAdvisorNote(app.id, note);
+              setNote("");
+            }}
+          >
+            <label className="block text-xs text-muted">
+              {t(locale, "Müşteriye not (e-posta ve WhatsApp)", "Note to client (email and WhatsApp)")}
+              <textarea
+                value={note}
+                onChange={(e) => setNote(e.target.value)}
+                rows={3}
+                className="mt-1 w-full rounded-lg border border-line bg-cream px-3 py-2 text-sm text-ink outline-none focus:border-gold"
+              />
+            </label>
+            <button type="submit" className="btn btn-sm mt-3">
+              {t(locale, "Gönder", "Send")}
+            </button>
+          </form>
+          <form
+            className="rounded-2xl border border-line bg-paper p-5"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const data = new FormData(e.currentTarget);
+              setFileAppointment(app.id, {
+                date: String(data.get("date") || ""),
+                time: String(data.get("time") || ""),
+                cityTr: String(data.get("city") || ""),
+                cityEn: String(data.get("city") || ""),
+                venueTr: String(data.get("venue") || ""),
+                venueEn: String(data.get("venue") || ""),
+                bringTr: String(data.get("bring") || ""),
+                bringEn: String(data.get("bring") || ""),
+                mapsUrl: String(data.get("maps") || "") || undefined,
+                docUrl: String(data.get("doc") || "") || undefined,
+              });
+            }}
+          >
+            <p className="text-xs uppercase tracking-[0.16em] text-muted">{t(locale, "Randevu kaydı", "Appointment")}</p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              <input name="date" type="date" required defaultValue={app.appointment?.date} className="rounded-lg border border-line bg-cream px-3 py-2 text-sm" />
+              <input name="time" type="time" required defaultValue={app.appointment?.time} className="rounded-lg border border-line bg-cream px-3 py-2 text-sm" />
+              <input name="city" required placeholder={t(locale, "Şehir", "City")} defaultValue={app.appointment?.cityTr} className="rounded-lg border border-line bg-cream px-3 py-2 text-sm" />
+              <input name="venue" required placeholder={t(locale, "Başvuru merkezi", "Application centre")} defaultValue={app.appointment?.venueTr} className="rounded-lg border border-line bg-cream px-3 py-2 text-sm sm:col-span-2" />
+              <textarea name="bring" rows={2} placeholder={t(locale, "Yanında götürülecekler", "What to bring")} defaultValue={app.appointment?.bringTr} className="rounded-lg border border-line bg-cream px-3 py-2 text-sm sm:col-span-2" />
+              <input name="maps" placeholder="https://maps..." defaultValue={app.appointment?.mapsUrl} className="rounded-lg border border-line bg-cream px-3 py-2 text-sm sm:col-span-2" />
+              <input name="doc" placeholder={t(locale, "Randevu belgesi URL", "Appointment letter URL")} defaultValue={app.appointment?.docUrl} className="rounded-lg border border-line bg-cream px-3 py-2 text-sm sm:col-span-2" />
+            </div>
+            <button type="submit" className="btn btn-sm mt-3">
+              {t(locale, "Randevuyu kaydet", "Save appointment")}
+            </button>
+          </form>
+        </div>
+      )}
+      {(user?.role === "admin" || user?.role === "staff") && (
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button type="button" className="btn btn-sm" onClick={() => markFileOutcome(app.id, "ready")}>
+            {t(locale, "Başvuruya hazır", "Ready to apply")}
           </button>
-        </form>
+          <button type="button" className="btn btn-sm" onClick={() => markFileOutcome(app.id, "complete")}>
+            {t(locale, "Dosyayı sonuçlandı işaretle", "Mark file closed")}
+          </button>
+        </div>
       )}
       <div className="mt-8 rounded-2xl border border-line bg-paper px-5">
         {app.documents.map((doc) => (

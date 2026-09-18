@@ -4,8 +4,10 @@ import { useState } from "react";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { FAQ_ITEMS } from "@/lib/faq";
+import { RegionCountryScroller } from "@/components/region-country-scroller";
+import type { RegionId } from "@/lib/region-countries";
 
-type Tab = "all" | "uk" | "usa" | "schengen";
+type Tab = "all" | "uk" | "usa" | "schengen" | "asya" | "afrika";
 
 export function FaqSection() {
   const { locale } = useLocale();
@@ -23,6 +25,8 @@ export function FaqSection() {
               ["uk", "İngiltere", "UK"],
               ["usa", "ABD", "USA"],
               ["schengen", "Schengen", "Schengen"],
+              ["asya", "Asya", "Asia"],
+              ["afrika", "Afrika", "Africa"],
             ] as const
           ).map(([id, tr, en]) => (
             <button
@@ -35,6 +39,11 @@ export function FaqSection() {
             </button>
           ))}
         </div>
+        {(tab === "schengen" || tab === "asya" || tab === "afrika") && (
+          <div className="mt-6 rounded-2xl border border-line bg-cream p-4 sm:p-5">
+            <RegionCountryScroller region={tab as RegionId} mode="links" />
+          </div>
+        )}
         <div className="mt-8 divide-y divide-line rounded-2xl border border-line bg-cream">
           {FAQ_ITEMS.map((item, i) => {
             const extra =

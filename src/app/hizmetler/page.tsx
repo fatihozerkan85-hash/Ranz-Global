@@ -1,10 +1,9 @@
-import type { Metadata } from "next";
-import { SITE } from "@/lib/cms";
+import { publicMeta } from "@/lib/seo-meta";
 
-export const metadata: Metadata = {
+export const metadata = publicMeta({
   title: "Hizmetler",
-  description: "Schengen ve ABD vize danışmanlığı, evrak yükleme ve dosya takibi.",
-  alternates: { canonical: `${SITE.url}/hizmetler` },
-};
+  description: "İngiltere, ABD, Kanada, Schengen, Asya, Afrika, BAE, Çin ve Rusya vize danışmanlığı, evrak ve dosya takibi.",
+  path: "/hizmetler",
+});
 
 export { default } from "./view";

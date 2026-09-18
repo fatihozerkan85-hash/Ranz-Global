@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
-import { getApplications, getAppointments, getUsers, subscribeStore } from "@/lib/store";
+import { deleteAppointment, getApplications, getAppointments, getUsers, subscribeStore } from "@/lib/store";
 import type { Application, AppointmentRequest, User } from "@/lib/types";
 import { GroupedBars, HBars } from "@/components/erp-charts";
 
@@ -189,8 +189,23 @@ export default function MiniErpPage() {
       <div className="mt-4 space-y-2">
         {appts.map((a) => (
           <div key={a.id} className="rounded-xl border border-line bg-paper px-4 py-3 text-sm">
-            <p className="font-medium">{a.name}</p>
-            <p className="text-xs text-muted">{a.phone}</p>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="font-medium">{a.name}</p>
+                <p className="text-xs text-muted">{a.phone}</p>
+              </div>
+              <button
+                type="button"
+                className="text-xs text-[#8a3b24]"
+                onClick={() => {
+                  if (window.confirm(t(locale, "Bu formu silmek istiyor musunuz?", "Delete this form?"))) {
+                    deleteAppointment(a.id);
+                  }
+                }}
+              >
+                {t(locale, "Sil", "Delete")}
+              </button>
+            </div>
             {a.message && <p className="mt-2 text-sm text-ink-soft">{a.message}</p>}
           </div>
         ))}

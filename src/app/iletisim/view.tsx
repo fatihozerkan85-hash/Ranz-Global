@@ -20,7 +20,7 @@ export default function ContactView() {
         lead={t(locale, "Ülke, başvuru yeri ve iletişim bilgilerinizi bırakın; uzmanımız sizi arasın.", "Leave country, where you apply from and your details; an advisor will call.")}
       />
       <section className="mx-auto grid max-w-6xl gap-10 px-5 py-14 md:grid-cols-[1fr_0.9fr]">
-        <div className="rounded-2xl border border-line bg-paper p-8">
+        <div className="min-w-0 rounded-2xl border border-line bg-paper p-5 sm:p-8">
           <h2 className="font-serif text-2xl">{t(locale, "İletişim formu", "Contact form")}</h2>
           <div className="mt-6">
             <ContactLeadForm source="/iletisim" />

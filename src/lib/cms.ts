@@ -5,7 +5,7 @@ export const SITE = {
   taglineTr: "Travel & Visa",
   taglineEn: "Travel & Visa",
   email: "info@ranzglobal.com",
-  phoneDisplay: "+90 (212) 000 00 00",
+  phoneDisplay: "",
   cityTr: "İstanbul, Türkiye",
   cityEn: "Istanbul, Turkey",
   url: "https://www.ranzglobal.com",
@@ -19,9 +19,9 @@ export const DEFAULT_PAGES: CmsPage[] = [
     descriptionTr: "Ranz Global, Avrupa ve Amerika vize danışmanlığında evrak sürecini sadeleştirir.",
     descriptionEn: "Ranz Global simplifies document preparation for Europe and US visa consultancy.",
     bodyTr:
-      "Ranz Global, vize danışmanlığını karmaşık form yığınından çıkarıp tek bir dosya deneyimine dönüştürür. Danışmanlarımız Schengen ve ABD başvurularında evrak listesini sizin adınıza kurar; siz yükler, biz inceleriz.\n\nKonsolosluk kararı resmi makamlara aittir. Bizim işimiz, dosyanızın eksiksiz, tutarlı ve takip edilebilir olmasını sağlamaktır.",
+      "Ranz Global, geleneksel vize danışmanlığını dijital altyapı ile birleştiren yeni nesil bir vize yönetim platformudur. Türkiye ve KKTC genelinde dijital altyapımız ve uzman danışmanlarımızla hizmet veriyoruz.\n\nKonsolosluk kararı resmi makamlara aittir. Bizim işimiz, dosyanızın eksiksiz, tutarlı ve takip edilebilir olmasını sağlamaktır.",
     bodyEn:
-      "Ranz Global turns visa consultancy into a single file experience instead of a maze of forms. Advisors set the checklist for Schengen and US files; you upload, we review.\n\nConsular decisions belong to official authorities. Our work is to keep your file complete, consistent and trackable.",
+      "Ranz Global is a next-generation visa management platform that combines traditional visa consultancy with digital infrastructure. We serve across Türkiye and the TRNC through our platform and specialist advisors.\n\nConsular decisions belong to official authorities. Our work is to keep your file complete, consistent and trackable.",
     status: "published",
   },
   {

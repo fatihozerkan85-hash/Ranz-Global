@@ -5,6 +5,7 @@ import { MarketingShell, PageHero, Prose } from "@/components/marketing-shell";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { CmsImg, useGuides } from "@/lib/use-site";
+import { SchengenCountryScroller } from "@/components/schengen-country-scroller";
 
 export default function GuideView() {
   const { slug } = useParams<{ slug: string }>();
@@ -25,6 +26,11 @@ export default function GuideView() {
         lead={t(locale, g.descriptionTr, g.descriptionEn)}
       />
       <section className="mx-auto max-w-6xl px-5 py-14">
+        {g.slug.includes("schengen") && (
+          <div className="mb-8 rounded-2xl border border-line bg-paper p-5">
+            <SchengenCountryScroller mode="links" />
+          </div>
+        )}
         {g.imageId ? <CmsImg id={g.imageId} alt="" className="mb-8 max-h-80 w-full rounded-2xl object-cover" /> : null}
         <Prose>{t(locale, g.bodyTr, g.bodyEn)}</Prose>
       </section>

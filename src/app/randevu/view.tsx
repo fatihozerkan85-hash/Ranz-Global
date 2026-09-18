@@ -15,7 +15,7 @@ export default function AppointmentView() {
         lead={t(locale, "Ad, telefon ve mesaj yeter. Talebiniz yönetim paneline düşer.", "Name, phone and a message are enough. Your request lands in the admin panel.")}
       />
       <section className="mx-auto max-w-xl px-5 py-14">
-        <div className="rounded-2xl border border-line bg-paper p-8">
+        <div className="min-w-0 rounded-2xl border border-line bg-paper p-5 sm:p-8">
           <ContactLeadForm source="/randevu" />
         </div>
       </section>

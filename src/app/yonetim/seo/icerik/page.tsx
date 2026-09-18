@@ -10,6 +10,7 @@ import type { SeoStore } from "@/lib/seo-store";
 export default function ContentQueue() {
   const { locale } = useLocale();
   const [seo, setSeo] = useState<SeoStore | null>(null);
+  const [published, setPublished] = useState<string | null>(null);
   useEffect(() => {
     const load = () => setSeo(getSeo());
     load();
@@ -28,8 +29,17 @@ export default function ContentQueue() {
       <SeoNav />
       <h1 className="font-serif text-4xl">{t(locale, "İçerik kuyruğu", "Content queue")}</h1>
       <p className="mt-2 text-sm text-ink-soft">
-        {t(locale, "AI taslak 800–1.800 kelime hedefi. Yayın insan onayı ile. Stok görsel API sonraki bağlanır.", "AI draft targets 800–1,800 words. Human approval before publish. Stock image APIs connect later.")}
+        {t(
+          locale,
+          "Taslak üretilir, siz onaylayınca /blog altında yayınlanır.",
+          "A draft is generated; after you approve it is published under /blog.",
+        )}
       </p>
+      {published && (
+        <p className="mt-3 text-sm text-gold-deep">
+          {t(locale, "Yayınlandı", "Published")}: <a href={published} className="underline">{published}</a>
+        </p>
+      )}
       <form onSubmit={onSubmit} className="mt-6 flex gap-2">
         <input name="topic" placeholder={t(locale, "Konu veya kelime", "Topic or keyword")} className="flex-1 rounded-full border border-line bg-paper px-4 py-2 text-sm" />
         <button className="rounded-full bg-navy px-4 py-2 text-sm text-cream">{t(locale, "Kuyruğa al", "Queue")}</button>
@@ -46,7 +56,14 @@ export default function ContentQueue() {
                 <button type="button" className="btn btn-sm" onClick={() => draftContent(job.id)}>
                   {t(locale, "AI yazsın", "AI draft")}
                 </button>
-                <button type="button" className="rounded-full bg-navy px-3 py-1.5 text-xs text-cream" onClick={() => publishContent(job.id)}>
+                <button
+                  type="button"
+                  className="rounded-full bg-navy px-3 py-1.5 text-xs text-cream"
+                  onClick={() => {
+                    const href = publishContent(job.id);
+                    if (href && href.startsWith("/")) setPublished(href);
+                  }}
+                >
                   {t(locale, "Yayınla", "Publish")}
                 </button>
               </div>

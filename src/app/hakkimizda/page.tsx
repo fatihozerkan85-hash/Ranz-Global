@@ -1,10 +1,9 @@
-import type { Metadata } from "next";
-import { SITE } from "@/lib/cms";
+import { publicMeta } from "@/lib/seo-meta";
 
-export const metadata: Metadata = {
+export const metadata = publicMeta({
   title: "Hakkımızda",
   description: "Ranz Global dijital vize yönetim platformu ve uzman danışmanlık. Vize onayı garantisi vermez.",
-  alternates: { canonical: `${SITE.url}/hakkimizda` },
-};
+  path: "/hakkimizda",
+});
 
 export { default } from "./view";

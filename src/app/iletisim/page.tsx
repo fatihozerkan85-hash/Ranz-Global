@@ -1,10 +1,9 @@
-import type { Metadata } from "next";
-import { SITE } from "@/lib/cms";
+import { publicMeta } from "@/lib/seo-meta";
 
-export const metadata: Metadata = {
+export const metadata = publicMeta({
   title: "İletişim",
-  description: "Ranz Global ile görüşme talebi, e-posta ve WhatsApp.",
-  alternates: { canonical: `${SITE.url}/iletisim` },
-};
+  description: "Ranz Global ile görüşme talebi, e-posta ve WhatsApp. Vize kararı resmi makamlara aittir.",
+  path: "/iletisim",
+});
 
 export { default } from "./view";

@@ -1,13 +1,17 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/lib/auth";
+import { Menu, X } from "lucide-react";
+import { portalPath, useAuth } from "@/lib/auth";
+import { isPublicSessionUser } from "@/lib/store";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { WhatsAppHeaderButton } from "@/components/whatsapp-button";
 import { BrandMark } from "@/components/brand-mark";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { StartApplicationLink } from "@/components/start-application-link";
 import { DISCLAIMER_EN, DISCLAIMER_TR } from "@/lib/faq";
 
 export { BrandMark };
@@ -23,48 +27,96 @@ const NAV = [
 
 export function SiteHeader({ solid: _solid = false }: { solid?: boolean }) {
   const { locale } = useLocale();
-  const { user } = useAuth();
+  const { user, ready } = useAuth();
   const pathname = usePathname();
   const inApp =
     pathname.startsWith("/panel") || pathname.startsWith("/danisman") || pathname.startsWith("/yonetim");
-  const fileHref = user
-    ? user.role === "admin"
-      ? "/yonetim/erp"
-      : user.role === "staff"
-        ? "/danisman"
-        : "/panel"
-    : "/giris";
+  const signedIn = ready && isPublicSessionUser(user);
+  const fileHref = signedIn && user ? portalPath(user) : "/giris";
+  const welcome =
+    signedIn && user
+      ? `${t(locale, "Hoşgeldin,", "Welcome,")} ${user.name}`
+      : null;
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   return (
     <header className="sticky top-0 z-40 border-b border-gold/40 bg-navy">
-      <div className="mx-auto flex h-[4.5rem] max-w-6xl items-center justify-between gap-3 px-5">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:h-[4.5rem] sm:gap-3 sm:px-5">
         <BrandMark onDark />
         {!inApp && (
           <nav className="hidden items-center gap-5 text-[13px] text-cream/80 xl:flex">
             {NAV.map((item) => (
-              <Link key={item.href} href={item.href} className="hover:text-gold">
+              <a key={item.href} href={item.href} className="hover:text-gold">
                 {t(locale, item.tr, item.en)}
-              </Link>
+              </a>
             ))}
-            <Link href={fileHref} className="hover:text-gold">
-              {t(locale, "Dosyama Gir", "Open My File")}
-            </Link>
+            <a href={fileHref} className="hover:text-gold">
+              {t(locale, "Müşteri Paneli", "Client Portal")}
+            </a>
           </nav>
         )}
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <WhatsAppHeaderButton locale={locale} />
           <LanguageSwitcher compact tone="gold" />
-          {!inApp ? (
-            <Link href="/kayit" className="btn btn-sm btn-gold btn-header">
-              {t(locale, "Başvurumu Başlat", "Start Application")}
+          {!inApp && welcome ? (
+            <Link
+              href={fileHref}
+              className="max-w-[9.5rem] truncate text-right text-[11px] font-medium text-gold sm:max-w-[18rem] sm:text-sm"
+              title={welcome}
+            >
+              {welcome}
             </Link>
+          ) : !inApp ? (
+            <StartApplicationLink className="btn btn-sm btn-gold btn-header max-[380px]:hidden">
+              <span className="sm:hidden">{t(locale, "Başlat", "Start")}</span>
+              <span className="hidden sm:inline">{t(locale, "Başvurumu Başlat", "Start Application")}</span>
+            </StartApplicationLink>
           ) : (
-            <Link href={fileHref} className="btn btn-sm btn-gold btn-header">
+            <Link href={fileHref} className="btn btn-sm btn-gold btn-header max-[380px]:hidden">
               {t(locale, "Panelim", "My Portal")}
             </Link>
           )}
+          {!inApp && (
+            <button
+              type="button"
+              className="grid h-8 w-8 place-items-center rounded-full text-cream xl:hidden"
+              aria-expanded={menuOpen}
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              onClick={() => setMenuOpen((open) => !open)}
+            >
+              {menuOpen ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          )}
         </div>
       </div>
+      {menuOpen && !inApp && (
+        <nav className="border-t border-gold/25 bg-navy px-4 py-3 xl:hidden">
+          <div className="mx-auto flex max-w-6xl flex-col gap-1">
+            {NAV.map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="rounded-lg px-3 py-2.5 text-sm text-cream/85 hover:bg-white/5 hover:text-gold"
+              >
+                {t(locale, item.tr, item.en)}
+              </a>
+            ))}
+            <a href={fileHref} className="rounded-lg px-3 py-2.5 text-sm text-cream/85 hover:bg-white/5 hover:text-gold">
+              {welcome ?? t(locale, "Müşteri Paneli", "Client Portal")}
+            </a>
+            {!welcome && (
+              <StartApplicationLink className="mt-1 btn btn-sm btn-gold w-full min-[381px]:hidden">
+                {t(locale, "Başvurumu Başlat", "Start Application")}
+              </StartApplicationLink>
+            )}
+          </div>
+        </nav>
+      )}
     </header>
   );
 }

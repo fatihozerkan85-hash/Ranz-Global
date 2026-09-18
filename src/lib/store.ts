@@ -5,17 +5,21 @@ import type {
   BlogPost,
   CmsPage,
   DocumentItem,
+  FileAppointment,
   HomeContent,
   Locale,
+  RefusalFile,
   SiteMedia,
   User,
 } from "./types";
 import { DEFAULT_GUIDES, DEFAULT_PAGES, DEFAULT_POSTS, SITE } from "./cms";
 import { DEFAULT_HOME } from "./site-content";
 import { visaTypeById } from "./visa-catalog";
+import { isRegionVisaId, REGION_META, regionByCode, visaIdToRegion } from "./region-countries";
 import { t } from "./i18n";
 import { defaultMailSettings, MAIL_EVENTS, type MailEventId, type MailSettings } from "./mail-catalog";
-import { notifyMail } from "./notify";
+import { notifyClient, notifyMail } from "./notify";
+import { mergeOps, type OpsPayload } from "./ops-shared";
 
 const KEY = "ranz-global-v6";
 const LEGACY_KEYS = ["ranz-global-v5"];
@@ -23,9 +27,9 @@ const EVENT = "ranz-store";
 const DEMO_APP_IDS = new Set(["RG-2026-0142", "RG-2026-0098"]);
 
 const DEMO_USERS: User[] = [
-  { id: "u-ayse", name: "Ayşe Demir", email: "ayse@ranz.demo", role: "client", password: "ranz2026" },
-  { id: "u-admin", name: "Işıl Yıldırım", email: "yonetici@ranz.demo", role: "admin", password: "ranz2026" },
+  { id: "u-admin", name: "Işıl Yıldırım", email: "info@ranzglobal.com", role: "admin", password: "ranz2026" },
 ];
+const LEGACY_ADMIN_EMAIL = "yonetici@ranz.demo";
 
 function withoutDemoApplications(apps: Application[] | undefined) {
   return (apps ?? []).filter((app) => !DEMO_APP_IDS.has(app.id));
@@ -35,40 +39,96 @@ function isRemovedStaff(user: User) {
   return user.id === "u-staff" || user.email.toLowerCase() === "danisman@ranz.demo";
 }
 
+function isRemovedDemoClient(user: { id?: string; email: string }) {
+  return user.id === "u-ayse" || user.email.toLowerCase() === "ayse@ranz.demo";
+}
+
+export function isPublicSessionUser(user: { id?: string; email: string; role?: string } | null | undefined) {
+  if (!user?.email) return false;
+  if (isRemovedDemoClient(user)) return false;
+  if (user.role === "client" && user.email.toLowerCase().endsWith("@ranz.demo")) return false;
+  return true;
+}
+
 type Store = {
   users: User[];
   applications: Application[];
   appointments: AppointmentRequest[];
+  refusals: RefusalFile[];
   pages: CmsPage[];
   posts: BlogPost[];
   guides: CmsPage[];
   home: HomeContent;
   media: SiteMedia[];
   mailSettings: MailSettings;
+  deletedApplicationIds: string[];
+  deletedAppointmentIds: string[];
+  deletedRefusalIds: string[];
+  deletedUserEmails: string[];
 };
+
+function uniqueIds(list: string[] | undefined) {
+  return [...new Set((list ?? []).map((id) => id.trim()).filter(Boolean))];
+}
+
+function uniqueEmails(list: string[] | undefined) {
+  return [...new Set((list ?? []).map((email) => email.trim().toLowerCase()).filter(Boolean))];
+}
+
+function rememberDeleted(list: string[], id: string) {
+  if (!id || list.includes(id)) return list;
+  list.push(id);
+  return list;
+}
 
 function emptyStore(): Store {
   return {
     users: DEMO_USERS,
     applications: [],
     appointments: [],
+    refusals: [],
     pages: DEFAULT_PAGES,
     posts: DEFAULT_POSTS,
     guides: DEFAULT_GUIDES,
     home: DEFAULT_HOME,
     media: [],
     mailSettings: defaultMailSettings(),
+    deletedApplicationIds: [],
+    deletedAppointmentIds: [],
+    deletedRefusalIds: [],
+    deletedUserEmails: [],
   };
 }
 
 function mergeUsers(existing?: User[]) {
-  const list = (existing?.length ? [...existing] : [...DEMO_USERS]).filter((user) => !isRemovedStaff(user));
+  const list = (existing?.length ? [...existing] : [...DEMO_USERS])
+    .filter((user) => !isRemovedStaff(user) && !isRemovedDemoClient(user))
+    .map((user) => {
+      if (user.id === "u-admin" || user.email.toLowerCase() === LEGACY_ADMIN_EMAIL) {
+        return { ...user, email: "info@ranzglobal.com", role: "admin" as const };
+      }
+      return user;
+    });
+  const byEmail = new Map<string, User>();
+  for (const user of list) {
+    const key = user.email.toLowerCase();
+    const prev = byEmail.get(key);
+    if (!prev || user.role === "admin") byEmail.set(key, user);
+  }
+  const deduped = [...byEmail.values()];
   for (const demo of DEMO_USERS) {
-    if (!list.some((u) => u.email.toLowerCase() === demo.email.toLowerCase())) {
-      list.push(demo);
+    if (!deduped.some((u) => u.email.toLowerCase() === demo.email.toLowerCase() || u.id === demo.id)) {
+      deduped.push(demo);
     }
   }
-  return list;
+  return deduped;
+}
+
+function mergeById<T extends { id: string }>(existing: T[] | undefined, defaults: T[]): T[] {
+  const list = existing ?? [];
+  const byId = new Map(list.map((item) => [item.id, item]));
+  const extras = list.filter((item) => !defaults.some((d) => d.id === item.id));
+  return [...defaults.map((item) => byId.get(item.id) ?? item), ...extras];
 }
 
 function mergeBySlug<T extends { slug: string }>(existing: T[] | undefined, defaults: T[]) {
@@ -91,12 +151,40 @@ function patchLegalPages(pages: CmsPage[]) {
   });
 }
 
+function isPlaceholderPhone(phone: string | undefined) {
+  const digits = (phone || "").replace(/\D/g, "");
+  return !digits || digits === "902120000000" || digits === "2120000000";
+}
+
+function patchHomeCopy(home: HomeContent): HomeContent {
+  let next = home;
+  if (next.ctaSecondaryTr === "Dosyama Gir") {
+    next = { ...next, ctaSecondaryTr: DEFAULT_HOME.ctaSecondaryTr, ctaSecondaryEn: DEFAULT_HOME.ctaSecondaryEn };
+  }
+  if (isPlaceholderPhone(next.phone)) {
+    next = { ...next, phone: "" };
+  }
+  return next;
+}
+
 function hydrateStore(parsed: Partial<Store>): Store {
-  const users = mergeUsers(parsed.users);
+  const deletedUserEmails = uniqueEmails(parsed.deletedUserEmails);
+  const deletedEmails = new Set(deletedUserEmails);
+  const users = mergeUsers(parsed.users).filter(
+    (user) => user.role === "admin" || !deletedEmails.has(user.email.toLowerCase()),
+  );
   const staffIds = new Set(users.filter((u) => u.role === "staff").map((u) => u.id));
+  const deletedApplicationIds = uniqueIds(parsed.deletedApplicationIds);
+  const deletedAppointmentIds = uniqueIds(parsed.deletedAppointmentIds);
+  const deletedRefusalIds = uniqueIds(parsed.deletedRefusalIds);
+  const deletedApps = new Set(deletedApplicationIds);
+  const deletedAppts = new Set(deletedAppointmentIds);
+  const deletedRets = new Set(deletedRefusalIds);
   return {
     users,
-    applications: withoutDemoApplications(parsed.applications).map((a) => {
+    applications: withoutDemoApplications(parsed.applications)
+      .filter((a) => !deletedApps.has(a.id))
+      .map((a) => {
       const assignedTo = a.assignedTo && staffIds.has(a.assignedTo) ? a.assignedTo : "";
       const advisor = users.find((u) => u.id === assignedTo);
       return {
@@ -107,24 +195,37 @@ function hydrateStore(parsed: Partial<Store>): Store {
         advisorName: advisor?.name ?? (assignedTo ? a.advisorName : "Atanmadı"),
       };
     }),
-    appointments: (parsed.appointments ?? []).map((a) => ({
-      ...a,
-      phone: a.phone ?? "",
-      message: a.message ?? a.topic ?? "",
-    })),
+    appointments: (parsed.appointments ?? [])
+      .filter((a) => !deletedAppts.has(a.id))
+      .map((a) => ({
+        ...a,
+        phone: a.phone ?? "",
+        message: a.message ?? a.topic ?? "",
+      })),
+    refusals: (parsed.refusals ?? [])
+      .filter((row) => !deletedRets.has(row.id))
+      .map((row) => ({
+        ...row,
+        assignedTo: row.assignedTo && staffIds.has(row.assignedTo) ? row.assignedTo : "",
+        status: row.assignedTo && staffIds.has(row.assignedTo) ? "assigned" : "new",
+      })),
     pages: patchLegalPages(mergeBySlug(parsed.pages, DEFAULT_PAGES)),
     posts: mergeBySlug(parsed.posts, DEFAULT_POSTS),
     guides: mergeBySlug(parsed.guides, DEFAULT_GUIDES),
-    home: {
+    home: patchHomeCopy({
       ...DEFAULT_HOME,
       ...parsed.home,
-      destCards: parsed.home?.destCards ?? DEFAULT_HOME.destCards,
+      destCards: mergeById(parsed.home?.destCards, DEFAULT_HOME.destCards),
       steps: parsed.home?.steps ?? DEFAULT_HOME.steps,
-      visaCards: parsed.home?.visaCards ?? DEFAULT_HOME.visaCards,
+      visaCards: mergeById(parsed.home?.visaCards, DEFAULT_HOME.visaCards),
       galleryIds: parsed.home?.galleryIds ?? DEFAULT_HOME.galleryIds,
-    },
+    }),
     media: parsed.media ?? [],
     mailSettings: { ...defaultMailSettings(), ...(parsed.mailSettings ?? {}) },
+    deletedApplicationIds,
+    deletedAppointmentIds,
+    deletedRefusalIds,
+    deletedUserEmails,
   };
 }
 
@@ -151,15 +252,86 @@ function read(): Store {
   }
 }
 
-function write(store: Store) {
+function write(store: Store, opts?: { skipHub?: boolean; flushHub?: boolean }) {
   try {
     localStorage.setItem(KEY, JSON.stringify(store));
     window.dispatchEvent(new Event(EVENT));
+    if (!opts?.skipHub) {
+      void import("./ops-client").then((mod) => mod.scheduleOpsPush(Boolean(opts?.flushHub)));
+    }
     return true;
   } catch {
     window.alert("Depolama dolu. Daha küçük görsel kullanın veya bir görseli silin.");
     return false;
   }
+}
+
+export function getOpsSnapshot(): OpsPayload {
+  const store = read();
+  return {
+    users: store.users.map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      password: user.password,
+    })),
+    applications: store.applications.map((app) => ({
+      ...app,
+      documents: (app.documents ?? []).map((doc) => ({
+        ...doc,
+        fileUrl: undefined,
+      })),
+    })),
+    appointments: store.appointments ?? [],
+    refusals: store.refusals ?? [],
+    home: store.home,
+    deletedApplicationIds: store.deletedApplicationIds ?? [],
+    deletedAppointmentIds: store.deletedAppointmentIds ?? [],
+    deletedRefusalIds: store.deletedRefusalIds ?? [],
+    deletedUserEmails: store.deletedUserEmails ?? [],
+  };
+}
+
+export function ingestOps(incoming: OpsPayload) {
+  if (typeof window === "undefined") return;
+  const store = read();
+  const merged = mergeOps(
+    {
+      users: store.users,
+      applications: store.applications,
+      appointments: store.appointments,
+      refusals: store.refusals,
+      deletedApplicationIds: store.deletedApplicationIds,
+      deletedAppointmentIds: store.deletedAppointmentIds,
+      deletedRefusalIds: store.deletedRefusalIds,
+      deletedUserEmails: store.deletedUserEmails,
+    },
+    incoming,
+  );
+  store.deletedApplicationIds = uniqueIds(merged.deletedApplicationIds);
+  store.deletedAppointmentIds = uniqueIds(merged.deletedAppointmentIds);
+  store.deletedRefusalIds = uniqueIds(merged.deletedRefusalIds);
+  store.deletedUserEmails = uniqueEmails(merged.deletedUserEmails);
+  const deletedEmails = new Set(store.deletedUserEmails);
+  store.users = mergeUsers(merged.users).filter(
+    (user) => user.role === "admin" || !deletedEmails.has(user.email.toLowerCase()),
+  );
+  store.applications = withoutDemoApplications(merged.applications).map((app) => ({
+    ...app,
+    documents: app.documents ?? [],
+    timeline: app.timeline ?? [],
+  }));
+  store.appointments = merged.appointments;
+  store.refusals = merged.refusals ?? [];
+  if (incoming.home) {
+    const localAt = store.home.updatedAt || "";
+    const remoteAt = incoming.home.updatedAt || "";
+    if (!localAt || remoteAt >= localAt) {
+      store.home = hydrateStore({ home: incoming.home }).home;
+    }
+  }
+  write(store, { skipHub: true });
 }
 
 export function subscribeStore(cb: () => void) {
@@ -192,9 +364,13 @@ function adminNotifyEmails() {
   return [...read().users.filter((u) => u.role === "admin").map((u) => u.email), SITE.email];
 }
 
-function userById(id?: string) {
+export function getUserById(id?: string) {
   if (!id) return undefined;
   return read().users.find((u) => u.id === id);
+}
+
+function userById(id?: string) {
+  return getUserById(id);
 }
 
 export function getUsers() {
@@ -202,13 +378,34 @@ export function getUsers() {
 }
 
 export function findUser(email: string) {
-  return getUsers().find((u) => u.email.toLowerCase() === email.toLowerCase());
+  const value = email.trim().toLowerCase();
+  const lookup = value === LEGACY_ADMIN_EMAIL ? "info@ranzglobal.com" : value;
+  return getUsers().find((u) => u.email.toLowerCase() === lookup);
+}
+
+export function setAccountPassword(email: string, password: string): string | null {
+  if (password.length < 6) return "Şifre en az 6 karakter olmalı.";
+  const store = read();
+  const user = store.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
+  if (!user) {
+    return "Bu tarayıcıda bu hesap yok. Bağlantıyı hesabın açıldığı cihazda açın.";
+  }
+  user.password = password;
+  write(store);
+  return null;
 }
 
 export function getApplications(userId?: string) {
   const apps = read().applications;
   if (!userId) return apps;
   return apps.filter((a) => a.userId === userId);
+}
+
+export function deleteApplication(id: string) {
+  const store = read();
+  store.applications = store.applications.filter((app) => app.id !== id);
+  rememberDeleted(store.deletedApplicationIds, id);
+  write(store, { flushHub: true });
 }
 
 export function getApplication(id: string) {
@@ -226,6 +423,9 @@ export function nextAction(app: Application, locale: Locale) {
   if (missing.length) {
     return `${missing.length} ${t(locale, "evrak sizi bekliyor", "documents need your attention")}`;
   }
+  if (app.submittedAt) {
+    return t(locale, "Evraklarınız gönderildi. İnceleme kuyruğundayız.", "Your documents were sent. They are in the review queue.");
+  }
   if (app.status === "review") {
     return t(locale, "Danışmanınız inceliyor", "Your advisor is reviewing");
   }
@@ -235,10 +435,12 @@ export function nextAction(app: Application, locale: Locale) {
   return t(locale, "Dosyanız güncel", "Your file is up to date");
 }
 
-function deriveStatus(docs: DocumentItem[]): AppStatus {
+function deriveStatus(docs: DocumentItem[], previous?: AppStatus): AppStatus {
   if (docs.some((d) => d.required && d.status === "rejected")) return "revision";
   if (docs.some((d) => d.required && d.status === "empty")) return "missing";
-  if (docs.filter((d) => d.required).every((d) => d.status === "approved")) return "complete";
+  if (docs.filter((d) => d.required).every((d) => d.status === "approved") && docs.some((d) => d.required)) {
+    return previous === "complete" ? "complete" : "ready";
+  }
   return "review";
 }
 
@@ -258,7 +460,7 @@ export function uploadDocument(
   doc.filePathname = file?.pathname;
   doc.fileUrl = file?.url;
   doc.note = undefined;
-  app.status = deriveStatus(app.documents);
+  app.status = deriveStatus(app.documents, app.status);
   app.timeline.unshift({
     at: nowStamp(),
     titleTr: "Evrak yüklendi",
@@ -266,27 +468,41 @@ export function uploadDocument(
     bodyTr: `${doc.labelTr} yüklendi.`,
     bodyEn: `${doc.labelEn} uploaded.`,
   });
-  write(store);
+  write(store, { flushHub: true });
+}
+
+export function submitDocuments(appId: string): string | null {
+  const store = read();
+  const app = store.applications.find((a) => a.id === appId);
+  if (!app) return "Dosya bulunamadı.";
+  const sentDocs = app.documents.filter((d) => d.status !== "empty");
+  if (!sentDocs.length) return "Önce en az bir evrak yükleyin.";
+  app.submittedAt = new Date().toISOString();
+  app.status = deriveStatus(app.documents, app.status);
+  app.timeline.unshift({
+    at: nowStamp(),
+    titleTr: "Evraklar gönderildi",
+    titleEn: "Documents submitted",
+    bodyTr: "Müşteri evrak paketini gönderdi. İnceleme kuyruğuna düştü.",
+    bodyEn: "The client submitted the document pack. It is in the review queue.",
+  });
+  write(store, { flushHub: true });
   const client = userById(app.userId);
-  const staff = userById(app.assignedTo);
-  void notifyMail("doc_status", [client?.email], {
+  const docs = sentDocs.map((d) => d.labelTr).join(", ");
+  void notifyMail("docs_submitted", [client?.email], {
     fileId: app.id,
-    docLabel: doc.labelTr,
-    status: "uploaded",
-    statusLabel: "yüklendi",
+    clientName: client?.name || "",
     audience: "client",
   });
-  void notifyMail("doc_status", [staff?.email], {
+  void notifyMail("docs_submitted", adminNotifyEmails(), {
     fileId: app.id,
-    docLabel: doc.labelTr,
-    status: "uploaded",
-    statusLabel: "yüklendi",
-    audience: "staff",
+    clientName: client?.name || "",
+    clientEmail: client?.email || "",
+    destination: app.destinationTr,
+    docs,
+    audience: "admin",
   });
-  const required = app.documents.filter((d) => d.required);
-  if (mailOn("all_docs_uploaded") && required.length > 0 && required.every((d) => d.status !== "empty")) {
-    void notifyMail("all_docs_uploaded", [staff?.email], { fileId: app.id });
-  }
+  return null;
 }
 
 export function assignApplication(appId: string, staffId: string) {
@@ -297,6 +513,7 @@ export function assignApplication(appId: string, staffId: string) {
   const previous = userById(app.assignedTo);
   app.assignedTo = staff.id;
   app.advisorName = staff.name;
+  app.status = deriveStatus(app.documents, app.status);
   app.timeline.unshift({
     at: nowStamp(),
     titleTr: "Danışman atandı",
@@ -304,7 +521,7 @@ export function assignApplication(appId: string, staffId: string) {
     bodyTr: `Dosya ${staff.name} adlı danışmana atandı.`,
     bodyEn: `File assigned to ${staff.name}.`,
   });
-  write(store);
+  write(store, { flushHub: true });
   const client = userById(app.userId);
   void notifyMail("advisor_assigned", [staff.email], {
     fileId: app.id,
@@ -324,7 +541,8 @@ export function reviewDocument(appId: string, key: string, status: "approved" | 
   if (!doc) return;
   doc.status = status;
   doc.note = note;
-  app.status = deriveStatus(app.documents);
+  app.status = deriveStatus(app.documents, app.status);
+  app.reviewedAt = new Date().toISOString();
   app.timeline.unshift({
     at: nowStamp(),
     titleTr: status === "approved" ? "Evrak onaylandı" : "Evrak revizyon",
@@ -332,17 +550,19 @@ export function reviewDocument(appId: string, key: string, status: "approved" | 
     bodyTr: note || doc.labelTr,
     bodyEn: note || doc.labelEn,
   });
-  write(store);
+  write(store, { flushHub: true });
   const client = userById(app.userId);
   const staff = userById(app.assignedTo);
   const statusLabel = status === "approved" ? "onaylandı" : "revizyon";
-  void notifyMail("doc_status", [client?.email], {
+  const revisionCount = String(app.documents.filter((d) => d.status === "rejected").length);
+  notifyClient("doc_status", client, {
     fileId: app.id,
     docLabel: doc.labelTr,
     status,
     statusLabel,
     note: note || "",
-    audience: "client",
+    destination: app.destinationTr,
+    revisionCount,
   });
   void notifyMail("doc_status", [staff?.email], {
     fileId: app.id,
@@ -352,36 +572,24 @@ export function reviewDocument(appId: string, key: string, status: "approved" | 
     note: note || "",
     audience: "staff",
   });
-  if (status === "rejected" && note) {
-    void notifyMail("advisor_note", [client?.email], { fileId: app.id, note });
-  }
-  if (mailOn("file_complete") && app.status === "complete") {
-    void notifyMail("file_complete", [client?.email], {
-      fileId: app.id,
-      destination: app.destinationTr,
-      audience: "client",
-    });
-    void notifyMail("file_complete", adminNotifyEmails(), {
-      fileId: app.id,
-      destination: app.destinationTr,
-      audience: "admin",
-    });
-  }
 }
 
-export function createApplication(userId: string, visaTypeId: string) {
+export function createApplication(userId: string, visaTypeId: string, memberCode?: string) {
   const type = visaTypeById(visaTypeId);
   if (!type) return null;
   const store = read();
   const staff = store.users.find((u) => u.role === "staff");
-  const id = `RG-2026-${String(1000 + store.applications.length).slice(-4)}`;
+  const id = `RG-${new Date().getFullYear()}-${Date.now().toString(36)}`;
+  const region = isRegionVisaId(type.family) ? visaIdToRegion(type.family) : undefined;
+  const member = region ? regionByCode(region, memberCode) : undefined;
+  const meta = region ? REGION_META[region] : undefined;
   const app: Application = {
     id,
     userId,
     visaFamily: type.family,
     visaTypeId: type.id,
-    destinationTr: type.titleTr,
-    destinationEn: type.titleEn,
+    destinationTr: member && meta ? `${member.tr} (${meta.labelTr})` : type.titleTr,
+    destinationEn: member && meta ? `${member.en} (${meta.labelEn})` : type.titleEn,
     status: "draft",
     createdAt: new Date().toISOString().slice(0, 10),
     advisorName: staff?.name ?? "Atanmadı",
@@ -402,25 +610,24 @@ export function createApplication(userId: string, visaTypeId: string) {
     ],
   };
   store.applications.unshift(app);
-  write(store);
-  if (mailOn("file_opened")) {
-    const client = userById(userId);
-    void notifyMail("file_opened", [staff?.email, ...adminNotifyEmails()], {
-      fileId: app.id,
-      destination: app.destinationTr,
-      clientName: client?.name || "",
-    });
-  }
+  write(store, { flushHub: true });
   return app;
 }
 
-export function addUser(name: string, email: string, password: string): User {
+export function addUser(name: string, email: string, password: string, phone?: string): User | null {
   const store = read();
-  const existing = store.users.find((u) => u.email.toLowerCase() === email.toLowerCase());
-  if (existing) return existing;
-  const user: User = { id: `u-${Date.now()}`, name, email, role: "client", password };
+  const existing = store.users.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
+  if (existing) return null;
+  const user: User = {
+    id: `u-${Date.now()}`,
+    name,
+    email: email.trim().toLowerCase(),
+    role: "client",
+    password,
+    phone: phone?.replace(/\D/g, "") || undefined,
+  };
   store.users.push(user);
-  write(store);
+  write(store, { flushHub: true });
   void notifyMail("signup", [email], { name });
   return user;
 }
@@ -458,6 +665,8 @@ export function addStaffAdvisor(input: {
   lastName: string;
   password: string;
   email?: string;
+  titleTr?: string;
+  titleEn?: string;
 }): { user: User; error?: undefined } | { user?: undefined; error: string } {
   const firstName = input.firstName.trim();
   const lastName = input.lastName.trim();
@@ -485,9 +694,12 @@ export function addStaffAdvisor(input: {
     email,
     role: "staff",
     password,
+    titleTr: input.titleTr?.trim() || "Vize uzmanı",
+    titleEn: input.titleEn?.trim() || "Visa specialist",
   };
+  store.deletedUserEmails = store.deletedUserEmails.filter((row) => row !== email);
   store.users.push(user);
-  write(store);
+  write(store, { flushHub: true });
   if (mailOn("staff_created")) {
     void notifyMail("staff_created", [user.email], {
       name: user.name,
@@ -498,13 +710,36 @@ export function addStaffAdvisor(input: {
   return { user };
 }
 
+export function deleteStaffAdvisor(userId: string): string | null {
+  const store = read();
+  const user = store.users.find((row) => row.id === userId && row.role === "staff");
+  if (!user) return "Danışman bulunamadı.";
+  const email = user.email.trim().toLowerCase();
+  store.users = store.users.filter((row) => row.id !== userId);
+  rememberDeleted(store.deletedUserEmails, email);
+  for (const app of store.applications) {
+    if (app.assignedTo === userId) {
+      app.assignedTo = "";
+      app.advisorName = "Atanmadı";
+    }
+  }
+  for (const row of store.refusals) {
+    if (row.assignedTo === userId) {
+      row.assignedTo = "";
+      row.status = "new";
+    }
+  }
+  write(store, { flushHub: true });
+  return null;
+}
+
 export function setStaffPassword(userId: string, password: string): string | null {
   if (password.length < 6) return "Şifre en az 6 karakter olmalı.";
   const store = read();
   const user = store.users.find((u) => u.id === userId && u.role === "staff");
   if (!user) return "Danışman bulunamadı.";
   user.password = password;
-  write(store);
+  write(store, { flushHub: true });
   if (mailOn("staff_created")) {
     void notifyMail("staff_created", [user.email], {
       name: user.name,
@@ -531,7 +766,7 @@ export function addAppointment(data: Omit<AppointmentRequest, "id" | "createdAt"
     createdAt: new Date().toISOString(),
     status: "new",
   });
-  write(store);
+  write(store, { flushHub: true });
   if (mailOn("contact_form")) {
     void notifyMail("contact_form", adminNotifyEmails(), {
       name: data.name,
@@ -540,10 +775,85 @@ export function addAppointment(data: Omit<AppointmentRequest, "id" | "createdAt"
       message: data.message,
     });
   }
+  if (mailOn("contact_form_client") && data.email) {
+    void notifyMail("contact_form_client", [data.email], {
+      name: data.name,
+      locale: data.locale,
+    });
+  }
 }
 
 export function getAppointments() {
   return read().appointments;
+}
+
+export function deleteAppointment(id: string) {
+  const store = read();
+  store.appointments = store.appointments.filter((row) => row.id !== id);
+  rememberDeleted(store.deletedAppointmentIds, id);
+  write(store, { flushHub: true });
+}
+
+export function addRefusal(data: Omit<RefusalFile, "id" | "createdAt" | "status" | "assignedTo">) {
+  const store = read();
+  const row: RefusalFile = {
+    ...data,
+    id: `RET-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+    status: "new",
+    assignedTo: "",
+  };
+  store.refusals.unshift(row);
+  write(store, { flushHub: true });
+  if (mailOn("refusal_form")) {
+    void notifyMail("refusal_form", adminNotifyEmails(), {
+      name: data.name,
+      email: data.email,
+      country: data.country,
+      year: data.year,
+      article: data.article,
+      fileId: row.id,
+    });
+  }
+  if (mailOn("refusal_form_client") && data.email) {
+    void notifyMail("refusal_form_client", [data.email], {
+      name: data.name,
+      locale: data.locale,
+      country: data.country,
+      year: data.year,
+      article: data.article,
+    });
+  }
+}
+
+export function getRefusals() {
+  return read().refusals;
+}
+
+export function deleteRefusal(id: string) {
+  const store = read();
+  store.refusals = store.refusals.filter((row) => row.id !== id);
+  rememberDeleted(store.deletedRefusalIds, id);
+  write(store, { flushHub: true });
+}
+
+export function assignRefusal(id: string, staffId: string) {
+  const store = read();
+  const row = store.refusals.find((item) => item.id === id);
+  const staff = store.users.find((u) => u.id === staffId && u.role === "staff");
+  if (!row || !staff) return;
+  const previous = userById(row.assignedTo);
+  row.assignedTo = staff.id;
+  row.status = "assigned";
+  write(store, { flushHub: true });
+  void notifyMail("advisor_assigned", [staff.email], {
+    fileId: row.id,
+    destination: `Vize ret · ${row.country}`,
+    clientName: row.name,
+  });
+  if (mailOn("assignment_left") && previous && previous.id !== staff.id) {
+    void notifyMail("assignment_left", [previous.email], { fileId: row.id });
+  }
 }
 
 export function getPages() {
@@ -617,13 +927,13 @@ export function deleteGuide(slug: string) {
 }
 
 export function getHome() {
-  return read().home;
+  return patchHomeCopy(read().home);
 }
 
 export function saveHome(home: HomeContent) {
   const store = read();
-  store.home = home;
-  write(store);
+  store.home = { ...patchHomeCopy(home), updatedAt: new Date().toISOString() };
+  return write(store, { flushHub: true });
 }
 
 export function getMedia() {
@@ -664,7 +974,7 @@ export function setApplicationFee(appId: string, feeTry: number) {
     bodyTr: `Hizmet bedeli ${next.toLocaleString("tr-TR")} TL olarak kaydedildi.`,
     bodyEn: `Service fee set to ${next.toLocaleString("tr-TR")} TL.`,
   });
-  write(store);
+  write(store, { flushHub: true });
   if (mailOn("fee_changed")) {
     void notifyMail("fee_changed", adminNotifyEmails(), {
       fileId: app.id,
@@ -681,6 +991,7 @@ export function setAdvisorNote(appId: string, note: string) {
   if (!app) return;
   app.advisorNoteTr = text;
   app.advisorNoteEn = text;
+  app.reviewedAt = new Date().toISOString();
   app.timeline.unshift({
     at: nowStamp(),
     titleTr: "Danışman notu",
@@ -688,7 +999,49 @@ export function setAdvisorNote(appId: string, note: string) {
     bodyTr: text,
     bodyEn: text,
   });
-  write(store);
+  write(store, { flushHub: true });
   const client = userById(app.userId);
-  void notifyMail("advisor_note", [client?.email], { fileId: app.id, note: text });
+  notifyClient("advisor_note", client, { fileId: app.id, note: text, destination: app.destinationTr });
+}
+
+export function setFileAppointment(appId: string, appointment: FileAppointment) {
+  const store = read();
+  const app = store.applications.find((a) => a.id === appId);
+  if (!app) return;
+  app.appointment = appointment;
+  app.reviewedAt = new Date().toISOString();
+  app.timeline.unshift({
+    at: nowStamp(),
+    titleTr: "Randevu kaydedildi",
+    titleEn: "Appointment saved",
+    bodyTr: `${appointment.date} ${appointment.time} · ${appointment.cityTr}`,
+    bodyEn: `${appointment.date} ${appointment.time} · ${appointment.cityEn}`,
+  });
+  write(store, { flushHub: true });
+  const client = userById(app.userId);
+  notifyClient("advisor_note", client, {
+    fileId: app.id,
+    destination: app.destinationTr,
+    note: `Randevu: ${appointment.date} ${appointment.time}, ${appointment.venueTr}, ${appointment.cityTr}.`,
+  });
+}
+
+export function markFileOutcome(appId: string, status: "ready" | "complete") {
+  const store = read();
+  const app = store.applications.find((a) => a.id === appId);
+  if (!app) return;
+  app.status = status;
+  app.reviewedAt = new Date().toISOString();
+  app.timeline.unshift({
+    at: nowStamp(),
+    titleTr: status === "complete" ? "Dosya sonuçlandı" : "Dosya başvuruya hazır",
+    titleEn: status === "complete" ? "File closed" : "File ready to apply",
+    bodyTr: status === "complete" ? "Süreç panelde kapatıldı." : "Danışman dosyayı başvuruya hazır işaretledi.",
+    bodyEn: status === "complete" ? "The file was closed in the portal." : "The advisor marked the file ready to apply.",
+  });
+  write(store, { flushHub: true });
+  const client = userById(app.userId);
+  if (mailOn("file_complete")) {
+    notifyClient("file_complete", client, { fileId: app.id, destination: app.destinationTr });
+  }
 }

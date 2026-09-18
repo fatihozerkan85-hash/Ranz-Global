@@ -1,12 +1,11 @@
-import type { Metadata } from "next";
-import { SITE } from "@/lib/cms";
+import { publicMeta } from "@/lib/seo-meta";
 import { LegalView } from "@/components/legal-view";
 
-export const metadata: Metadata = {
+export const metadata = publicMeta({
   title: "Mesafeli Hizmet Sözleşmesi",
-  description: "Ranz Global mesafeli danışmanlık hizmetine ilişkin bilgilendirme.",
-  alternates: { canonical: `${SITE.url}/mesafeli-hizmet` },
-};
+  description: "Ranz Global mesafeli danışmanlık hizmetine ilişkin bilgilendirme. Vize kararı resmi makamlara aittir.",
+  path: "/mesafeli-hizmet",
+});
 
 export default function Page() {
   return (

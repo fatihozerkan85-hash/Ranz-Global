@@ -10,6 +10,8 @@ const FLAGS: Record<string, string> = {
   ae: "/flags/ae.svg",
   cn: "/flags/cn.svg",
   ru: "/flags/ru.svg",
+  asia: "/flags/asia.svg",
+  africa: "/flags/africa.svg",
 };
 
 export function CountryFlag({
@@ -21,14 +23,23 @@ export function CountryFlag({
   title?: string;
   size?: "sm" | "md" | "lg";
 }) {
-  const src = FLAGS[code] ?? FLAGS.eu;
-  const box = size === "lg" ? "h-10 w-14" : size === "md" ? "h-5 w-7" : "h-4 w-[1.35rem]";
+  const key = code.toLowerCase();
+  const src = FLAGS[key] ?? `/flags/${key}.svg`;
+  const fallback = `https://flagcdn.com/w80/${key}.png`;
+  const box = size === "lg" ? "h-9 w-12 sm:h-10 sm:w-[3.35rem]" : size === "md" ? "h-5 w-[1.67rem]" : "h-4 w-[1.33rem]";
   return (
     <img
       src={src}
       alt={title ?? ""}
       title={title}
-      className={`${box} shrink-0 rounded-[2px] object-cover shadow-[0_0_0_1px_rgba(15,39,68,0.12)]`}
+      width={size === "lg" ? 48 : size === "md" ? 27 : 21}
+      height={size === "lg" ? 36 : size === "md" ? 20 : 16}
+      className={`${box} shrink-0 overflow-hidden rounded-[2px] object-cover shadow-[0_0_0_1px_rgba(15,39,68,0.12)]`}
+      onError={(e) => {
+        if (e.currentTarget.dataset.fallback === "1") return;
+        e.currentTarget.dataset.fallback = "1";
+        e.currentTarget.src = fallback;
+      }}
     />
   );
 }

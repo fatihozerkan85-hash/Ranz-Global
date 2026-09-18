@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { CountryFlag } from "@/components/country-flag";
+import { RegionCountryScroller } from "@/components/region-country-scroller";
 import {
   docsFor,
   HOME_DEST_SLUGS,
@@ -13,6 +14,7 @@ import {
   type ProfileId,
   type ServiceSlug,
 } from "@/lib/services";
+import { slugToRegion } from "@/lib/region-countries";
 
 export function DocsFinder() {
   const { locale } = useLocale();
@@ -40,13 +42,18 @@ export function DocsFinder() {
             key={s.slug}
             type="button"
             onClick={() => setSlug(s.slug)}
-            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm ${slug === s.slug ? "border-navy bg-navy text-cream" : "border-line bg-paper"}`}
+            className={`inline-flex max-w-full items-center gap-2 rounded-full border px-3 py-2 text-sm sm:px-4 ${slug === s.slug ? "border-navy bg-navy text-cream" : "border-line bg-paper"}`}
           >
             <CountryFlag code={s.flag} title={t(locale, s.titleTr, s.titleEn)} />
             {t(locale, s.titleTr.replace(" Vizesi", " Evrak Listesi"), `${s.titleEn} List`)}
           </button>
         ))}
       </div>
+      {slugToRegion(slug) && (slug === "schengen" || slug === "asya" || slug === "afrika") && (
+        <div className="mt-4">
+          <RegionCountryScroller region={slugToRegion(slug)!} mode="links" />
+        </div>
+      )}
       <div className="mt-4 flex flex-wrap gap-2">
         {PROFILES.map((p) => (
           <button

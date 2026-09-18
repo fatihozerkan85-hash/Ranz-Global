@@ -2,7 +2,6 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { MAIL_EVENTS } from "@/lib/mail-catalog";
-import { notifyMail } from "@/lib/notify";
 import { getMailSettings, setMailEventEnabled, subscribeStore } from "@/lib/store";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
@@ -23,8 +22,27 @@ export default function MailSettingsPage() {
   const onTest = async (e: FormEvent) => {
     e.preventDefault();
     setMessage(null);
-    await notifyMail("test", [testTo]);
-    setMessage(t(locale, "Deneme maili kuyruğa alındı. RESEND_API_KEY yoksa gönderilmez.", "Test mail queued. It will not send without RESEND_API_KEY."));
+    const res = await fetch("/api/bildirim", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ event: "test", to: [testTo] }),
+    });
+    const json = (await res.json()) as { error?: string; lastEvent?: string; skipped?: boolean };
+    if (!res.ok) {
+      setMessage(json.error || t(locale, "Mail gönderilemedi.", "Email could not be sent."));
+      return;
+    }
+    if (json.skipped) {
+      setMessage(t(locale, "Alıcı atlandı (demo adres veya geçersiz e-posta).", "Recipient skipped (demo or invalid email)."));
+      return;
+    }
+    setMessage(
+      t(
+        locale,
+        `Resend kabul etti (${json.lastEvent || "sent"}). Konu: “Ranz Global — deneme bildirimi”. Gönderen: onboarding@resend.dev. Gelen kutusu, Promosyonlar ve Spam’e bakın.`,
+        `Resend accepted it (${json.lastEvent || "sent"}). Subject: “Ranz Global — deneme bildirimi”. From: onboarding@resend.dev. Check inbox, Promotions, and Spam.`,
+      ),
+    );
   };
 
   if (!settings) return null;
@@ -36,8 +54,8 @@ export default function MailSettingsPage() {
       <p className="mt-2 max-w-2xl text-sm text-ink-soft">
         {t(
           locale,
-          "Mailler Resend ile gider. Kilitli olanlar kapatılamaz. Gönderen: bildirim@ranzglobal.com (alan doğrulanınca). Yanıt: info@ranzglobal.com.",
-          "Emails go through Resend. Locked events cannot be turned off. From: bildirim@ranzglobal.com once the domain is verified. Reply-to: info@ranzglobal.com.",
+          "Mailler Resend ile gider. Alan doğrulanana kadar gönderen onboarding@resend.dev olur ve deneme yalnızca Resend hesabındaki Gmail adresine düşer. Gelen kutusu ve spam’i kontrol edin.",
+          "Emails go through Resend. Until the domain is verified, mail is sent from onboarding@resend.dev and tests can only reach the Gmail on the Resend account. Check inbox and spam.",
         )}
       </p>
 

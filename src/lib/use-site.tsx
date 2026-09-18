@@ -11,6 +11,7 @@ import {
   subscribeStore,
 } from "@/lib/store";
 import type { BlogPost, CmsPage, HomeContent, SiteMedia } from "@/lib/types";
+import { DEFAULT_GUIDES, DEFAULT_PAGES, DEFAULT_POSTS } from "@/lib/cms";
 import { DEFAULT_HOME } from "@/lib/site-content";
 
 export function useHome() {
@@ -18,13 +19,14 @@ export function useHome() {
   useEffect(() => {
     const load = () => setHome(getHome());
     load();
+    void import("@/lib/ops-client").then((mod) => mod.pullOps().then(load));
     return subscribeStore(load);
   }, []);
   return home;
 }
 
 export function usePages() {
-  const [pages, setPages] = useState<CmsPage[]>([]);
+  const [pages, setPages] = useState<CmsPage[]>(DEFAULT_PAGES);
   useEffect(() => {
     const load = () => setPages(getPages());
     load();
@@ -34,7 +36,7 @@ export function usePages() {
 }
 
 export function useGuides() {
-  const [guides, setGuides] = useState<CmsPage[]>([]);
+  const [guides, setGuides] = useState<CmsPage[]>(DEFAULT_GUIDES);
   useEffect(() => {
     const load = () => setGuides(getGuides());
     load();
@@ -44,7 +46,9 @@ export function useGuides() {
 }
 
 export function usePosts(all = false) {
-  const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [posts, setPosts] = useState<BlogPost[]>(() =>
+    all ? DEFAULT_POSTS : DEFAULT_POSTS.filter((p) => p.status === "published"),
+  );
   useEffect(() => {
     const load = () => setPosts(all ? getAllPosts() : getAllPosts().filter((p) => p.status === "published"));
     load();

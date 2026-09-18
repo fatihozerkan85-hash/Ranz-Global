@@ -1,11 +1,22 @@
-import type { CrawlRun, CrawlUrl, SeoIssue } from "./seo-store";
-import { SITE_PATHS } from "./seo-store";
+import type { CrawlUrl, SeoIssue } from "./seo-store";
 
-function pick(html: string, re: RegExp) {
-  return html.match(re)?.[1]?.trim() ?? "";
+function decodeEntities(value: string) {
+  return value
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCharCode(parseInt(n, 16)));
 }
 
-function auditHtml(url: string, status: number, html: string): CrawlUrl {
+function pick(html: string, re: RegExp) {
+  return decodeEntities(html.match(re)?.[1]?.trim() ?? "");
+}
+
+export function auditHtml(url: string, status: number, html: string): CrawlUrl {
   const title = pick(html, /<title[^>]*>([\s\S]*?)<\/title>/i).replace(/\s+/g, " ");
   const description = pick(html, /<meta[^>]*name=["']description["'][^>]*content=["']([^"']*)["']/i);
   const h1 = pick(html, /<h1[^>]*>([\s\S]*?)<\/h1>/i).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ");
@@ -15,8 +26,9 @@ function auditHtml(url: string, status: number, html: string): CrawlUrl {
   const hasJsonLd = /application\/ld\+json/i.test(html);
   const issues: string[] = [];
   if (status >= 400) issues.push("http");
+  const titleCore = title.replace(/\s*[·|–-]\s*Ranz Global.*$/i, "").trim();
   if (!title) issues.push("title-empty");
-  if (title.length > 65) issues.push("title-long");
+  if (titleCore.length > 60) issues.push("title-long");
   if (!description) issues.push("desc-empty");
   if (description && description.length < 70) issues.push("desc-short");
   if (description && description.length > 160) issues.push("desc-long");
@@ -25,6 +37,7 @@ function auditHtml(url: string, status: number, html: string): CrawlUrl {
   if (!hasOg) issues.push("og-missing");
   if (!hasJsonLd) issues.push("jsonld-missing");
   if (!canonical) issues.push("canonical-missing");
+  if (robots.includes("noindex")) issues.push("noindex");
   return {
     url,
     status,
@@ -51,20 +64,10 @@ const RULES: Record<string, { tr: string; en: string; suggestion: string }> = {
   "og-missing": { tr: "Open Graph yok", en: "Missing Open Graph", suggestion: "og:title ve og:description ekleyin." },
   "jsonld-missing": { tr: "JSON-LD yok", en: "Missing JSON-LD", suggestion: "Organization veya Article şeması ekleyin." },
   "canonical-missing": { tr: "Canonical yok", en: "Missing canonical", suggestion: "Kendine işaret eden canonical ekleyin." },
+  noindex: { tr: "noindex etiketi", en: "noindex tag", suggestion: "Dizine girmesi gereken sayfada robots index, follow kullanın." },
 };
 
-export async function runSiteCrawl(origin: string): Promise<{ run: CrawlRun; issues: SeoIssue[] }> {
-  const urls: CrawlUrl[] = [];
-  for (const path of SITE_PATHS) {
-    const href = `${origin}${path}`;
-    try {
-      const res = await fetch(href, { cache: "no-store" });
-      const html = await res.text();
-      urls.push(auditHtml(path, res.status, html));
-    } catch {
-      urls.push(auditHtml(path, 0, ""));
-    }
-  }
+export function issuesFromUrls(urls: CrawlUrl[]): SeoIssue[] {
   const issues: SeoIssue[] = [];
   for (const row of urls) {
     for (const rule of row.issues) {
@@ -82,12 +85,5 @@ export async function runSiteCrawl(origin: string): Promise<{ run: CrawlRun; iss
       });
     }
   }
-  return {
-    run: {
-      id: `c-${Date.now()}`,
-      startedAt: new Date().toISOString(),
-      urls,
-    },
-    issues,
-  };
+  return issues;
 }

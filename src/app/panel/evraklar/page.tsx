@@ -30,7 +30,7 @@ export default function VaultPage() {
 
   return (
     <div>
-      <h1 className="font-serif text-4xl">{t(locale, "Evrak kasası", "Document vault")}</h1>
+      <h1 className="font-serif text-4xl">{t(locale, "Evraklarım", "My documents")}</h1>
       <p className="mt-2 text-sm text-ink-soft">
         {t(
           locale,

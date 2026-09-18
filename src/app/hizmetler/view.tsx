@@ -6,6 +6,21 @@ import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { usePages } from "@/lib/use-site";
 import { VISA_TYPES } from "@/lib/visa-catalog";
+import { RegionCountryScroller } from "@/components/region-country-scroller";
+import { StartApplicationLink } from "@/components/start-application-link";
+import { visaIdToRegion, isRegionVisaId } from "@/lib/region-countries";
+
+function slugForVisa(id: string) {
+  if (id === "usa") return "abd";
+  if (id === "uk") return "ingiltere";
+  if (id === "canada") return "kanada";
+  if (id === "uae") return "dubai";
+  if (id === "china") return "cin";
+  if (id === "russia") return "rusya";
+  if (id === "asia") return "asya";
+  if (id === "africa") return "afrika";
+  return "schengen";
+}
 
 export default function ServicesView() {
   const { locale } = useLocale();
@@ -27,33 +42,24 @@ export default function ServicesView() {
         </section>
       )}
       <section className="mx-auto grid max-w-6xl gap-4 px-5 py-14 md:grid-cols-2">
-        {VISA_TYPES.map((type) => {
-          const slug =
-            type.id === "usa"
-              ? "abd"
-              : type.id === "uk"
-                ? "ingiltere"
-                : type.id === "canada"
-                  ? "kanada"
-                  : type.id === "uae"
-                    ? "dubai"
-                    : type.id === "china"
-                      ? "cin"
-                      : type.id === "russia"
-                        ? "rusya"
-                        : "schengen";
-          return (
-            <Link key={type.id} href={`/hizmet/${slug}`} className="rounded-2xl border border-line bg-paper p-7 hover:border-gold">
-              <h2 className="font-serif text-2xl">{t(locale, type.titleTr, type.titleEn)}</h2>
-              <p className="mt-2 text-sm text-ink-soft">{t(locale, type.hintTr, type.titleHintEn)}</p>
-            </Link>
-          );
-        })}
+        {VISA_TYPES.map((type) => (
+          <Link key={type.id} href={`/hizmet/${slugForVisa(type.id)}`} className="rounded-2xl border border-line bg-paper p-7 hover:border-gold">
+            <h2 className="font-serif text-2xl">{t(locale, type.titleTr, type.titleEn)}</h2>
+            <p className="mt-2 text-sm text-ink-soft">{t(locale, type.hintTr, type.titleHintEn)}</p>
+          </Link>
+        ))}
+      </section>
+      <section className="mx-auto max-w-6xl space-y-4 px-5 pb-8">
+        {(["schengen", "asia", "africa"] as const).map((id) => (
+          <div key={id} className="rounded-2xl border border-line bg-paper p-5">
+            <RegionCountryScroller region={isRegionVisaId(id) ? visaIdToRegion(id) : "schengen"} mode="links" />
+          </div>
+        ))}
       </section>
       <section className="mx-auto max-w-6xl px-5 pb-16">
-        <Link href="/kayit" className="btn">
+        <StartApplicationLink className="btn">
           {t(locale, "Dosya açın", "Open a file")}
-        </Link>
+        </StartApplicationLink>
       </section>
     </MarketingShell>
   );

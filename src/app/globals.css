@@ -25,6 +25,11 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: clip;
+}
+
+body {
+  overflow-x: clip;
 }
 
 h1,
@@ -57,6 +62,11 @@ body {
 
 .btn:hover {
   background: var(--color-navy-hover);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 .btn-sm {
@@ -133,6 +143,119 @@ html[lang="zh"] body {
   font-family: var(--font-zh), var(--font-sans), system-ui, sans-serif;
 }
 
+@media (max-width: 639px) {
+  .btn-lg {
+    width: 100%;
+    min-height: 2.85rem;
+    padding: 0.8rem 1.15rem;
+  }
+
+  .btn-header {
+    min-width: 0;
+    height: 2rem;
+    padding: 0 0.7rem;
+  }
+
+  .header-chip {
+    min-width: 2.85rem;
+    height: 2rem;
+    padding: 0 1.4rem 0 0.5rem;
+    font-size: 0.7rem;
+    background-position: right 0.42rem center;
+  }
+
+  .schengen-chips {
+    width: 100%;
+    max-width: 100%;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x;
+  }
+
+  .schengen-slider {
+    height: 12px;
+  }
+
+  .schengen-slider::-webkit-slider-thumb {
+    width: 28px;
+    height: 28px;
+  }
+
+  .schengen-slider::-moz-range-thumb {
+    width: 28px;
+    height: 28px;
+  }
+
+  .travel-date {
+    min-height: 2.75rem;
+    font-size: 16px;
+  }
+}
+
 ::selection {
   background: #ead9a8;
+}
+
+.schengen-chips {
+  scrollbar-width: none;
+}
+
+.schengen-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.schengen-slider {
+  appearance: none;
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--color-line);
+  cursor: pointer;
+}
+
+.schengen-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: var(--color-navy);
+  border: 2px solid var(--color-gold);
+  cursor: pointer;
+}
+
+.schengen-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 9999px;
+  background: var(--color-navy);
+  border: 2px solid var(--color-gold);
+  cursor: pointer;
+}
+
+.schengen-slider::-webkit-slider-runnable-track {
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--color-line);
+}
+
+.schengen-slider::-moz-range-track {
+  height: 8px;
+  border-radius: 9999px;
+  background: var(--color-line);
+}
+
+.travel-date {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  color-scheme: light;
+}
+
+.travel-date::-webkit-date-and-time-value {
+  text-align: left;
+}
+
+.travel-date::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  opacity: 1;
 }

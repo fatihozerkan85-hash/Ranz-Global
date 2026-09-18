@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
-import { addStaffAdvisor, getStaffUsers, setStaffPassword, subscribeStore } from "@/lib/store";
+import { addStaffAdvisor, deleteStaffAdvisor, getStaffUsers, setStaffPassword, subscribeStore } from "@/lib/store";
 import type { User } from "@/lib/types";
 
 export default function AdvisorsAdminPage() {
@@ -28,7 +28,15 @@ export default function AdvisorsAdminPage() {
     const lastName = String(data.get("lastName") || "");
     const email = String(data.get("email") || "");
     const password = String(data.get("password") || "");
-    const result = addStaffAdvisor({ firstName, lastName, email, password });
+    const title = String(data.get("title") || "");
+    const result = addStaffAdvisor({
+      firstName,
+      lastName,
+      email,
+      password,
+      titleTr: title,
+      titleEn: title,
+    });
     if (!result.user) {
       setError(result.error ?? t(locale, "Danışman eklenemedi.", "Could not add advisor."));
       setCreated(null);
@@ -94,6 +102,14 @@ export default function AdvisorsAdminPage() {
           />
         </label>
         <label className="block text-sm md:col-span-2">
+          {t(locale, "Unvan (ör. İngiltere & Kanada Vize Uzmanı)", "Title (e.g. UK & Canada visa specialist)")}
+          <input
+            name="title"
+            autoComplete="off"
+            className="mt-1 w-full rounded-lg border border-line bg-cream px-3 py-2.5 outline-none focus:border-gold"
+          />
+        </label>
+        <label className="block text-sm md:col-span-2">
           {t(locale, "Giriş e-postası (isteğe bağlı)", "Login email (optional)")}
           <input
             name="email"
@@ -137,13 +153,31 @@ export default function AdvisorsAdminPage() {
                 <p className="font-medium">{person.name}</p>
                 <p className="mt-1 text-xs text-muted">{person.email}</p>
               </div>
-              <button
-                type="button"
-                className="text-xs text-gold-deep"
-                onClick={() => setResetId((id) => (id === person.id ? null : person.id))}
-              >
-                {t(locale, "Şifreyi değiştir", "Change password")}
-              </button>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  className="text-xs text-gold-deep"
+                  onClick={() => setResetId((id) => (id === person.id ? null : person.id))}
+                >
+                  {t(locale, "Şifreyi değiştir", "Change password")}
+                </button>
+                <button
+                  type="button"
+                  className="text-xs text-[#8a3b24]"
+                  onClick={() => {
+                    if (
+                      window.confirm(
+                        t(locale, "Bu danışmanı silmek istiyor musunuz?", "Delete this advisor?"),
+                      )
+                    ) {
+                      const err = deleteStaffAdvisor(person.id);
+                      if (err) setError(err);
+                    }
+                  }}
+                >
+                  {t(locale, "Sil", "Delete")}
+                </button>
+              </div>
             </div>
             {resetId === person.id && (
               <form className="mt-3 flex flex-wrap gap-2" onSubmit={(e) => onResetPassword(e, person.id)}>

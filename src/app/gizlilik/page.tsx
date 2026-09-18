@@ -1,10 +1,9 @@
-import type { Metadata } from "next";
-import { SITE } from "@/lib/cms";
+import { publicMeta } from "@/lib/seo-meta";
 
-export const metadata: Metadata = {
+export const metadata = publicMeta({
   title: "Gizlilik",
   description: "Ranz Global gizlilik politikası.",
-  alternates: { canonical: `${SITE.url}/gizlilik` },
-};
+  path: "/gizlilik",
+});
 
 export { default } from "./view";

@@ -6,7 +6,17 @@ const appTone: Record<AppStatus, string> = {
   missing: "bg-[#f3ead6] text-gold-deep",
   review: "bg-[#e8eef6] text-ink",
   revision: "bg-[#f6e4dc] text-[#8a3b24]",
+  ready: "bg-[#e8eef6] text-ink",
   complete: "bg-[#e4efe6] text-[#215c38]",
+};
+
+export const QUEUE_CARD_TONE: Record<AppStatus, string> = {
+  draft: "border-line bg-[#f3f0e8]",
+  missing: "border-[#e4d4a8] bg-[#f3ead6]",
+  review: "border-[#c5d4e8] bg-[#e8eef6]",
+  revision: "border-[#e8c4b4] bg-[#f6e4dc]",
+  ready: "border-[#c5d4e8] bg-[#eef3f8]",
+  complete: "border-[#b7d4bc] bg-[#e4efe6]",
 };
 
 const docTone: Record<DocStatus, string> = {

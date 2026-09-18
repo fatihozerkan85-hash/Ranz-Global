@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { SITE } from "@/lib/cms";
+import { publicMeta } from "@/lib/seo-meta";
+import { BreadcrumbJsonLd, ServiceJsonLd } from "@/components/json-ld";
 import { SERVICES, serviceBySlug } from "@/lib/services";
 import { ServiceView } from "./view";
 
@@ -12,16 +13,36 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const s = serviceBySlug(slug);
   if (!s) return { title: "Hizmet" };
-  return {
+  const desc = `${s.titleTr} — ${s.visaTr}. ${s.fee ? `Danışmanlık ücreti ${s.fee}.` : ""} Konsolosluk harcı ayrıdır. Ranz Global vize onayı garantisi vermez.`;
+  return publicMeta({
     title: s.titleTr,
-    description: `${s.titleTr} — ${s.visaTr}. ${s.fee ? `Danışmanlık ücreti ${s.fee}.` : ""} Ranz Global vize danışmanlığı.`,
-    alternates: { canonical: `${SITE.url}/hizmet/${s.slug}` },
-  };
+    description: desc.slice(0, 155),
+    path: `/hizmet/${s.slug}`,
+  });
 }
 
-export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ServicePage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ ulke?: string }>;
+}) {
   const { slug } = await params;
+  const { ulke } = await searchParams;
   const service = serviceBySlug(slug);
   if (!service) notFound();
-  return <ServiceView slug={slug} />;
+  return (
+    <>
+      <ServiceJsonLd service={service} />
+      <BreadcrumbJsonLd
+        items={[
+          { name: "Ranz Global", path: "" },
+          { name: "Hizmetler", path: "/hizmetler" },
+          { name: service.titleTr, path: `/hizmet/${service.slug}` },
+        ]}
+      />
+      <ServiceView slug={slug} ulke={ulke} />
+    </>
+  );
 }

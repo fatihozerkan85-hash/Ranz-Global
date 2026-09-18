@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 480" role="img" aria-label="Asya">
+  <rect width="640" height="480" fill="#0f2744"/>
+  <g transform="translate(320 240)" fill="#c4a056">
+    <polygon points="0,-198 26,-70 -26,-70"/>
+    <polygon points="0,-198 26,-70 -26,-70" transform="rotate(45)"/>
+    <polygon points="0,-198 26,-70 -26,-70" transform="rotate(90)"/>
+    <polygon points="0,-198 26,-70 -26,-70" transform="rotate(135)"/>
+    <polygon points="0,-198 26,-70 -26,-70" transform="rotate(180)"/>
+    <polygon points="0,-198 26,-70 -26,-70" transform="rotate(225)"/>
+    <polygon points="0,-198 26,-70 -26,-70" transform="rotate(270)"/>
+    <polygon points="0,-198 26,-70 -26,-70" transform="rotate(315)"/>
+    <circle r="78" fill="#d4b36a"/>
+    <circle r="62" fill="#c4a056"/>
+  </g>
+</svg>

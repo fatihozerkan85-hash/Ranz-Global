@@ -1,10 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { MarketingShell, PageHero } from "@/components/marketing-shell";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { DISCLAIMER_EN, DISCLAIMER_TR } from "@/lib/faq";
+import { StartApplicationLink } from "@/components/start-application-link";
 
 const TEAM = [
   { name: "Berat", roleTr: "Müşteri İlişkileri", roleEn: "Client relations" },
@@ -21,8 +21,8 @@ export default function AboutView() {
         title={t(locale, "Ranz Global Hakkında", "About Ranz Global")}
         lead={t(
           locale,
-          "Dijital vize yönetim platformu ve uzman danışmanlık. Türkiye ve KKTC genelinde.",
-          "A digital visa management platform plus specialist consultancy, across Türkiye and the TRNC.",
+          "Türkiye ve KKTC genelinde dijital altyapımız ve uzman danışmanlarımızla hizmet veriyoruz.",
+          "We serve across Türkiye and the TRNC through our digital platform and specialist advisors.",
         )}
       />
       <section className="mx-auto max-w-6xl space-y-12 px-5 py-14">
@@ -31,8 +31,8 @@ export default function AboutView() {
           <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft">
             {t(
               locale,
-              "Ranz Global, vize dosyasını WhatsApp yığınından çıkarıp tek bir panele alan özel bir danışmanlık ekibidir. Konsolosluk, VFS veya devlet kurumu değiliz.",
-              "Ranz Global is a private team that moves the visa file out of a WhatsApp pile into one portal. We are not a consulate, VAC or government office.",
+              "Ranz Global, geleneksel vize danışmanlığını dijital altyapı ile birleştiren yeni nesil bir vize yönetim platformudur. Konsolosluk, VFS veya devlet kurumu değiliz.",
+              "Ranz Global is a next-generation visa management platform that combines traditional visa consultancy with digital infrastructure. We are not a consulate, VAC or government office.",
             )}
           </p>
         </div>
@@ -61,8 +61,8 @@ export default function AboutView() {
           <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft">
             {t(
               locale,
-              "Ülkenizi seçin, ön değerlendirme yapın, ücreti görün, hesabınız açılsın, evrak listesi gelsin, belgelerinizi işaretleyin, danışman kontrol etsin, süreci panelden izleyin. Dijital altyapımız sayesinde Türkiye ve KKTC genelinde vize danışmanlığı sağlıyoruz. Sahte bir fiziki ofis adresi kullanmıyoruz.",
-              "Choose a country, run a short assessment, see the fee, open an account, receive a list, mark documents, get advisor review, track the file. We advise across Türkiye and the TRNC through a digital setup. We do not invent a fake office address.",
+              "Ülkenizi seçin, ön değerlendirme yapın, ücreti görün, hesabınız açılsın, evrak listesi gelsin, belgelerinizi işaretleyin, danışman kontrol etsin, süreci panelden izleyin. Dijital altyapımız sayesinde Türkiye ve KKTC genelinde vize danışmanlığı sağlıyoruz.",
+              "Choose a country, run a short assessment, see the fee, open an account, receive a list, mark documents, get advisor review, track the file. We advise across Türkiye and the TRNC through a digital setup.",
             )}
           </p>
         </div>
@@ -78,9 +78,9 @@ export default function AboutView() {
           </div>
         </div>
         <p className="max-w-2xl text-xs leading-5 text-muted">{t(locale, DISCLAIMER_TR, DISCLAIMER_EN)}</p>
-        <Link href="/kayit" className="btn">
+        <StartApplicationLink className="btn">
           {t(locale, "Vize Başvurumu Başlat", "Start My Visa Application")}
-        </Link>
+        </StartApplicationLink>
       </section>
     </MarketingShell>
   );

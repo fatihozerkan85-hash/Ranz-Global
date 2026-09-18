@@ -5,7 +5,10 @@ import type { Locale } from "@/lib/types";
 import { whatsappHref } from "@/lib/contact";
 import { t } from "@/lib/i18n";
 import { CountryFlag } from "@/components/country-flag";
+import { RegionCountryScroller } from "@/components/region-country-scroller";
 import { HOME_DEST_SLUGS, SERVICES } from "@/lib/services";
+import { REGION_META, regionByCode, slugToRegion, type RegionId } from "@/lib/region-countries";
+import { trackEngagement } from "@/lib/seo-store";
 
 function WhatsAppGlyph({ className }: { className?: string }) {
   return (
@@ -35,12 +38,13 @@ export function WhatsAppHeaderButton({ locale }: { locale: Locale }) {
 
 export function WhatsAppFloat({ locale }: { locale: Locale }) {
   const [open, setOpen] = useState(false);
+  const [openRegion, setOpenRegion] = useState<RegionId | null>(null);
   const countries = SERVICES.filter((s) => HOME_DEST_SLUGS.includes(s.slug));
 
   return (
-    <div className="fixed bottom-5 right-4 z-50 flex max-w-[min(100%-2rem,20rem)] flex-col items-end gap-2">
+    <div className="fixed bottom-5 right-4 z-50 flex max-w-[min(100%-2rem,22rem)] flex-col items-end gap-2">
       {open && (
-        <div className="w-full rounded-2xl border border-line bg-paper p-4 shadow-[0_16px_40px_-20px_rgba(12,26,42,0.45)]">
+        <div className="max-h-[min(70vh,34rem)] w-full overflow-y-auto rounded-2xl border border-line bg-paper p-4 shadow-[0_16px_40px_-20px_rgba(12,26,42,0.45)]">
           <p className="text-sm leading-6 text-ink-soft">
             {t(
               locale,
@@ -49,30 +53,68 @@ export function WhatsAppFloat({ locale }: { locale: Locale }) {
             )}
           </p>
           <div className="mt-3 grid gap-2">
-            {countries.slice(0, 4).map((s) => (
-              <a
-                key={s.slug}
-                href={whatsappHref(locale, t(locale, `Ülke: ${s.titleTr}`, `Country: ${s.titleEn}`))}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 rounded-xl border border-line px-3 py-2 text-sm hover:border-gold"
-              >
-                <CountryFlag code={s.flag} title={t(locale, s.titleTr, s.titleEn)} />
-                {t(locale, s.titleTr, s.titleEn)}
-              </a>
-            ))}
+            {countries.map((s) => {
+              const region = slugToRegion(s.slug);
+              if (region && (s.slug === "schengen" || s.slug === "asya" || s.slug === "afrika")) {
+                return (
+                  <button
+                    key={s.slug}
+                    type="button"
+                    onClick={() => setOpenRegion((v) => (v === region ? null : region))}
+                    className="flex items-center gap-2 rounded-xl border border-line px-3 py-2 text-left text-sm hover:border-gold"
+                  >
+                    <CountryFlag code={s.flag} title={t(locale, s.titleTr, s.titleEn)} />
+                    {t(locale, s.titleTr, s.titleEn)}
+                  </button>
+                );
+              }
+              return (
+                <a
+                  key={s.slug}
+                  href={whatsappHref(locale, t(locale, `Ülke: ${s.titleTr}`, `Country: ${s.titleEn}`))}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 rounded-xl border border-line px-3 py-2 text-sm hover:border-gold"
+                >
+                  <CountryFlag code={s.flag} title={t(locale, s.titleTr, s.titleEn)} />
+                  {t(locale, s.titleTr, s.titleEn)}
+                </a>
+              );
+            })}
           </div>
+          {openRegion && (
+            <div className="mt-3">
+              <RegionCountryScroller
+                region={openRegion}
+                mode="select"
+                onChange={(code) => {
+                  const country = regionByCode(openRegion, code);
+                  if (!country) return;
+                  const meta = REGION_META[openRegion];
+                  window.open(
+                    whatsappHref(
+                      locale,
+                      t(locale, `Ülke: ${country.tr} (${meta.labelTr})`, `Country: ${country.en} (${meta.labelEn})`),
+                    ),
+                    "_blank",
+                    "noopener,noreferrer",
+                  );
+                  trackEngagement("whatsapp", window.location.pathname);
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex items-center gap-2 rounded-full bg-[#25D366] py-3 pl-3 pr-4 text-left text-white shadow-[0_12px_30px_-8px_rgba(37,211,102,0.7)] transition hover:brightness-95"
+        className="flex items-center gap-2 rounded-full bg-[#25D366] py-3 pl-3 pr-3 text-left text-white shadow-[0_12px_30px_-8px_rgba(37,211,102,0.7)] transition hover:brightness-95 sm:pr-4"
         aria-expanded={open}
         aria-label={t(locale, "WhatsApp’tan vize uzmanına sor", "Ask a visa advisor on WhatsApp")}
       >
         <WhatsAppGlyph className="h-7 w-7 shrink-0" />
-        <span className="pr-1 text-sm font-medium leading-tight">
+        <span className="hidden pr-1 text-sm font-medium leading-tight sm:inline">
           {t(locale, "WhatsApp’tan vize uzmanına sor", "Ask on WhatsApp")}
         </span>
       </button>

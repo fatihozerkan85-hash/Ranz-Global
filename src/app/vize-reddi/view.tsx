@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
 import { MarketingShell, PageHero } from "@/components/marketing-shell";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
+import { StartApplicationLink } from "@/components/start-application-link";
+import { RefusalReviewForm } from "@/components/refusal-review-form";
 
 const POINTS = [
   { tr: "Ret gerekçesinin incelenmesi", en: "Reading the refusal grounds" },
@@ -36,13 +37,13 @@ export default function RefusalView() {
             </li>
           ))}
         </ul>
-        <div className="mt-10 flex flex-wrap gap-3">
-          <Link href="/#iletisim" className="btn btn-lg">
-            {t(locale, "Ret Dosyamı Değerlendir", "Review My Refusal File")}
-          </Link>
-          <Link href="/kayit" className="btn btn-lg btn-line">
-            {t(locale, "Vize Başvurumu Başlat", "Start My Visa Application")}
-          </Link>
+        <div className="mt-10">
+          <RefusalReviewForm source="/vize-reddi" />
+          <div className="mt-3">
+            <StartApplicationLink className="btn btn-lg btn-line">
+              {t(locale, "Vize Başvurumu Başlat", "Start My Visa Application")}
+            </StartApplicationLink>
+          </div>
         </div>
       </section>
     </MarketingShell>

@@ -12,11 +12,11 @@ export type FileStage = {
 export function fileStages(app: Application, locale: Locale): FileStage[] {
   const required = app.documents.filter((d) => d.required);
   const paid = app.paidTry > 0;
-  const uploaded = required.length > 0 && required.every((d) => d.status !== "empty");
+  const uploaded = Boolean(app.submittedAt) || (required.length > 0 && required.every((d) => d.status !== "empty"));
   const anyRejected = required.some((d) => d.status === "rejected");
-  const anyPendingReview = required.some((d) => d.status === "uploaded");
+  const anyPendingReview = Boolean(app.submittedAt) && required.some((d) => d.status === "uploaded");
   const allApproved = required.length > 0 && required.every((d) => d.status === "approved");
-  const complete = app.status === "complete";
+  const complete = app.status === "complete" || app.status === "ready";
 
   const doneFlags = [
     paid,

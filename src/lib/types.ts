@@ -1,7 +1,7 @@
 export type Role = "client" | "staff" | "admin";
 export type Locale = "tr" | "en" | "ar" | "zh" | "ru" | "de" | "fr" | "es";
-export type VisaCountry = "schengen" | "usa" | "uae" | "china" | "russia" | "uk" | "canada";
-export type AppStatus = "draft" | "missing" | "review" | "revision" | "complete";
+export type VisaCountry = "schengen" | "asia" | "africa" | "usa" | "uae" | "china" | "russia" | "uk" | "canada";
+export type AppStatus = "draft" | "missing" | "review" | "revision" | "ready" | "complete";
 export type DocStatus = "empty" | "uploaded" | "approved" | "rejected";
 
 export type User = {
@@ -10,6 +10,22 @@ export type User = {
   email: string;
   role: Role;
   password?: string;
+  phone?: string;
+  titleTr?: string;
+  titleEn?: string;
+};
+
+export type FileAppointment = {
+  date: string;
+  time: string;
+  cityTr: string;
+  cityEn: string;
+  venueTr: string;
+  venueEn: string;
+  bringTr: string;
+  bringEn: string;
+  mapsUrl?: string;
+  docUrl?: string;
 };
 
 export type DocumentItem = {
@@ -49,6 +65,9 @@ export type Application = {
   assignedTo: string;
   documents: DocumentItem[];
   timeline: TimelineItem[];
+  submittedAt?: string;
+  reviewedAt?: string;
+  appointment?: FileAppointment;
 };
 
 export type AppointmentRequest = {
@@ -64,6 +83,19 @@ export type AppointmentRequest = {
   locale: Locale;
   createdAt: string;
   status: "new" | "done";
+};
+
+export type RefusalFile = {
+  id: string;
+  name: string;
+  email: string;
+  country: string;
+  year: string;
+  article: string;
+  locale: Locale;
+  createdAt: string;
+  status: "new" | "assigned";
+  assignedTo: string;
 };
 
 export type CmsPage = {
@@ -160,6 +192,7 @@ export type HomeContent = {
   cityEn: string;
   footerNoteTr: string;
   footerNoteEn: string;
+  updatedAt?: string;
 };
 
 export type VisaType = {

@@ -15,10 +15,12 @@ export function AdminFeeField({
   appId,
   feeTry,
   locale,
+  disabled = false,
 }: {
   appId: string;
   feeTry: number;
   locale: Locale;
+  disabled?: boolean;
 }) {
   const [value, setValue] = useState(String(feeTry));
 
@@ -27,6 +29,7 @@ export function AdminFeeField({
   }, [feeTry]);
 
   const save = () => {
+    if (disabled) return;
     const next = parseTry(value);
     if (next === null) {
       setValue(String(feeTry));
@@ -47,6 +50,7 @@ export function AdminFeeField({
           type="text"
           inputMode="numeric"
           value={value}
+          disabled={disabled}
           onChange={(e) => setValue(e.target.value)}
           onBlur={save}
           onKeyDown={(e) => {
@@ -55,9 +59,9 @@ export function AdminFeeField({
               save();
             }
           }}
-          className="w-full rounded-lg border border-line bg-cream px-3 py-2 text-sm text-ink"
+          className="w-full rounded-lg border border-line bg-cream px-3 py-2 text-sm text-ink disabled:cursor-not-allowed disabled:opacity-60"
         />
-        <button type="button" className="btn btn-sm shrink-0" onClick={save}>
+        <button type="button" className="btn btn-sm shrink-0" onClick={save} disabled={disabled}>
           {t(locale, "Kaydet", "Save")}
         </button>
       </span>

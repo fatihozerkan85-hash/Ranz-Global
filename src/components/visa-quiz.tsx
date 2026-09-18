@@ -2,10 +2,15 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
+import { useAuth } from "@/lib/auth";
+import { isPublicSessionUser, createApplication } from "@/lib/store";
 import { HOME_DEST_SLUGS, serviceBySlug, SERVICES, type ServiceSlug } from "@/lib/services";
 import { CountryFlag } from "@/components/country-flag";
+import { RegionCountryScroller } from "@/components/region-country-scroller";
+import { regionByCode, regionServiceHref, slugToRegion } from "@/lib/region-countries";
 
 const PURPOSE = [
   { id: "tourist", tr: "Turistik", en: "Tourism" },
@@ -23,6 +28,7 @@ const WORK = [
 
 type Answers = {
   country?: ServiceSlug;
+  memberCode?: string;
   purpose?: string;
   when?: string;
   work?: string;
@@ -32,11 +38,16 @@ type Answers = {
 
 export function VisaQuiz() {
   const { locale } = useLocale();
+  const { user } = useAuth();
+  const router = useRouter();
   const [step, setStep] = useState(0);
   const [answers, setAnswers] = useState<Answers>({});
+  const signedIn = isPublicSessionUser(user);
 
   const quizCountries = SERVICES.filter((s) => HOME_DEST_SLUGS.includes(s.slug));
   const service = answers.country ? serviceBySlug(answers.country) : undefined;
+  const quizRegion = answers.country ? slugToRegion(answers.country) : undefined;
+  const pickedCountry = quizRegion ? regionByCode(quizRegion, answers.memberCode) : undefined;
 
   const questions = useMemo(
     () => [
@@ -115,9 +126,16 @@ export function VisaQuiz() {
                 <button
                   key={opt.id}
                   type="button"
-                  className="btn btn-line"
+                  className="btn btn-line max-w-full"
                   onClick={() => {
-                    setAnswers((a) => ({ ...a, [current.key]: opt.id }));
+                    setAnswers((a) => ({
+                      ...a,
+                      [current.key]: opt.id,
+                      ...(current.key === "country" ? { memberCode: undefined } : {}),
+                    }));
+                    if (current.key === "country" && slugToRegion(opt.id) && (opt.id === "schengen" || opt.id === "asya" || opt.id === "afrika")) {
+                      return;
+                    }
                     setStep((s) => s + 1);
                   }}
                 >
@@ -126,6 +144,18 @@ export function VisaQuiz() {
                 </button>
               ))}
             </div>
+            {current.key === "country" && quizRegion && answers.country && (answers.country === "schengen" || answers.country === "asya" || answers.country === "afrika") && (
+              <div className="mt-6">
+                <RegionCountryScroller
+                  region={quizRegion}
+                  value={answers.memberCode}
+                  onChange={(code) => {
+                    setAnswers((a) => ({ ...a, memberCode: code }));
+                    setStep((s) => s + 1);
+                  }}
+                />
+              </div>
+            )}
           </div>
         )}
 
@@ -134,8 +164,8 @@ export function VisaQuiz() {
             <h3 className="font-serif text-2xl leading-snug">
               {t(
                 locale,
-                `${service.titleTr.replace(" Vizesi", "")} ${service.visaTr} başvurusu sizin için uygun görünüyor.`,
-                `${service.visaEn} looks like a fit for your trip.`,
+                `${pickedCountry?.tr ?? service.titleTr.replace(" Vizesi", "")} ${service.visaTr} başvurusu sizin için uygun görünüyor.`,
+                `${pickedCountry?.en ?? service.visaEn} looks like a fit for your trip.`,
               )}
             </h3>
             <p className="mt-4 text-sm leading-7 text-ink-soft">
@@ -155,10 +185,44 @@ export function VisaQuiz() {
               </p>
             )}
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href={`/kayit?hizmet=${service.slug}`} className="btn btn-lg">
-                {t(locale, "Başvurumu başlat", "Start my application")}
-              </Link>
-              <Link href={`/hizmet/${service.slug}`} className="btn btn-lg btn-line">
+              {signedIn && user?.role === "client" ? (
+                <button
+                  type="button"
+                  className="btn btn-lg"
+                  onClick={() => {
+                    const app = createApplication(user.id, service.destId, answers.memberCode);
+                    if (app) router.push(`/panel/basvuru/${app.id}`);
+                  }}
+                >
+                  {t(locale, "Başvurumu başlat", "Start my application")}
+                </button>
+              ) : (
+                <a
+                  href="/#iletisim"
+                  className="btn btn-lg"
+                  onClick={() => {
+                    try {
+                      sessionStorage.setItem(
+                        "ranz-quiz-lead",
+                        JSON.stringify({ region: answers.country, memberCode: answers.memberCode ?? "" }),
+                      );
+                      window.dispatchEvent(new Event("ranz-quiz-lead"));
+                    } catch {
+                      /* ignore */
+                    }
+                  }}
+                >
+                  {t(locale, "Başvurumu değerlendir", "Have us review my application")}
+                </a>
+              )}
+              <Link
+                href={
+                  quizRegion && answers.memberCode
+                    ? regionServiceHref(quizRegion, answers.memberCode)
+                    : `/hizmet/${service.slug}`
+                }
+                className="btn btn-lg btn-line"
+              >
                 {t(locale, "Hizmet sayfası", "Service page")}
               </Link>
               <button type="button" className="text-sm text-gold-deep" onClick={() => { setStep(0); setAnswers({}); }}>

@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { DocumentRow } from "@/components/document-row";
+import { AdvisorCard, FileScore } from "@/components/client-hub";
+import { DocumentStatusCard } from "@/components/document-status-card";
 import { FilePipeline } from "@/components/file-pipeline";
-import { UPLOAD_NOTICE_EN, UPLOAD_NOTICE_TR } from "@/lib/faq";
 import { StatusBadge } from "@/components/badges";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
-import { getApplication, nextAction, progressOf, subscribeStore, uploadDocument } from "@/lib/store";
+import { getApplication, getUserById, nextAction, progressOf, subscribeStore, submitDocuments, uploadDocument } from "@/lib/store";
 import { uploadEvrakFile } from "@/lib/upload-evrak";
 import type { Application } from "@/lib/types";
 
@@ -16,6 +16,8 @@ export default function ApplicationPage() {
   const params = useParams<{ id: string }>();
   const { locale } = useLocale();
   const [app, setApp] = useState<Application | undefined>();
+  const [sentMessage, setSentMessage] = useState<string | null>(null);
+  const [sentError, setSentError] = useState<string | null>(null);
 
   useEffect(() => {
     const load = () => setApp(getApplication(params.id));
@@ -28,41 +30,36 @@ export default function ApplicationPage() {
   }
 
   const p = progressOf(app);
-  const pct = p.total ? Math.round((p.done / p.total) * 100) : 0;
+  const advisor = getUserById(app.assignedTo);
+  const ready = app.documents.some((d) => d.status !== "empty");
+  const send = () => {
+    setSentError(null);
+    const err = submitDocuments(app.id);
+    if (err) {
+      setSentError(err);
+      return;
+    }
+    setSentMessage(
+      t(locale, "Dosyanız değerlendirmeye başarıyla gönderilmiştir.", "Your file has been sent for review."),
+    );
+  };
 
   return (
     <div className="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
       <div>
         <p className="text-xs uppercase tracking-[0.22em] text-muted">{app.id}</p>
         <div className="mt-2 flex flex-wrap items-center gap-3">
-          <h1 className="font-serif text-4xl">
-            {t(locale, app.destinationTr, app.destinationEn)}
-          </h1>
+          <h1 className="font-serif text-4xl">{t(locale, app.destinationTr, app.destinationEn)}</h1>
           <StatusBadge status={app.status} locale={locale} />
         </div>
         <p className="mt-3 text-sm text-ink-soft">{nextAction(app, locale)}</p>
+        <p className="mt-2 text-sm">
+          {p.done}/{p.total} {t(locale, "zorunlu evrak işlendi", "required documents in progress")}
+        </p>
 
-        <div className="mt-6">
-          <div className="flex justify-between text-xs text-muted">
-            <span>{t(locale, "Zorunlu evrak", "Required documents")}</span>
-            <span>
-              {p.done}/{p.total}
-            </span>
-          </div>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-line">
-            <div className="h-full bg-gold" style={{ width: `${pct}%` }} />
-          </div>
-        </div>
-
-        <div className="mt-8 rounded-2xl border border-line bg-cream px-5 py-4 text-xs leading-5 text-ink-soft">
-          {t(locale, UPLOAD_NOTICE_TR, UPLOAD_NOTICE_EN)}{" "}
-          <a href="/kvkk" className="text-gold-deep">
-            KVKK
-          </a>
-        </div>
-        <div className="mt-4 rounded-2xl border border-line bg-paper px-5">
+        <div className="mt-8 space-y-3">
           {app.documents.map((doc) => (
-            <DocumentRow
+            <DocumentStatusCard
               key={doc.key}
               doc={doc}
               locale={locale}
@@ -76,26 +73,28 @@ export default function ApplicationPage() {
             />
           ))}
         </div>
+
+        <div className="mt-6 rounded-2xl border border-line bg-paper p-5">
+          <p className="text-sm text-ink-soft">
+            {t(locale, "Belgeleri yükledikten sonra gönderin; danışmanınız incelemeye alır.", "Send after uploading so your advisor can review.")}
+          </p>
+          <button type="button" className="btn mt-4" disabled={!ready} onClick={send}>
+            {t(locale, "Değerlendirmeye gönder", "Send for review")}
+          </button>
+          {sentError && <p className="mt-3 text-sm text-[#8a3b24]">{sentError}</p>}
+          {sentMessage && <p className="mt-3 text-sm text-[#215c38]">{sentMessage}</p>}
+        </div>
       </div>
 
       <aside className="space-y-4">
         <FilePipeline app={app} locale={locale} />
+        <FileScore app={app} locale={locale} />
+        <AdvisorCard app={app} advisor={advisor} locale={locale} />
         <div className="rounded-2xl border border-line bg-paper p-5">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted">
-            {t(locale, "Danışman notu", "Advisor note")}
-          </p>
-          <p className="mt-2 font-medium">{app.advisorName}</p>
-          <p className="mt-3 text-sm leading-6 text-ink-soft">
-            {t(locale, app.advisorNoteTr, app.advisorNoteEn)}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-line bg-paper p-5">
-          <p className="text-xs uppercase tracking-[0.2em] text-muted">
-            {t(locale, "Süreç", "Timeline")}
-          </p>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted">{t(locale, "Süreç", "Timeline")}</p>
           <ol className="mt-4 space-y-4">
             {app.timeline.map((item) => (
-              <li key={item.at} className="border-l border-gold pl-4">
+              <li key={`${item.at}-${item.titleTr}`} className="border-l border-gold pl-4">
                 <p className="text-xs text-muted">{item.at}</p>
                 <p className="text-sm font-medium">{t(locale, item.titleTr, item.titleEn)}</p>
                 <p className="mt-1 text-xs text-ink-soft">{t(locale, item.bodyTr, item.bodyEn)}</p>

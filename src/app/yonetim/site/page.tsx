@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { compressImage, slugify } from "@/lib/media";
@@ -217,7 +217,10 @@ export default function SiteContentPage() {
   const posts = usePosts(true);
   const media = useMedia();
   const [draftHome, setDraftHome] = useState<HomeContent | null>(null);
+  const [homeSaved, setHomeSaved] = useState<string | null>(null);
   const current = draftHome ?? home;
+  const currentRef = useRef(current);
+  currentRef.current = current;
 
   const tabs: { id: Tab; tr: string; en: string }[] = [
     { id: "home", tr: "Anasayfa", en: "Home" },
@@ -228,8 +231,19 @@ export default function SiteContentPage() {
   ];
 
   const patchHome = (patch: Partial<HomeContent>) => {
-    if (!current) return;
-    setDraftHome({ ...current, ...patch });
+    setHomeSaved(null);
+    setDraftHome((prev) => ({ ...(prev ?? home), ...patch }));
+  };
+
+  const persistHome = async () => {
+    const ok = saveHome(currentRef.current);
+    if (ok) {
+      setDraftHome(currentRef.current);
+      setHomeSaved(t(locale, "Anasayfa kaydedildi.", "Homepage saved."));
+      await import("@/lib/ops-client").then((mod) => mod.pushOpsNow());
+    } else {
+      setHomeSaved(t(locale, "Kayıt başarısız. Depolama dolu olabilir.", "Save failed. Storage may be full."));
+    }
   };
 
   const onUpload = async (e: FormEvent<HTMLFormElement>) => {
@@ -400,9 +414,12 @@ export default function SiteContentPage() {
           <p className="text-xs text-muted">
             {t(locale, "Galerideki görseller:", "Gallery images:")} {current.galleryIds.length}
           </p>
-          <button type="button" className="rounded-full bg-navy px-6 py-3 text-sm text-cream" onClick={() => saveHome(current)}>
-            {t(locale, "Anasayfayı kaydet", "Save homepage")}
-          </button>
+          <div className="flex flex-wrap items-center gap-3">
+            <button type="button" className="rounded-full bg-navy px-6 py-3 text-sm text-cream" onClick={persistHome}>
+              {t(locale, "Anasayfayı kaydet", "Save homepage")}
+            </button>
+            {homeSaved && <p className="text-sm text-[#215c38]">{homeSaved}</p>}
+          </div>
         </div>
       )}
 

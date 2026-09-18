@@ -1,39 +1,45 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
-import { useAuth } from "@/lib/auth";
+import { portalPath, useAuth } from "@/lib/auth";
+import { isPublicSessionUser } from "@/lib/store";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 
 export default function LoginPage() {
   const { locale } = useLocale();
-  const { login } = useAuth();
+  const { login, user, ready } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const onSubmit = (e: FormEvent) => {
+  useEffect(() => {
+    if (!ready || !isPublicSessionUser(user) || !user) return;
+    router.replace(portalPath(user));
+  }, [ready, user, router]);
+
+  const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    const { error: err, user: logged } = login(email, password);
+    const { error: err, user: logged } = await login(email, password);
     if (err || !logged) {
       setError(err);
       return;
     }
-    router.push(logged.role === "admin" ? "/yonetim/erp" : logged.role === "staff" ? "/danisman" : "/panel");
+    router.replace(portalPath(logged));
   };
 
   return (
     <div className="flex min-h-screen flex-col">
       <SiteHeader solid />
       <main className="flex flex-1 items-center justify-center px-5 py-16">
-        <div className="w-full max-w-md rounded-2xl border border-line bg-paper p-8">
-          <h1 className="font-serif text-3xl">{t(locale, "Giriş", "Sign in")}</h1>
+        <div className="w-full max-w-md rounded-2xl border border-line bg-paper p-5 sm:p-8">
+          <h1 className="font-serif text-3xl">{t(locale, "Müşteri paneli", "Client portal")}</h1>
           <p className="mt-2 text-sm text-muted">
-            {t(locale, "Dosyanıza ve evrak listenize ulaşın.", "Open your file and document list.")}
+            {t(locale, "Başvurunuzu yönetin ve sürecinizi takip edin.", "Manage your application and follow the process.")}
           </p>
           <form onSubmit={onSubmit} className="mt-8 space-y-4">
             <label className="block text-sm">
@@ -62,6 +68,11 @@ export default function LoginPage() {
             </button>
           </form>
           <p className="mt-4 text-sm">
+            <Link href="/sifre-unuttum" className="text-gold-deep">
+              {t(locale, "Şifremi unuttum", "Forgot password")}
+            </Link>
+          </p>
+          <p className="mt-2 text-sm">
             <Link href="/kayit" className="text-gold-deep">
               {t(locale, "Hesap oluştur", "Create an account")}
             </Link>

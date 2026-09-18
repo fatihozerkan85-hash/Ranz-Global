@@ -6,6 +6,8 @@ export type ServiceSlug =
   | "abd"
   | "kanada"
   | "schengen"
+  | "asya"
+  | "afrika"
   | "dubai"
   | "cin"
   | "rusya"
@@ -119,6 +121,28 @@ export const SERVICES: Service[] = [
     quizKey: "schengen",
   },
   {
+    slug: "asya",
+    flag: "asia",
+    titleTr: "Asya Vizesi",
+    titleEn: "Asia Visa",
+    visaTr: "Turistik / kısa konaklama",
+    visaEn: "Tourist / short stay",
+    fee: "",
+    destId: "asia",
+    quizKey: "asia",
+  },
+  {
+    slug: "afrika",
+    flag: "africa",
+    titleTr: "Afrika Vizesi",
+    titleEn: "Africa Visa",
+    visaTr: "Turistik / kısa konaklama",
+    visaEn: "Tourist / short stay",
+    fee: "",
+    destId: "africa",
+    quizKey: "africa",
+  },
+  {
     slug: "dubai",
     flag: "ae",
     titleTr: "BAE / Dubai Vizesi",
@@ -160,6 +184,8 @@ export const HOME_DEST_SLUGS: ServiceSlug[] = [
   "abd",
   "kanada",
   "schengen",
+  "asya",
+  "afrika",
   "dubai",
   "cin",
   "rusya",
@@ -252,8 +278,8 @@ export const WHY_POINTS = [
   {
     titleTr: "Türkiye ve KKTC danışmanlığı",
     titleEn: "Türkiye and TRNC consultancy",
-    bodyTr: "Başvuruyu Türkiye veya KKTC’den yürütenler için süreç buna göre kurulur.",
-    bodyEn: "The process is set up for applications from Türkiye or the TRNC.",
+    bodyTr: "Türkiye ve KKTC genelinde dijital altyapımız ve uzman danışmanlarımızla hizmet veriyoruz.",
+    bodyEn: "We serve across Türkiye and the TRNC through our digital platform and specialist advisors.",
   },
   {
     titleTr: "WhatsApp ve e-posta desteği",
@@ -287,6 +313,20 @@ const BASE_DOCS: Record<string, { tr: string; en: string }[]> = {
     { tr: "Biyometrik fotoğraf", en: "Biometric photo" },
     { tr: "Uçak ve otel rezervasyonu", en: "Flight and hotel booking" },
     { tr: "Seyahat sağlık sigortası", en: "Travel medical insurance" },
+    { tr: "Banka dökümü (son 3 ay)", en: "Bank statements (last 3 months)" },
+  ],
+  asia: [
+    { tr: "Pasaport (en az 6 ay)", en: "Passport (min. 6 months)" },
+    { tr: "Biyometrik fotoğraf", en: "Biometric photo" },
+    { tr: "Başvuru formu", en: "Application form" },
+    { tr: "Uçak ve otel rezervasyonu", en: "Flight and hotel booking" },
+    { tr: "Banka dökümü (son 3 ay)", en: "Bank statements (last 3 months)" },
+  ],
+  africa: [
+    { tr: "Pasaport (en az 6 ay)", en: "Passport (min. 6 months)" },
+    { tr: "Biyometrik fotoğraf", en: "Biometric photo" },
+    { tr: "Başvuru formu", en: "Application form" },
+    { tr: "Uçak ve otel rezervasyonu", en: "Flight and hotel booking" },
     { tr: "Banka dökümü (son 3 ay)", en: "Bank statements (last 3 months)" },
   ],
   uae: [

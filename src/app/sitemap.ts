@@ -3,6 +3,7 @@ import { DEFAULT_GUIDES, DEFAULT_POSTS, SITE } from "@/lib/cms";
 import { SERVICES } from "@/lib/services";
 
 export default function sitemap(): MetadataRoute.Sitemap {
+  const now = new Date();
   const staticPaths = [
     "",
     "/hizmetler",
@@ -10,6 +11,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/iletisim",
     "/randevu",
     "/vize-rehberi",
+    "/blog",
     "/vize-reddi",
     "/mesafeli-hizmet",
     "/cerez-politikasi",
@@ -23,7 +25,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
   return [...staticPaths, ...extra].map((path) => ({
     url: `${SITE.url}${path}`,
-    changeFrequency: "weekly" as const,
-    priority: path === "" ? 1 : path.startsWith("/hizmet/") ? 0.85 : 0.7,
+    lastModified: now,
+    changeFrequency: path === "" || path.startsWith("/hizmet/") ? "weekly" : "monthly",
+    priority: path === "" ? 1 : path.startsWith("/hizmet/") ? 0.85 : path.startsWith("/blog/") ? 0.6 : 0.7,
   }));
 }

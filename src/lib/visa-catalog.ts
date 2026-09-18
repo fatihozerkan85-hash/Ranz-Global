@@ -14,6 +14,18 @@ const schengenDocs: Docs = [
   { key: "invite", labelTr: "Davet mektubu", labelEn: "Invitation letter", required: false },
 ];
 
+const regionalTouristDocs: Docs = [
+  { key: "passport", labelTr: "Pasaport (en az 6 ay geçerli)", labelEn: "Passport (valid at least 6 months)", required: true },
+  { key: "photo", labelTr: "Biyometrik fotoğraf", labelEn: "Biometric photo", required: true },
+  { key: "form", labelTr: "Vize başvuru formu", labelEn: "Visa application form", required: true },
+  { key: "flight", labelTr: "Uçak rezervasyonu", labelEn: "Flight reservation", required: true },
+  { key: "hotel", labelTr: "Konaklama rezervasyonu", labelEn: "Hotel reservation", required: true },
+  { key: "bank", labelTr: "Banka hesap dökümü (son 3 ay)", labelEn: "Bank statements (last 3 months)", required: true },
+  { key: "work", labelTr: "İş / gelir belgesi", labelEn: "Employment or income proof", required: true },
+  { key: "insurance", labelTr: "Seyahat sağlık sigortası", labelEn: "Travel medical insurance", required: false },
+  { key: "invite", labelTr: "Davet mektubu", labelEn: "Invitation letter", required: false },
+];
+
 const usaDocs: Docs = [
   { key: "passport", labelTr: "Pasaport", labelEn: "Passport", required: true },
   { key: "ds160", labelTr: "DS-160 onay sayfası", labelEn: "DS-160 confirmation", required: true },
@@ -89,6 +101,26 @@ export const VISA_TYPES: VisaType[] = [
     titleHintEn: "Short stay in Europe, tourism and family visits",
     feeTry: 18500,
     documents: schengenDocs,
+  },
+  {
+    id: "asia",
+    family: "asia",
+    titleTr: "Asya ülkeleri",
+    titleEn: "Asian countries",
+    hintTr: "Türkiye pasaportu için vize gereken Asya destinasyonları",
+    titleHintEn: "Asian destinations that require a visa for Turkish passports",
+    feeTry: 0,
+    documents: regionalTouristDocs,
+  },
+  {
+    id: "africa",
+    family: "africa",
+    titleTr: "Afrika ülkeleri",
+    titleEn: "African countries",
+    hintTr: "Türkiye pasaportu için vize gereken Afrika destinasyonları",
+    titleHintEn: "African destinations that require a visa for Turkish passports",
+    feeTry: 0,
+    documents: regionalTouristDocs,
   },
   {
     id: "usa",
