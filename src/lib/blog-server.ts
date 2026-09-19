@@ -29,19 +29,50 @@ export async function listBlogPosts() {
 }
 
 export async function getBlogPost(slug: string) {
-  return (await listBlogPosts()).find((p) => p.slug === slug);
+  const post = (await listBlogPosts()).find((p) => p.slug === slug);
+  if (!post || post.status !== "published") return undefined;
+  return post;
 }
 
 export async function saveBlogPost(post: BlogPost) {
   const remote = await readRemote();
   const next = remote.filter((p) => p.slug !== post.slug);
   next.unshift(post);
-  await put(POSTS_PATH, JSON.stringify(next), {
+  await writeRemote(next);
+  return post;
+}
+
+async function writeRemote(posts: BlogPost[]) {
+  await put(POSTS_PATH, JSON.stringify(posts), {
     access: "private",
     addRandomSuffix: false,
     allowOverwrite: true,
     contentType: "application/json",
     cacheControlMaxAge: 0,
   });
-  return post;
+}
+
+export async function listRemoteBlogPosts() {
+  return readRemote();
+}
+
+export async function unpublishBlogPost(slug: string) {
+  const remote = await readRemote();
+  const next = remote.map((post) => (post.slug === slug ? { ...post, status: "draft" as const } : post));
+  await writeRemote(next);
+  return next.find((p) => p.slug === slug) ?? null;
+}
+
+export async function unpublishCreatedBlogPosts() {
+  const remote = await readRemote();
+  const next = remote.map((post) => ({ ...post, status: "draft" as const }));
+  await writeRemote(next);
+  return next;
+}
+
+export async function deleteBlogPost(slug: string) {
+  const remote = await readRemote();
+  const next = remote.filter((p) => p.slug !== slug);
+  await writeRemote(next);
+  return { ok: true };
 }

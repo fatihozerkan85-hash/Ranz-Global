@@ -1,7 +1,7 @@
 import type { BlogArticle } from "./blog-article";
 import { previewBody, slugifyTopic, wordCount } from "./blog-article";
 import type { Locale } from "./types";
-import { getGuide, getPage, getPost, saveGuide, savePage, savePost } from "./store";
+import { getGuide, getPage, getPost, saveGuide, savePage, savePost, deletePost } from "./store";
 
 const KEY = "ranz-seo-v2";
 const EVENT = "ranz-seo";
@@ -45,6 +45,7 @@ export type ContentJob = {
   createdAt: string;
   body: string;
   article?: BlogArticle;
+  slug?: string;
   source?: "gemini" | "ai" | "fallback";
 };
 
@@ -236,8 +237,50 @@ export function publishContent(id: string, href?: string) {
     status: "published",
   });
   job.status = "published";
+  job.slug = slug;
   write(store);
   return href || `/blog/${slug}`;
+}
+
+export function unpublishContent(id: string) {
+  const store = read();
+  const job = store.queue.find((j) => j.id === id);
+  if (!job) return;
+  const slug = job.slug || slugifyTopic(job.topic);
+  deletePost(slug);
+  job.status = job.article || job.body ? "draft" : "queued";
+  write(store);
+  return slug;
+}
+
+export function removeContentJob(id: string) {
+  const store = read();
+  const job = store.queue.find((j) => j.id === id);
+  const slug = job?.slug || (job ? slugifyTopic(job.topic) : "");
+  if (slug) deletePost(slug);
+  store.queue = store.queue.filter((j) => j.id !== id);
+  write(store);
+  return slug;
+}
+
+export function demoteMissingLivePosts(liveSlugs: string[]) {
+  const live = new Set(liveSlugs);
+  const store = read();
+  let changed = false;
+  for (const job of store.queue) {
+    if (job.status !== "published") continue;
+    const slug = job.slug || slugifyTopic(job.topic);
+    if (!live.has(slug)) {
+      deletePost(slug);
+      job.status = job.article || job.body ? "draft" : "queued";
+      changed = true;
+    }
+  }
+  if (changed) write(store);
+}
+
+export function jobSlug(job: { slug?: string; topic: string }) {
+  return job.slug || slugifyTopic(job.topic);
 }
 
 function clip(text: string, max: number) {

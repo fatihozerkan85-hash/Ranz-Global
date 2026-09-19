@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getBlogPost, listBlogPosts, saveBlogPost } from "@/lib/blog-server";
+import { getBlogPost, listBlogPosts, saveBlogPost, unpublishBlogPost, unpublishCreatedBlogPosts, deleteBlogPost } from "@/lib/blog-server";
 import { slugifyTopic, wordCount, type BlogArticle } from "@/lib/blog-article";
 import { writeBlogArticle, GEMINI_BLOG_MODEL } from "@/lib/write-blog";
 import type { BlogPost } from "@/lib/types";
@@ -75,6 +75,22 @@ export async function POST(request: Request) {
       const slug = slugifyTopic(String(body.slug || topic));
       const post = await saveBlogPost(toPost(article, slug));
       return noStore({ ok: true, href: `/blog/${post.slug}`, post });
+    }
+    if (action === "unpublish") {
+      const slug = slugifyTopic(String(body.slug || ""));
+      if (!slug) return noStore({ error: "Slug yok." }, 400);
+      await unpublishBlogPost(slug);
+      return noStore({ ok: true, slug });
+    }
+    if (action === "unpublish-all") {
+      await unpublishCreatedBlogPosts();
+      return noStore({ ok: true });
+    }
+    if (action === "delete") {
+      const slug = slugifyTopic(String(body.slug || ""));
+      if (!slug) return noStore({ error: "Slug yok." }, 400);
+      await deleteBlogPost(slug);
+      return noStore({ ok: true, slug });
     }
     return noStore({ error: "Geçersiz işlem." }, 400);
   } catch (error) {
