@@ -1,3 +1,5 @@
+import type { BlogArticle } from "./blog-article";
+import { previewBody, slugifyTopic, wordCount } from "./blog-article";
 import type { Locale } from "./types";
 import { getGuide, getPage, getPost, saveGuide, savePage, savePost } from "./store";
 
@@ -42,6 +44,8 @@ export type ContentJob = {
   words: number;
   createdAt: string;
   body: string;
+  article?: BlogArticle;
+  source?: "ai" | "fallback";
 };
 
 export type KeywordRow = {
@@ -196,99 +200,44 @@ export function addContentJob(topic: string, locale: Locale) {
   write(store);
 }
 
-export function draftContent(id: string) {
+export function setContentDraft(id: string, article: BlogArticle, source: "ai" | "fallback") {
   const store = read();
   const job = store.queue.find((j) => j.id === id);
   if (!job) return;
-  job.body = visaArticle(job.topic, job.locale);
-  job.words = job.body.split(/\s+/).filter(Boolean).length;
+  job.article = article;
+  job.source = source;
+  job.body = previewBody(article, job.locale);
+  job.words = wordCount(job.body);
   job.status = "draft";
   write(store);
 }
 
-function slugify(value: string) {
-  const map: Record<string, string> = { ç: "c", ğ: "g", ı: "i", ö: "o", ş: "s", ü: "u", â: "a" };
-  return value
-    .toLowerCase()
-    .split("")
-    .map((ch) => map[ch] ?? ch)
-    .join("")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "")
-    .slice(0, 72) || `yazi-${Date.now()}`;
-}
-
-function visaArticle(topic: string, locale: Locale) {
-  if (locale === "en") {
-    return [
-      `# ${topic}`,
-      ``,
-      `Ranz Global prepares a personal visa file around “${topic}”. We do not decide visas. Consulates and visa centres do.`,
-      ``,
-      `## What the file must show`,
-      `Officers read identity, travel purpose, funds and ties together. A template pack that ignores your job, family or sponsor usually creates revision notes.`,
-      `Start with a valid passport, a clear itinerary and proof of where you will stay. Add bank statements that match the trip length and your income story. If someone sponsors you, their identity and finances sit next to yours — they do not replace you as the applicant.`,
-      ``,
-      `## How we work`,
-      `You open a portal file. We set the checklist for the country and your profile (employee, owner, student, retired or sponsored). You upload PDFs and photos. An advisor marks gaps and contradictions before you use official appointment systems.`,
-      `Online forms such as DS-160 or UK visitor questions must match the papers. We help you keep that story consistent. We do not attend interviews in your place and we do not guarantee an outcome.`,
-      ``,
-      `## After a refusal`,
-      `A new application is often possible. Repeating the same weak file is not a plan. We read the refusal grounds and rebuild the pack. Approval still belongs to the authority.`,
-      ``,
-      `## Fees`,
-      `Ranz Global charges for consultancy. Embassy, VAC, biometrics, courier and translation fees are separate and shown before you proceed.`,
-      ``,
-      `## Next step`,
-      `Create an account, start a file for the destination, and upload the first required items. Questions can go through the panel or WhatsApp without promising a visa.`,
-    ].join("\n");
-  }
-  return [
-    `# ${topic}`,
-    ``,
-    `Ranz Global, “${topic}” başlığı etrafında kişiye özel dosya kurar. Vize kararını biz vermeyiz; karar konsolosluk veya yetkili merkeze aittir.`,
-    ``,
-    `## Dosyada ne durmalı`,
-    `Kimlik, seyahat amacı, mali tablo ve dönüş bağları birlikte okunur. Mesleğinizi, aileyi veya sponsoru yok sayan hazır paket çoğu zaman revizyon üretir.`,
-    `Geçerli pasaport, net güzergâh ve konaklama ile başlayın. Banka dökümü seyahat süresi ve gelir hikâyesiyle uyumlu olsun. Sponsor varsa kimliği ve mali belgesi sizin yanınızda durur; sizin yerinize başvuran olmaz.`,
-    ``,
-    `## Nasıl çalışırız`,
-    `Panelde dosya açılır. Ülke ve profilinize (çalışan, şirket sahibi, öğrenci, emekli, sponsorlu) göre madde listesi kurulur. PDF ve görselleri yüklersiniz. Danışman, resmi randevu sistemini kullanmadan önce çelişki ve eksiği işaretler.`,
-    `DS-160 veya İngiltere ziyaretçi soruları evrakla aynı hikâyeyi anlatmalıdır. Bunu tutarlı tutmanıza yardımcı oluruz. Mülakata sizin yerinize girmeyiz; sonuç garantisi vermeyiz.`,
-    ``,
-    `## Ret sonrası`,
-    `Yeniden başvuru çoğu ülkede mümkündür. Aynı zayıf dosyayı tekrar etmek plan değildir. Ret gerekçesini okuyup paketi yeniden kurarız. Onay yine resmi makama aittir.`,
-    ``,
-    `## Ücret`,
-    `Ranz Global danışmanlık ücreti alır. Konsolosluk, başvuru merkezi, biyometri, kurye ve çeviri ayrıdır; işlemden önce gösterilir.`,
-    ``,
-    `## Sonraki adım`,
-    `Hesap açın, ülke dosyasını başlatın ve zorunlu ilk evrakları yükleyin. Sorular panel veya WhatsApp üzerinden gider; vize sözü yoktur.`,
-  ].join("\n");
-}
-
-export function publishContent(id: string) {
+export function publishContent(id: string, href?: string) {
   const store = read();
   const job = store.queue.find((j) => j.id === id);
-  if (!job?.body) return "Önce taslak üretin.";
-  const slug = slugify(job.topic);
-  const excerpt = job.body.split("\n").map((l) => l.trim()).find((l) => l && !l.startsWith("#")) || job.topic;
+  if (!job?.article && !job?.body) return "Önce taslak üretin.";
+  const slug = slugifyTopic(job.topic);
+  const article = job.article;
+  const excerpt =
+    article?.excerptTr ||
+    job.body.split("\n").map((l) => l.trim()).find((l) => l && !l.startsWith("#")) ||
+    job.topic;
   savePost({
     slug,
-    titleTr: job.topic,
-    titleEn: job.topic,
+    titleTr: article?.titleTr || job.topic,
+    titleEn: article?.titleEn || job.topic,
     excerptTr: excerpt.slice(0, 160),
-    excerptEn: excerpt.slice(0, 160),
-    bodyTr: job.body,
-    bodyEn: job.body,
-    coverAltTr: job.topic,
-    coverAltEn: job.topic,
+    excerptEn: (article?.excerptEn || excerpt).slice(0, 160),
+    bodyTr: article?.bodyTr || job.body,
+    bodyEn: article?.bodyEn || job.body,
+    coverAltTr: article?.titleTr || job.topic,
+    coverAltEn: article?.titleEn || job.topic,
     publishedAt: new Date().toISOString().slice(0, 10),
     status: "published",
   });
   job.status = "published";
   write(store);
-  return `/blog/${slug}`;
+  return href || `/blog/${slug}`;
 }
 
 function clip(text: string, max: number) {

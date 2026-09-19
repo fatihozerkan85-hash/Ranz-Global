@@ -1,9 +1,11 @@
 import type { MetadataRoute } from "next";
-import { DEFAULT_GUIDES, DEFAULT_POSTS, SITE } from "@/lib/cms";
+import { DEFAULT_GUIDES, SITE } from "@/lib/cms";
 import { SERVICES } from "@/lib/services";
+import { listBlogPosts } from "@/lib/blog-server";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+  const posts = await listBlogPosts();
   const staticPaths = [
     "",
     "/hizmetler",
@@ -21,7 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   const extra = [
     ...SERVICES.map((s) => `/hizmet/${s.slug}`),
     ...DEFAULT_GUIDES.map((g) => `/vize-rehberi/${g.slug}`),
-    ...DEFAULT_POSTS.map((p) => `/blog/${p.slug}`),
+    ...posts.filter((p) => p.status === "published").map((p) => `/blog/${p.slug}`),
   ];
   return [...staticPaths, ...extra].map((path) => ({
     url: `${SITE.url}${path}`,

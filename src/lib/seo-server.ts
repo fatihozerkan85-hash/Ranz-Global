@@ -1,7 +1,8 @@
 import { get, put } from "@vercel/blob";
 import { AI_BOT_UA } from "./ai-bots";
-import { DEFAULT_GUIDES, DEFAULT_POSTS, SITE } from "./cms";
+import { DEFAULT_GUIDES, SITE } from "./cms";
 import { SERVICES } from "./services";
+import { listBlogPosts } from "./blog-server";
 import { auditHtml, issuesFromUrls } from "./seo-audit";
 import type { CrawlRun, EngagementEvent, SeoIssue, UptimeCheck } from "./seo-store";
 
@@ -11,7 +12,8 @@ const ENGAGE_TYPES = new Set(["whatsapp", "phone", "email", "form"]);
 
 export type SeoBotHit = { ua: string; path: string; at: string; tag: "ai" | "suspect" };
 
-export function crawlPaths() {
+export async function crawlPaths() {
+  const posts = await listBlogPosts();
   return [
     "/",
     "/hizmetler",
@@ -27,7 +29,7 @@ export function crawlPaths() {
     "/gizlilik",
     ...SERVICES.map((s) => `/hizmet/${s.slug}`),
     ...DEFAULT_GUIDES.map((g) => `/vize-rehberi/${g.slug}`),
-    ...DEFAULT_POSTS.map((p) => `/blog/${p.slug}`),
+    ...posts.filter((p) => p.status === "published").map((p) => `/blog/${p.slug}`),
   ];
 }
 
@@ -48,7 +50,7 @@ async function fetchPage(href: string) {
 export async function crawlSite(): Promise<{ run: CrawlRun; issues: SeoIssue[] }> {
   const origin = publicOrigin();
   const urls = [];
-  for (const path of crawlPaths()) {
+  for (const path of await crawlPaths()) {
     try {
       const { status, html } = await fetchPage(`${origin}${path}`);
       urls.push(auditHtml(path, status, html));

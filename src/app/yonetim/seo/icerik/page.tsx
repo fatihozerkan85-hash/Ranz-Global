@@ -4,13 +4,17 @@ import { FormEvent, useEffect, useState } from "react";
 import { SeoNav } from "@/components/seo-nav";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
-import { addContentJob, draftContent, getSeo, publishContent, subscribeSeo } from "@/lib/seo-store";
+import { addContentJob, getSeo, publishContent, setContentDraft, subscribeSeo } from "@/lib/seo-store";
+import type { BlogArticle } from "@/lib/blog-article";
 import type { SeoStore } from "@/lib/seo-store";
+import { ArticleBody } from "@/components/article-body";
 
 export default function ContentQueue() {
   const { locale } = useLocale();
   const [seo, setSeo] = useState<SeoStore | null>(null);
   const [published, setPublished] = useState<string | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     const load = () => setSeo(getSeo());
     load();
@@ -24,6 +28,49 @@ export default function ContentQueue() {
     e.currentTarget.reset();
   };
 
+  const draft = async (id: string, topic: string) => {
+    setBusyId(id);
+    setError(null);
+    try {
+      const res = await fetch("/api/seo/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "draft", topic, locale }),
+      });
+      const json = (await res.json()) as { article?: BlogArticle; source?: "ai" | "fallback"; error?: string };
+      if (!res.ok || !json.article) throw new Error(json.error || "Yazı üretilemedi.");
+      setContentDraft(id, json.article, json.source || "fallback");
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const publish = async (id: string, topic: string, article?: BlogArticle) => {
+    if (!article) {
+      setError(t(locale, "Önce AI yazsın.", "Generate the article first."));
+      return;
+    }
+    setBusyId(id);
+    setError(null);
+    try {
+      const res = await fetch("/api/seo/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "publish", topic, article }),
+      });
+      const json = (await res.json()) as { href?: string; error?: string };
+      if (!res.ok || !json.href) throw new Error(json.error || "Yayın başarısız.");
+      const href = publishContent(id, json.href);
+      if (href && href.startsWith("/")) setPublished(href);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   return (
     <div>
       <SeoNav />
@@ -31,17 +78,25 @@ export default function ContentQueue() {
       <p className="mt-2 text-sm text-ink-soft">
         {t(
           locale,
-          "Taslak üretilir, siz onaylayınca /blog altında yayınlanır.",
-          "A draft is generated; after you approve it is published under /blog.",
+          "Konuyu yazın, AI gerçek bir blog yazısı üretsin. Onaylayınca /blog altında herkese açılır. Vize onayı sözü yazılmaz.",
+          "Enter a topic; AI writes a real article. After you approve it, it goes live under /blog. No visa-approval promises.",
         )}
       </p>
       {published && (
         <p className="mt-3 text-sm text-gold-deep">
-          {t(locale, "Yayınlandı", "Published")}: <a href={published} className="underline">{published}</a>
+          {t(locale, "Yayınlandı", "Published")}:{" "}
+          <a href={published} className="underline">
+            {published}
+          </a>
         </p>
       )}
+      {error && <p className="mt-3 text-sm text-[#8a3b24]">{error}</p>}
       <form onSubmit={onSubmit} className="mt-6 flex gap-2">
-        <input name="topic" placeholder={t(locale, "Konu veya kelime", "Topic or keyword")} className="flex-1 rounded-full border border-line bg-paper px-4 py-2 text-sm" />
+        <input
+          name="topic"
+          placeholder={t(locale, "Örn. sonbaharda gezilmesi gereken Avrupa rotası", "e.g. autumn Europe itinerary")}
+          className="flex-1 rounded-full border border-line bg-paper px-4 py-2 text-sm"
+        />
         <button className="rounded-full bg-navy px-4 py-2 text-sm text-cream">{t(locale, "Kuyruğa al", "Queue")}</button>
       </form>
       <div className="mt-8 space-y-3">
@@ -49,26 +104,31 @@ export default function ContentQueue() {
           <article key={job.id} className="rounded-xl border border-line bg-paper p-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="font-medium">{job.topic}</p>
-                <p className="text-xs text-muted">{job.locale.toUpperCase()} · {job.status} · {job.words} {t(locale, "kelime", "words")}</p>
+                <p className="font-medium">{job.article?.titleTr || job.topic}</p>
+                <p className="text-xs text-muted">
+                  {job.locale.toUpperCase()} · {job.status} · {job.words} {t(locale, "kelime", "words")}
+                  {job.source ? ` · ${job.source === "ai" ? "AI" : t(locale, "yedek yazım", "fallback copy")}` : ""}
+                </p>
               </div>
               <div className="flex gap-2">
-                <button type="button" className="btn btn-sm" onClick={() => draftContent(job.id)}>
-                  {t(locale, "AI yazsın", "AI draft")}
+                <button type="button" className="btn btn-sm" disabled={busyId === job.id} onClick={() => void draft(job.id, job.topic)}>
+                  {busyId === job.id ? t(locale, "Yazıyor…", "Writing…") : t(locale, "AI yazsın", "AI draft")}
                 </button>
                 <button
                   type="button"
-                  className="rounded-full bg-navy px-3 py-1.5 text-xs text-cream"
-                  onClick={() => {
-                    const href = publishContent(job.id);
-                    if (href && href.startsWith("/")) setPublished(href);
-                  }}
+                  className="rounded-full bg-navy px-3 py-1.5 text-xs text-cream disabled:opacity-50"
+                  disabled={busyId === job.id}
+                  onClick={() => void publish(job.id, job.topic, job.article)}
                 >
                   {t(locale, "Yayınla", "Publish")}
                 </button>
               </div>
             </div>
-            {job.body && <pre className="mt-4 whitespace-pre-wrap text-xs text-ink-soft">{job.body}</pre>}
+            {job.body ? (
+              <div className="mt-4 border-t border-line pt-4">
+                <ArticleBody text={job.body} />
+              </div>
+            ) : null}
           </article>
         ))}
       </div>

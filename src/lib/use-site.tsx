@@ -50,9 +50,27 @@ export function usePosts(all = false) {
     all ? DEFAULT_POSTS : DEFAULT_POSTS.filter((p) => p.status === "published"),
   );
   useEffect(() => {
-    const load = () => setPosts(all ? getAllPosts() : getAllPosts().filter((p) => p.status === "published"));
-    load();
-    return subscribeStore(load);
+    let remote: BlogPost[] = [];
+    const apply = () => {
+      const map = new Map<string, BlogPost>();
+      for (const post of all ? getAllPosts() : getAllPosts().filter((p) => p.status === "published")) {
+        map.set(post.slug, post);
+      }
+      for (const post of remote) {
+        if (!all && post.status !== "published") continue;
+        map.set(post.slug, post);
+      }
+      setPosts([...map.values()].sort((a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || "")));
+    };
+    apply();
+    void fetch("/api/seo/content", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((json: { posts?: BlogPost[] }) => {
+        remote = json.posts ?? [];
+        apply();
+      })
+      .catch(() => undefined);
+    return subscribeStore(apply);
   }, [all]);
   return posts;
 }

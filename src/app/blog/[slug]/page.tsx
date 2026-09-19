@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
 import { publicMeta } from "@/lib/seo-meta";
 import { ArticleJsonLd, BreadcrumbJsonLd } from "@/components/json-ld";
-import { DEFAULT_POSTS } from "@/lib/cms";
+import { getBlogPost, listBlogPosts } from "@/lib/blog-server";
 import PostView from "./view";
 
-export function generateStaticParams() {
-  return DEFAULT_POSTS.map((p) => ({ slug: p.slug }));
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const posts = await listBlogPosts();
+  return posts.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const p = DEFAULT_POSTS.find((x) => x.slug === slug);
+  const p = await getBlogPost(slug);
   return publicMeta({
     title: p?.titleTr ?? "Blog",
-    description: (p?.excerptTr ?? "Ranz Global vize danışmanlığı yazısı.").slice(0, 155),
+    description: p?.excerptTr ?? "Ranz Global vize danışmanlığı yazısı.",
     path: `/blog/${slug}`,
     type: "article",
   });
@@ -21,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const p = DEFAULT_POSTS.find((x) => x.slug === slug);
+  const p = await getBlogPost(slug);
   return (
     <>
       {p ? (
