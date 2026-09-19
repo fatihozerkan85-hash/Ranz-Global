@@ -37,9 +37,15 @@ export default function ContentQueue() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "draft", topic, locale }),
       });
-      const json = (await res.json()) as { article?: BlogArticle; source?: "ai" | "fallback"; error?: string };
+      const json = (await res.json()) as {
+        article?: BlogArticle;
+        source?: "gemini" | "ai" | "fallback";
+        warning?: string;
+        error?: string;
+      };
       if (!res.ok || !json.article) throw new Error(json.error || "Yazı üretilemedi.");
       setContentDraft(id, json.article, json.source || "fallback");
+      if (json.warning) setError(json.warning);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -78,8 +84,8 @@ export default function ContentQueue() {
       <p className="mt-2 text-sm text-ink-soft">
         {t(
           locale,
-          "Konuyu yazın, AI gerçek bir blog yazısı üretsin. Onaylayınca /blog altında herkese açılır. Vize onayı sözü yazılmaz.",
-          "Enter a topic; AI writes a real article. After you approve it, it goes live under /blog. No visa-approval promises.",
+          "Konuyu yazın, Gemini gerçek bir blog yazısı üretsin. Onaylayınca /blog altında herkese açılır. Vize onayı sözü yazılmaz. Vercel AI Gateway (Gemini) gerekir.",
+          "Enter a topic; Gemini writes a real article. After you approve it, it goes live under /blog. No visa-approval promises. Vercel AI Gateway (Gemini) is required.",
         )}
       </p>
       {published && (
@@ -107,12 +113,12 @@ export default function ContentQueue() {
                 <p className="font-medium">{job.article?.titleTr || job.topic}</p>
                 <p className="text-xs text-muted">
                   {job.locale.toUpperCase()} · {job.status} · {job.words} {t(locale, "kelime", "words")}
-                  {job.source ? ` · ${job.source === "ai" ? "AI" : t(locale, "yedek yazım", "fallback copy")}` : ""}
+                  {job.source ? ` · ${job.source === "gemini" ? "Gemini" : job.source === "ai" ? "AI" : t(locale, "yedek yazım", "fallback copy")}` : ""}
                 </p>
               </div>
               <div className="flex gap-2">
                 <button type="button" className="btn btn-sm" disabled={busyId === job.id} onClick={() => void draft(job.id, job.topic)}>
-                  {busyId === job.id ? t(locale, "Yazıyor…", "Writing…") : t(locale, "AI yazsın", "AI draft")}
+                  {busyId === job.id ? t(locale, "Gemini yazıyor…", "Gemini is writing…") : t(locale, "Gemini yazsın", "Gemini draft")}
                 </button>
                 <button
                   type="button"

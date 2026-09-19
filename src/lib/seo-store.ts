@@ -45,7 +45,7 @@ export type ContentJob = {
   createdAt: string;
   body: string;
   article?: BlogArticle;
-  source?: "ai" | "fallback";
+  source?: "gemini" | "ai" | "fallback";
 };
 
 export type KeywordRow = {
@@ -200,7 +200,7 @@ export function addContentJob(topic: string, locale: Locale) {
   write(store);
 }
 
-export function setContentDraft(id: string, article: BlogArticle, source: "ai" | "fallback") {
+export function setContentDraft(id: string, article: BlogArticle, source: "gemini" | "ai" | "fallback") {
   const store = read();
   const job = store.queue.find((j) => j.id === id);
   if (!job) return;

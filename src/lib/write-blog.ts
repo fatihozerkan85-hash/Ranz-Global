@@ -3,6 +3,8 @@ import { z } from "zod";
 import { ensureMetaDescription } from "./seo-meta";
 import { type BlogArticle, isUsableArticle } from "./blog-article";
 
+export const GEMINI_BLOG_MODEL = "google/gemini-3-flash";
+
 const schema = z.object({
   titleTr: z.string(),
   titleEn: z.string(),
@@ -23,12 +25,8 @@ function polish(article: BlogArticle): BlogArticle {
   };
 }
 
-async function llmArticle(topic: string, locale: string): Promise<BlogArticle | null> {
-  try {
-    const result = await generateText({
-      model: "openai/gpt-5.4",
-      output: Output.object({ schema }),
-      prompt: `Ranz Global için gerçek bir blog yazısı yaz. Şablon doldurma. Konu neyse yazı onun hakkında olsun.
+function authorPrompt(topic: string, locale: string) {
+  return `Ranz Global için gerçek bir blog yazısı yaz. Şablon doldurma. Konu neyse yazı onun hakkında olsun.
 
 Konu: ${topic}
 Panel dili: ${locale}
@@ -40,15 +38,53 @@ Kurallar:
 - Somut ol: yer adı, ay, süre, pratik uyarı. Uydurma istatistik ve sahte alıntı yok.
 - Vize onayı, ret kalkması veya kesin randevu sözü yok. Karar konsolosluk / yetkili makama aittir.
 - Ranz Global en fazla kapanışta kısa geçer (Türkiye ve KKTC’den dosya hazırlığı). Yazının gövdesi danışmanlık reklamı olmasın.
-- title/excerpt/body hem Türkçe hem İngilizce, eşit kalitede. Excerpt 1–2 cümle, 70–155 karakter.`,
-    });
-    const out = result.output;
-    if (!out) return null;
-    const article = polish(out);
-    return isUsableArticle(article) ? article : null;
-  } catch (error) {
-    console.error("blog_llm_failed", (error as Error).message);
+- title/excerpt/body hem Türkçe hem İngilizce, eşit kalitede. Excerpt 1–2 cümle, 70–155 karakter.`;
+}
+
+function parseJsonArticle(text: string): BlogArticle | null {
+  const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+  const raw = (fenced?.[1] || text).trim();
+  const start = raw.indexOf("{");
+  const end = raw.lastIndexOf("}");
+  if (start < 0 || end <= start) return null;
+  try {
+    const parsed = schema.parse(JSON.parse(raw.slice(start, end + 1)));
+    return polish(parsed);
+  } catch {
     return null;
+  }
+}
+
+async function geminiArticle(topic: string, locale: string): Promise<{ article: BlogArticle | null; error?: string }> {
+  const prompt = authorPrompt(topic, locale);
+  try {
+    const structured = await generateText({
+      model: GEMINI_BLOG_MODEL,
+      output: Output.object({ schema }),
+      prompt,
+    });
+    if (structured.output) {
+      const article = polish(structured.output);
+      if (isUsableArticle(article)) return { article };
+    }
+  } catch (error) {
+    console.error("blog_gemini_structured_failed", (error as Error).message);
+  }
+
+  try {
+    const loose = await generateText({
+      model: GEMINI_BLOG_MODEL,
+      prompt: `${prompt}
+
+Yalnızca JSON döndür, anahtarlar: titleTr, titleEn, excerptTr, excerptEn, bodyTr, bodyEn.`,
+    });
+    const article = parseJsonArticle(loose.text);
+    if (article && isUsableArticle(article)) return { article };
+    return { article: null, error: "Gemini JSON beklenen yazı şemasına uymadı." };
+  } catch (error) {
+    const message = (error as Error).message || "Gemini yanıt vermedi.";
+    console.error("blog_gemini_failed", message);
+    return { article: null, error: message.slice(0, 280) };
   }
 }
 
@@ -180,10 +216,18 @@ function fallbackArticle(topic: string): BlogArticle {
   });
 }
 
-export async function writeBlogArticle(topic: string, locale: string): Promise<{ article: BlogArticle; source: "ai" | "fallback" }> {
+export async function writeBlogArticle(
+  topic: string,
+  locale: string,
+): Promise<{ article: BlogArticle; source: "gemini" | "fallback"; warning?: string; model: string }> {
   const clean = topic.replace(/\s+/g, " ").trim();
   if (!clean) throw new Error("Konu gerekli.");
-  const llm = await llmArticle(clean, locale);
-  if (llm) return { article: llm, source: "ai" };
-  return { article: fallbackArticle(clean), source: "fallback" };
+  const gemini = await geminiArticle(clean, locale);
+  if (gemini.article) return { article: gemini.article, source: "gemini", model: GEMINI_BLOG_MODEL };
+  return {
+    article: fallbackArticle(clean),
+    source: "fallback",
+    model: GEMINI_BLOG_MODEL,
+    warning: gemini.error || "Gemini yazmadı. Vercel AI Gateway’i açın veya AI_GATEWAY_API_KEY ekleyin.",
+  };
 }

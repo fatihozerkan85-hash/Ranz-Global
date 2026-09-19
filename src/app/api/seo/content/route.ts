@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
 import { getBlogPost, listBlogPosts, saveBlogPost } from "@/lib/blog-server";
 import { slugifyTopic, wordCount, type BlogArticle } from "@/lib/blog-article";
-import { writeBlogArticle } from "@/lib/write-blog";
+import { writeBlogArticle, GEMINI_BLOG_MODEL } from "@/lib/write-blog";
 import type { BlogPost } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 function noStore(data: unknown, status = 200) {
   return NextResponse.json(data, { status, headers: { "Cache-Control": "no-store, max-age=0" } });
@@ -37,7 +37,14 @@ export async function GET(request: Request) {
     return noStore({ post });
   }
   const posts = await listBlogPosts();
-  return noStore({ posts: posts.filter((p) => p.status === "published") });
+  return noStore({
+    posts: posts.filter((p) => p.status === "published"),
+    gemini: {
+      model: GEMINI_BLOG_MODEL,
+      hasGatewayKey: Boolean(process.env.AI_GATEWAY_API_KEY),
+      onVercel: process.env.VERCEL === "1",
+    },
+  });
 }
 
 export async function POST(request: Request) {
@@ -52,10 +59,12 @@ export async function POST(request: Request) {
     if (action === "draft") {
       const topic = String(body.topic || "").trim();
       const locale = String(body.locale || "tr");
-      const { article, source } = await writeBlogArticle(topic, locale);
+      const { article, source, warning, model } = await writeBlogArticle(topic, locale);
       return noStore({
         article,
         source,
+        warning,
+        model,
         words: wordCount(locale === "en" ? article.bodyEn : article.bodyTr),
       });
     }
