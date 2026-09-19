@@ -3,7 +3,8 @@ import { z } from "zod";
 import { ensureMetaDescription } from "./seo-meta";
 import { type BlogArticle, isUsableArticle } from "./blog-article";
 
-export const GEMINI_BLOG_MODEL = "google/gemini-3-flash";
+export const GEMINI_BLOG_MODEL = "google/gemini-2.5-flash";
+const GEMINI_MODELS = ["google/gemini-2.5-flash", "google/gemini-2.5-flash-lite", "google/gemini-3-flash"];
 
 const schema = z.object({
   titleTr: z.string(),
@@ -55,37 +56,41 @@ function parseJsonArticle(text: string): BlogArticle | null {
   }
 }
 
-async function geminiArticle(topic: string, locale: string): Promise<{ article: BlogArticle | null; error?: string }> {
+async function geminiArticle(topic: string, locale: string): Promise<{ article: BlogArticle | null; error?: string; model?: string }> {
   const prompt = authorPrompt(topic, locale);
-  try {
-    const structured = await generateText({
-      model: GEMINI_BLOG_MODEL,
-      output: Output.object({ schema }),
-      prompt,
-    });
-    if (structured.output) {
-      const article = polish(structured.output);
-      if (isUsableArticle(article)) return { article };
+  let lastError = "";
+  for (const model of GEMINI_MODELS) {
+    try {
+      const structured = await generateText({
+        model,
+        output: Output.object({ schema }),
+        prompt,
+      });
+      if (structured.output) {
+        const article = polish(structured.output);
+        if (isUsableArticle(article)) return { article, model };
+      }
+    } catch (error) {
+      lastError = (error as Error).message || lastError;
+      console.error("blog_gemini_structured_failed", model, lastError);
     }
-  } catch (error) {
-    console.error("blog_gemini_structured_failed", (error as Error).message);
-  }
 
-  try {
-    const loose = await generateText({
-      model: GEMINI_BLOG_MODEL,
-      prompt: `${prompt}
+    try {
+      const loose = await generateText({
+        model,
+        prompt: `${prompt}
 
 Yalnızca JSON döndür, anahtarlar: titleTr, titleEn, excerptTr, excerptEn, bodyTr, bodyEn.`,
-    });
-    const article = parseJsonArticle(loose.text);
-    if (article && isUsableArticle(article)) return { article };
-    return { article: null, error: "Gemini JSON beklenen yazı şemasına uymadı." };
-  } catch (error) {
-    const message = (error as Error).message || "Gemini yanıt vermedi.";
-    console.error("blog_gemini_failed", message);
-    return { article: null, error: message.slice(0, 280) };
+      });
+      const article = parseJsonArticle(loose.text);
+      if (article && isUsableArticle(article)) return { article, model };
+      lastError = lastError || "Gemini JSON beklenen yazı şemasına uymadı.";
+    } catch (error) {
+      lastError = (error as Error).message || lastError;
+      console.error("blog_gemini_failed", model, lastError);
+    }
   }
+  return { article: null, error: lastError.slice(0, 280) || "Gemini yanıt vermedi." };
 }
 
 function fallbackArticle(topic: string): BlogArticle {
@@ -223,7 +228,7 @@ export async function writeBlogArticle(
   const clean = topic.replace(/\s+/g, " ").trim();
   if (!clean) throw new Error("Konu gerekli.");
   const gemini = await geminiArticle(clean, locale);
-  if (gemini.article) return { article: gemini.article, source: "gemini", model: GEMINI_BLOG_MODEL };
+  if (gemini.article) return { article: gemini.article, source: "gemini", model: gemini.model || GEMINI_BLOG_MODEL };
   return {
     article: fallbackArticle(clean),
     source: "fallback",
