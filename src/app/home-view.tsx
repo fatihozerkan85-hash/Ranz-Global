@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import Link from "next/link";
 import { SiteFooter, SiteHeader } from "@/components/site-chrome";
 import { WhatsAppFloat } from "@/components/whatsapp-button";
@@ -12,9 +11,7 @@ import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { CountryFlag } from "@/components/country-flag";
 import { HomeDestGrid } from "@/components/home-dest-grid";
-import { CmsImg, useGuides, useHome, usePosts } from "@/lib/use-site";
-import { trackBlogListView, trackBlogOpen } from "@/components/google-pageview";
-import type { BlogPost } from "@/lib/types";
+import { CmsImg, useGuides, useHome } from "@/lib/use-site";
 import {
   FEE_DISCLAIMER_EN,
   FEE_DISCLAIMER_TR,
@@ -54,18 +51,12 @@ const REVIEWS = [
   },
 ];
 
-export default function HomePage({ initialPosts = [] }: { initialPosts?: BlogPost[] }) {
+export default function HomePage() {
   const { locale } = useLocale();
   const home = useHome();
   const guides = useGuides().filter((g) => g.status === "published").slice(0, 6);
-  const livePosts = usePosts();
-  const posts = (livePosts.length ? livePosts : initialPosts).filter((p) => p.status === "published").slice(0, 8);
   const leads = t(locale, home.heroLeadTr, home.heroLeadEn).split("\n\n");
   const priced = PRICED_SLUGS.map((slug) => serviceBySlug(slug)!).filter(Boolean);
-
-  useEffect(() => {
-    if (posts.length) trackBlogListView(posts.length);
-  }, [posts.length]);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -259,43 +250,6 @@ export default function HomePage({ initialPosts = [] }: { initialPosts?: BlogPos
           <Link href="/vize-rehberi" className="mt-6 inline-block text-sm text-gold-deep">
             {t(locale, "Tüm Rehberi Aç", "Open The Full Guide")}
           </Link>
-        </section>
-
-        <section id="kesfet" className="scroll-mt-24 border-t border-line bg-paper">
-          <div className="mx-auto max-w-6xl px-5 py-16">
-            <p className="text-xs font-medium uppercase tracking-[0.22em] text-gold-deep">
-              {t(locale, "Blog", "Blog")}
-            </p>
-            <h2 className="mt-3 font-serif text-3xl md:text-4xl">{t(locale, "Keşfet", "Explore")}</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-7 text-ink-soft">
-              {t(
-                locale,
-                "Yayınlanan yazılar burada durur. Rehber niteliğindedir; vize onayı sözü yoktur.",
-                "Published articles sit here. They are guides, not a promise of visa approval.",
-              )}
-            </p>
-            <div className="mt-8 grid gap-4 md:grid-cols-2">
-              {posts.map((p) => (
-                <Link
-                  key={p.slug}
-                  href={`/blog/${p.slug}`}
-                  onClick={() => trackBlogOpen(p.slug, t(locale, p.titleTr, p.titleEn))}
-                  className="rounded-2xl border border-line bg-cream p-6 hover:border-gold"
-                >
-                  <p className="text-xs text-muted">{p.publishedAt}</p>
-                  <h3 className="mt-2 font-serif text-2xl">{t(locale, p.titleTr, p.titleEn)}</h3>
-                  <p className="mt-2 text-sm text-ink-soft">{t(locale, p.excerptTr, p.excerptEn)}</p>
-                </Link>
-              ))}
-            </div>
-            {posts.length === 0 ? (
-              <p className="mt-6 text-sm text-muted">{t(locale, "Henüz yayınlanan yazı yok.", "No published articles yet.")}</p>
-            ) : (
-              <Link href="/blog" className="mt-6 inline-block text-sm text-gold-deep">
-                {t(locale, "Tüm yazıları aç", "Open all articles")}
-              </Link>
-            )}
-          </div>
         </section>
 
         <section id="iletisim" className="scroll-mt-24 border-t border-line bg-paper">

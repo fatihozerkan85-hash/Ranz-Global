@@ -183,35 +183,13 @@ export const DEFAULT_GUIDES: CmsPage[] = [
   },
 ];
 
-export const DEFAULT_POSTS: BlogPost[] = [
-  {
-    slug: "schengen-evragi-nasil-hazirlanir",
-    titleTr: "Schengen evrakları nasıl hazırlanır?",
-    titleEn: "How to prepare Schengen documents",
-    excerptTr: "Turistik Schengen dosyasında en çok eksik kalan belgeler ve sırası.",
-    excerptEn: "The documents most often missing in tourist Schengen files, in order.",
-    bodyTr:
-      "Schengen turistik dosyada sıra nettir: pasaport ve fotoğraf, sigorta, rezervasyonlar, banka dökümü, gelir belgesi. Eksik ay içeren hesap özeti en sık revizyon nedenidir.\n\nRanz Global panelinde zorunlu maddeler işaretlenir; danışman notunu aynı ekrandan görürsünüz.",
-    bodyEn:
-      "Tourist Schengen files follow a clear order: passport and photo, insurance, reservations, bank statements, income proof. Incomplete months on statements are the most common revision trigger.\n\nRequired items are flagged in the Ranz Global portal; you read advisor notes on the same screen.",
-    coverAltTr: "Schengen evrak klasörü",
-    coverAltEn: "Schengen document folder",
-    publishedAt: "2026-08-12",
-    status: "published",
-  },
-  {
-    slug: "abd-b1b2-randevu-oncesi",
-    titleTr: "ABD B1/B2 randevu öncesi kontrol listesi",
-    titleEn: "USA B1/B2 pre-interview checklist",
-    excerptTr: "DS-160, mali tutarlılık ve seyahat planının aynı hikâyeyi anlatması.",
-    excerptEn: "DS-160, finances and itinerary should tell the same story.",
-    bodyTr:
-      "B1/B2 mülakatı resmi süreçtir. Danışmanlık tarafında DS-160 onay sayfası, mali belgeler ve itinerary’nin çelişmemesi hedeflenir.\n\nRanz Global evrak kasasında bu üçlü yan yana durur.",
-    bodyEn:
-      "The B1/B2 interview is an official process. On the consultancy side we keep DS-160 confirmation, finances and itinerary consistent.\n\nThey sit side by side in the Ranz Global vault.",
-    coverAltTr: "ABD vize hazırlığı",
-    coverAltEn: "USA visa preparation",
-    publishedAt: "2026-07-03",
-    status: "published",
-  },
-];
+export const RETIRED_BLOG_SLUGS = new Set([
+  "schengen-evragi-nasil-hazirlanir",
+  "abd-b1b2-randevu-oncesi",
+]);
+
+export const DEFAULT_POSTS: BlogPost[] = [];
+
+export function isListedBlogPost(post: { slug: string; status?: string }) {
+  return post.status === "published" && !RETIRED_BLOG_SLUGS.has(post.slug);
+}

@@ -12,7 +12,7 @@ import type {
   SiteMedia,
   User,
 } from "./types";
-import { DEFAULT_GUIDES, DEFAULT_PAGES, DEFAULT_POSTS, SITE } from "./cms";
+import { DEFAULT_GUIDES, DEFAULT_PAGES, DEFAULT_POSTS, RETIRED_BLOG_SLUGS, SITE } from "./cms";
 import { DEFAULT_HOME } from "./site-content";
 import { visaTypeById } from "./visa-catalog";
 import { isRegionVisaId, REGION_META, regionByCode, visaIdToRegion } from "./region-countries";
@@ -210,7 +210,7 @@ function hydrateStore(parsed: Partial<Store>): Store {
         status: row.assignedTo && staffIds.has(row.assignedTo) ? "assigned" : "new",
       })),
     pages: patchLegalPages(mergeBySlug(parsed.pages, DEFAULT_PAGES)),
-    posts: mergeBySlug(parsed.posts, DEFAULT_POSTS),
+    posts: mergeBySlug(parsed.posts, DEFAULT_POSTS).filter((p) => !RETIRED_BLOG_SLUGS.has(p.slug)),
     guides: mergeBySlug(parsed.guides, DEFAULT_GUIDES),
     home: patchHomeCopy({
       ...DEFAULT_HOME,

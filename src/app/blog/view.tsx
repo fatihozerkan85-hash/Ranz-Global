@@ -14,7 +14,6 @@ export default function BlogView() {
       <PageHero
         eyebrow={t(locale, "Keşfet", "Explore")}
         title={t(locale, "Blog", "Blog")}
-        lead={t(locale, "Anasayfadaki Keşfet bölümünde de yayınlanan yazılar.", "Articles also listed under Explore on the homepage.")}
       />
       <section className="mx-auto max-w-6xl space-y-4 px-5 py-14">
         {posts.map((p) => (

@@ -12,13 +12,13 @@ import { WhatsAppHeaderButton } from "@/components/whatsapp-button";
 import { BrandMark } from "@/components/brand-mark";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { StartApplicationLink } from "@/components/start-application-link";
+import { KesfetDialog, openKesfet } from "@/components/kesfet-dialog";
 import { DISCLAIMER_EN, DISCLAIMER_TR } from "@/lib/faq";
 
 export { BrandMark };
 
 const NAV = [
   { href: "/#ulkeler", tr: "Vizeler", en: "Visas" },
-  { href: "/#kesfet", tr: "Keşfet", en: "Explore" },
   { href: "/#nasil", tr: "Nasıl Çalışır?", en: "How It Works" },
   { href: "/#ucret", tr: "Ücretler", en: "Fees" },
   { href: "/vize-rehberi", tr: "Vize Rehberi", en: "Visa Guide" },
@@ -42,18 +42,37 @@ export function SiteHeader({ solid: _solid = false }: { solid?: boolean }) {
       : null;
 
   const [menuOpen, setMenuOpen] = useState(false);
+  const [kesfetOpen, setKesfetOpen] = useState(false);
 
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
 
+  useEffect(() => {
+    const open = () => {
+      setMenuOpen(false);
+      setKesfetOpen(true);
+    };
+    window.addEventListener("ranz-kesfet", open);
+    return () => window.removeEventListener("ranz-kesfet", open);
+  }, []);
+
   return (
+    <>
     <header className="sticky top-0 z-40 border-b border-gold/40 bg-navy">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-2 px-4 sm:h-[4.5rem] sm:gap-3 sm:px-5">
         <BrandMark onDark />
         {!inApp && (
           <nav className="hidden items-center gap-5 text-[13px] text-cream/80 xl:flex">
-            {NAV.map((item) => (
+            {NAV.slice(0, 1).map((item) => (
+              <a key={item.href} href={item.href} className="hover:text-gold">
+                {t(locale, item.tr, item.en)}
+              </a>
+            ))}
+            <button type="button" className="hover:text-gold" onClick={() => setKesfetOpen(true)}>
+              {t(locale, "Keşfet", "Explore")}
+            </button>
+            {NAV.slice(1).map((item) => (
               <a key={item.href} href={item.href} className="hover:text-gold">
                 {t(locale, item.tr, item.en)}
               </a>
@@ -116,7 +135,26 @@ export function SiteHeader({ solid: _solid = false }: { solid?: boolean }) {
       {menuOpen && !inApp && (
         <nav className="border-t border-gold/25 bg-navy px-4 py-3 xl:hidden">
           <div className="mx-auto flex max-w-6xl flex-col gap-1">
-            {NAV.map((item) => (
+            {NAV.slice(0, 1).map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                className="rounded-lg px-3 py-2.5 text-sm text-cream/85 hover:bg-white/5 hover:text-gold"
+              >
+                {t(locale, item.tr, item.en)}
+              </a>
+            ))}
+            <button
+              type="button"
+              className="rounded-lg px-3 py-2.5 text-left text-sm text-cream/85 hover:bg-white/5 hover:text-gold"
+              onClick={() => {
+                setMenuOpen(false);
+                setKesfetOpen(true);
+              }}
+            >
+              {t(locale, "Keşfet", "Explore")}
+            </button>
+            {NAV.slice(1).map((item) => (
               <a
                 key={item.href}
                 href={item.href}
@@ -152,6 +190,8 @@ export function SiteHeader({ solid: _solid = false }: { solid?: boolean }) {
         </nav>
       )}
     </header>
+    <KesfetDialog open={kesfetOpen} onClose={() => setKesfetOpen(false)} />
+    </>
   );
 }
 
@@ -169,9 +209,9 @@ export function SiteFooter() {
             </p>
           </div>
           <div className="flex max-w-md flex-wrap gap-x-4 gap-y-2 text-xs text-cream/70">
-            <Link href="/blog" className="hover:text-gold">
+            <button type="button" className="hover:text-gold" onClick={openKesfet}>
               {t(locale, "Keşfet", "Explore")}
-            </Link>
+            </button>
             <Link href="/kvkk" className="hover:text-gold">
               {t(locale, "KVKK", "Data Notice")}
             </Link>

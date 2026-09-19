@@ -42,21 +42,21 @@ export function ReviewQueue({ basePath }: { basePath: "/danisman" | "/yonetim" }
 
   useEffect(() => {
     let alive = true;
-    const load = async () => {
-      const { pullOps } = await import("@/lib/ops-client");
-      await pullOps();
-      if (!alive) return;
+    const refresh = () => {
       setApps(getApplications());
       setStaff(getStaffUsers());
       setPeople(getUsers());
     };
+    const load = async () => {
+      refresh();
+      const { pullOps } = await import("@/lib/ops-client");
+      await pullOps();
+      if (!alive) return;
+      refresh();
+    };
     void load();
     const tick = window.setInterval(() => void load(), 5000);
-    const unsub = subscribeStore(() => {
-      setApps(getApplications());
-      setStaff(getStaffUsers());
-      setPeople(getUsers());
-    });
+    const unsub = subscribeStore(refresh);
     return () => {
       alive = false;
       window.clearInterval(tick);

@@ -153,7 +153,7 @@ export function BlogListJsonLd({
         "@type": "ItemList",
         name: "Keşfet",
         description: "Ranz Global blog yazıları. Vize onayı garantisi yoktur.",
-        url: `${SITE.url}/#kesfet`,
+        url: `${SITE.url}/blog`,
         numberOfItems: live.length,
         itemListElement: live.map((post, i) => ({
           "@type": "ListItem",

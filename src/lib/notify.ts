@@ -15,7 +15,7 @@ export async function notifyMail(
       body: JSON.stringify({ event, to: recipients, data }),
     });
     if (!res.ok) {
-      console.error("notifyMail", event, await res.text());
+      await res.text().catch(() => "");
     }
   } catch {
     /* mail is best-effort */

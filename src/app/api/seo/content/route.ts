@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getBlogPost, listBlogPosts, saveBlogPost, unpublishBlogPost, unpublishCreatedBlogPosts, deleteBlogPost } from "@/lib/blog-server";
 import { slugifyTopic, wordCount, type BlogArticle } from "@/lib/blog-article";
+import { isListedBlogPost } from "@/lib/cms";
 import { writeBlogArticle, GEMINI_BLOG_MODEL } from "@/lib/write-blog";
 import type { BlogPost } from "@/lib/types";
 
@@ -38,7 +39,7 @@ export async function GET(request: Request) {
   }
   const posts = await listBlogPosts();
   return noStore({
-    posts: posts.filter((p) => p.status === "published"),
+    posts: posts.filter(isListedBlogPost),
     gemini: {
       model: GEMINI_BLOG_MODEL,
       hasGatewayKey: Boolean(process.env.AI_GATEWAY_API_KEY),

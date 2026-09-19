@@ -61,7 +61,10 @@ export async function pullOps() {
   if (typeof window === "undefined") return;
   ensureWatch();
   try {
-    const res = await fetch(`/api/ops?t=${Date.now()}`, { cache: "no-store" });
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 8000);
+    const res = await fetch(`/api/ops?t=${Date.now()}`, { cache: "no-store", signal: controller.signal });
+    window.clearTimeout(timeout);
     if (!res.ok) return;
     const json = (await res.json()) as OpsPayload;
     ingestOps(json);

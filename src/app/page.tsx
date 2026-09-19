@@ -1,6 +1,7 @@
 import { publicMeta } from "@/lib/seo-meta";
 import { BlogListJsonLd, FaqJsonLd, WebSiteJsonLd } from "@/components/json-ld";
 import { listBlogPosts } from "@/lib/blog-server";
+import { isListedBlogPost } from "@/lib/cms";
 import HomeView from "./home-view";
 
 export const metadata = publicMeta({
@@ -12,13 +13,13 @@ export const metadata = publicMeta({
 });
 
 export default async function Page() {
-  const posts = (await listBlogPosts()).filter((p) => p.status === "published");
+  const posts = (await listBlogPosts()).filter(isListedBlogPost);
   return (
     <>
       <WebSiteJsonLd />
       <FaqJsonLd />
       {posts.length ? <BlogListJsonLd posts={posts} /> : null}
-      <HomeView initialPosts={posts} />
+      <HomeView />
     </>
   );
 }

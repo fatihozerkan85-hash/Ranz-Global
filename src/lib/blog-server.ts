@@ -1,5 +1,5 @@
 import { get, put } from "@vercel/blob";
-import { DEFAULT_POSTS } from "./cms";
+import { DEFAULT_POSTS, RETIRED_BLOG_SLUGS } from "./cms";
 import type { BlogPost } from "./types";
 
 const POSTS_PATH = "ops/blog-posts.json";
@@ -17,9 +17,11 @@ async function readRemote(): Promise<BlogPost[]> {
 
 export function mergePosts(remote: BlogPost[]) {
   const map = new Map<string, BlogPost>();
-  for (const post of DEFAULT_POSTS) map.set(post.slug, post);
+  for (const post of DEFAULT_POSTS) {
+    if (!RETIRED_BLOG_SLUGS.has(post.slug)) map.set(post.slug, post);
+  }
   for (const post of remote) {
-    if (post?.slug) map.set(post.slug, post);
+    if (post?.slug && !RETIRED_BLOG_SLUGS.has(post.slug)) map.set(post.slug, post);
   }
   return [...map.values()].sort((a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || ""));
 }

@@ -17,19 +17,20 @@ export function RefusalQueue({ mode }: { mode: "admin" | "staff" }) {
 
   useEffect(() => {
     let alive = true;
-    const load = async () => {
-      const { pullOps } = await import("@/lib/ops-client");
-      await pullOps();
-      if (!alive) return;
+    const refresh = () => {
       setRows(getRefusals());
       setStaff(getStaffUsers());
     };
+    const load = async () => {
+      refresh();
+      const { pullOps } = await import("@/lib/ops-client");
+      await pullOps();
+      if (!alive) return;
+      refresh();
+    };
     void load();
     const tick = window.setInterval(() => void load(), 5000);
-    const unsub = subscribeStore(() => {
-      setRows(getRefusals());
-      setStaff(getStaffUsers());
-    });
+    const unsub = subscribeStore(refresh);
     return () => {
       alive = false;
       window.clearInterval(tick);

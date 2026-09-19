@@ -178,7 +178,6 @@ export default function ContentQueue() {
                   <p className="font-medium">{job.article?.titleTr || job.topic}</p>
                   <p className="text-xs text-muted">
                     {job.locale.toUpperCase()} · {job.words} {t(locale, "kelime", "words")}
-                    {job.source ? ` · ${job.source === "gemini" ? "Gemini" : job.source === "ai" ? "AI" : t(locale, "yedek yazım", "fallback copy")}` : ""}
                   </p>
                 </div>
                 <div className="flex flex-wrap items-center gap-2">

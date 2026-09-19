@@ -11,7 +11,7 @@ import {
   subscribeStore,
 } from "@/lib/store";
 import type { BlogPost, CmsPage, HomeContent, SiteMedia } from "@/lib/types";
-import { DEFAULT_GUIDES, DEFAULT_PAGES, DEFAULT_POSTS } from "@/lib/cms";
+import { DEFAULT_GUIDES, DEFAULT_PAGES, DEFAULT_POSTS, RETIRED_BLOG_SLUGS, isListedBlogPost } from "@/lib/cms";
 import { DEFAULT_HOME } from "@/lib/site-content";
 
 export function useHome() {
@@ -47,17 +47,18 @@ export function useGuides() {
 
 export function usePosts(all = false) {
   const [posts, setPosts] = useState<BlogPost[]>(() =>
-    all ? DEFAULT_POSTS : DEFAULT_POSTS.filter((p) => p.status === "published"),
+    all ? DEFAULT_POSTS : DEFAULT_POSTS.filter(isListedBlogPost),
   );
   useEffect(() => {
     let remote: BlogPost[] = [];
     const apply = () => {
       const map = new Map<string, BlogPost>();
-      for (const post of all ? getAllPosts() : getAllPosts().filter((p) => p.status === "published")) {
+      for (const post of all ? getAllPosts() : getAllPosts().filter(isListedBlogPost)) {
         map.set(post.slug, post);
       }
       for (const post of remote) {
-        if (!all && post.status !== "published") continue;
+        if (RETIRED_BLOG_SLUGS.has(post.slug)) continue;
+        if (!all && !isListedBlogPost(post)) continue;
         map.set(post.slug, post);
       }
       setPosts([...map.values()].sort((a, b) => (b.publishedAt || "").localeCompare(a.publishedAt || "")));

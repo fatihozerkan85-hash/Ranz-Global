@@ -35,7 +35,7 @@ export const MAIL_EVENTS: MailEventMeta[] = [
   { id: "advisor_assigned", locked: true, defaultOn: true, labelTr: "Dosya atandı — danışman", labelEn: "File assigned — advisor" },
   { id: "assignment_left", locked: false, defaultOn: true, labelTr: "Atama değişti — önceki danışman", labelEn: "Reassigned — previous advisor" },
   { id: "file_opened", locked: true, defaultOn: true, labelTr: "Yeni dosya — yönetici", labelEn: "New file — admin" },
-  { id: "all_docs_uploaded", locked: false, defaultOn: false, labelTr: "Eski: her evrak yüklemesi (kapalı)", labelEn: "Legacy: per-upload mail (off)" },
+  { id: "all_docs_uploaded", locked: false, defaultOn: false, labelTr: "Eski: her evrak yüklemesinde mail", labelEn: "Legacy: mail on each document upload" },
   { id: "docs_submitted", locked: true, defaultOn: true, labelTr: "Evraklar gönderildi — müşteri ve yönetici", labelEn: "Documents submitted — client and admin" },
   { id: "file_complete", locked: false, defaultOn: true, labelTr: "Dosya tamamlandı — müşteri ve yönetici", labelEn: "File complete — client and admin" },
   { id: "staff_created", locked: false, defaultOn: true, labelTr: "Danışman hesabı açıldı — danışman", labelEn: "Advisor account created" },
