@@ -74,7 +74,7 @@ export default function ContentQueue() {
 
   const publish = async (id: string, topic: string, article?: BlogArticle) => {
     if (!article) {
-      setError(t(locale, "Önce Gemini yazsın.", "Generate the article first."));
+      setError(t(locale, "Önce AI yazsın.", "Generate the article first."));
       return;
     }
     setBusyId(id);
@@ -189,7 +189,7 @@ export default function ContentQueue() {
                   ) : (
                     <>
                       <button type="button" className="btn btn-sm" disabled={busyId === job.id} onClick={() => void draft(job.id, job.topic)}>
-                        {busyId === job.id ? t(locale, "Gemini yazıyor…", "Gemini is writing…") : t(locale, "Gemini yazsın", "Gemini draft")}
+                        {busyId === job.id ? t(locale, "AI yazıyor…", "AI is writing…") : t(locale, "AI yazsın", "AI draft")}
                       </button>
                       <button
                         type="button"

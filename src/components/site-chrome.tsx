@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { LogOut, Menu, X } from "lucide-react";
 import { portalPath, useAuth } from "@/lib/auth";
 import { isPublicSessionUser } from "@/lib/store";
 import { useLocale } from "@/lib/locale";
@@ -27,8 +27,10 @@ const NAV = [
 
 export function SiteHeader({ solid: _solid = false }: { solid?: boolean }) {
   const { locale } = useLocale();
-  const { user, ready } = useAuth();
+  const { user, ready, logout } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
+  const isHome = pathname === "/";
   const inApp =
     pathname.startsWith("/panel") || pathname.startsWith("/danisman") || pathname.startsWith("/yonetim");
   const signedIn = ready && isPublicSessionUser(user);
@@ -64,13 +66,29 @@ export function SiteHeader({ solid: _solid = false }: { solid?: boolean }) {
           <WhatsAppHeaderButton locale={locale} />
           <LanguageSwitcher compact tone="gold" />
           {!inApp && welcome ? (
-            <Link
-              href={fileHref}
-              className="max-w-[9.5rem] truncate text-right text-[11px] font-medium text-gold sm:max-w-[18rem] sm:text-sm"
-              title={welcome}
-            >
-              {welcome}
-            </Link>
+            <div className="flex min-w-0 items-center gap-1">
+              <Link
+                href={fileHref}
+                className="max-w-[9.5rem] truncate text-right text-[11px] font-medium text-gold sm:max-w-[18rem] sm:text-sm"
+                title={welcome}
+              >
+                {welcome}
+              </Link>
+              {isHome ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    logout();
+                    router.push("/");
+                  }}
+                  className="grid h-8 w-8 shrink-0 place-items-center rounded-full text-gold hover:bg-white/10"
+                  aria-label={t(locale, "Çıkış", "Log out")}
+                  title={t(locale, "Çıkış", "Log out")}
+                >
+                  <LogOut size={16} />
+                </button>
+              ) : null}
+            </div>
           ) : !inApp ? (
             <StartApplicationLink className="btn btn-sm btn-gold btn-header max-[380px]:hidden">
               <span className="sm:hidden">{t(locale, "Başlat", "Start")}</span>
@@ -106,9 +124,24 @@ export function SiteHeader({ solid: _solid = false }: { solid?: boolean }) {
                 {t(locale, item.tr, item.en)}
               </a>
             ))}
-            <a href={fileHref} className="rounded-lg px-3 py-2.5 text-sm text-cream/85 hover:bg-white/5 hover:text-gold">
-              {welcome ?? t(locale, "Müşteri Paneli", "Client Portal")}
-            </a>
+            <div className="flex items-center justify-between gap-2">
+              <a href={fileHref} className="rounded-lg px-3 py-2.5 text-sm text-cream/85 hover:bg-white/5 hover:text-gold">
+                {welcome ?? t(locale, "Müşteri Paneli", "Client Portal")}
+              </a>
+              {welcome && isHome ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    logout();
+                    router.push("/");
+                  }}
+                  className="grid h-9 w-9 shrink-0 place-items-center rounded-full text-gold hover:bg-white/10"
+                  aria-label={t(locale, "Çıkış", "Log out")}
+                >
+                  <LogOut size={16} />
+                </button>
+              ) : null}
+            </div>
             {!welcome && (
               <StartApplicationLink className="mt-1 btn btn-sm btn-gold w-full min-[381px]:hidden">
                 {t(locale, "Başvurumu Başlat", "Start Application")}
