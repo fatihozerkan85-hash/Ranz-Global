@@ -1,11 +1,9 @@
 import { NextResponse, type NextFetchEvent, type NextRequest } from "next/server";
-
-const AI =
-  /GPTBot|ChatGPT-User|ClaudeBot|anthropic|PerplexityBot|Google-Extended|Bytespider|CCBot|meta-externalagent|Applebot-Extended|Diffbot/i;
+import { AI_BOT_UA } from "@/lib/ai-bots";
 
 export function middleware(request: NextRequest, event: NextFetchEvent) {
   const ua = request.headers.get("user-agent") || "";
-  if (!AI.test(ua)) return NextResponse.next();
+  if (!AI_BOT_UA.test(ua)) return NextResponse.next();
   const path = request.nextUrl.pathname;
   if (path.startsWith("/api") || path.startsWith("/_next") || path.startsWith("/yonetim") || path.startsWith("/panel") || path.startsWith("/danisman")) {
     return NextResponse.next();

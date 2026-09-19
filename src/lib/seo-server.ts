@@ -1,4 +1,5 @@
 import { get, put } from "@vercel/blob";
+import { AI_BOT_UA } from "./ai-bots";
 import { DEFAULT_GUIDES, DEFAULT_POSTS, SITE } from "./cms";
 import { SERVICES } from "./services";
 import { auditHtml, issuesFromUrls } from "./seo-audit";
@@ -167,7 +168,7 @@ export async function listBots() {
 }
 
 export function classifyBot(ua: string): "ai" | "suspect" {
-  if (/GPTBot|ChatGPT-User|ClaudeBot|anthropic|PerplexityBot|Google-Extended|Bytespider|CCBot|meta-externalagent|Diffbot|Applebot-Extended/i.test(ua)) {
+  if (AI_BOT_UA.test(ua)) {
     return "ai";
   }
   return "suspect";
