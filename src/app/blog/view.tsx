@@ -12,9 +12,9 @@ export default function BlogView() {
   return (
     <MarketingShell>
       <PageHero
-        eyebrow="SEO"
+        eyebrow={t(locale, "Keşfet", "Explore")}
         title={t(locale, "Blog", "Blog")}
-        lead={t(locale, "Onaylı içerik kuyruğundan yayınlanan yazılar.", "Articles published from the approved content queue.")}
+        lead={t(locale, "Anasayfadaki Keşfet bölümünde de yayınlanan yazılar.", "Articles also listed under Explore on the homepage.")}
       />
       <section className="mx-auto max-w-6xl space-y-4 px-5 py-14">
         {posts.map((p) => (

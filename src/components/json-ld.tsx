@@ -140,6 +140,38 @@ export function ArticleJsonLd({
   );
 }
 
+export function BlogListJsonLd({
+  posts,
+}: {
+  posts: { slug: string; titleTr: string; excerptTr?: string }[];
+}) {
+  const live = posts.slice(0, 20);
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        name: "Keşfet",
+        description: "Ranz Global blog yazıları. Vize onayı garantisi yoktur.",
+        url: `${SITE.url}/#kesfet`,
+        numberOfItems: live.length,
+        itemListElement: live.map((post, i) => ({
+          "@type": "ListItem",
+          position: i + 1,
+          url: `${SITE.url}/blog/${post.slug}`,
+          name: post.titleTr,
+          item: {
+            "@type": "Article",
+            headline: post.titleTr,
+            description: post.excerptTr,
+            url: `${SITE.url}/blog/${post.slug}`,
+          },
+        })),
+      }}
+    />
+  );
+}
+
 export function BreadcrumbJsonLd({ items }: { items: { name: string; path: string }[] }) {
   return (
     <JsonLd

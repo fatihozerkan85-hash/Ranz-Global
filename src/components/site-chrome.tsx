@@ -18,6 +18,7 @@ export { BrandMark };
 
 const NAV = [
   { href: "/#ulkeler", tr: "Vizeler", en: "Visas" },
+  { href: "/#kesfet", tr: "Keşfet", en: "Explore" },
   { href: "/#nasil", tr: "Nasıl Çalışır?", en: "How It Works" },
   { href: "/#ucret", tr: "Ücretler", en: "Fees" },
   { href: "/vize-rehberi", tr: "Vize Rehberi", en: "Visa Guide" },
@@ -168,6 +169,9 @@ export function SiteFooter() {
             </p>
           </div>
           <div className="flex max-w-md flex-wrap gap-x-4 gap-y-2 text-xs text-cream/70">
+            <Link href="/blog" className="hover:text-gold">
+              {t(locale, "Keşfet", "Explore")}
+            </Link>
             <Link href="/kvkk" className="hover:text-gold">
               {t(locale, "KVKK", "Data Notice")}
             </Link>
