@@ -8,7 +8,7 @@ import { CountryFlag } from "@/components/country-flag";
 import { RegionCountryScroller } from "@/components/region-country-scroller";
 import { HOME_DEST_SLUGS, SERVICES } from "@/lib/services";
 import { REGION_META, regionByCode, slugToRegion, type RegionId } from "@/lib/region-countries";
-import { trackEngagement } from "@/lib/seo-store";
+import { logPublicEngagement } from "@/components/engagement-tracker";
 
 function WhatsAppGlyph({ className }: { className?: string }) {
   return (
@@ -99,7 +99,7 @@ export function WhatsAppFloat({ locale }: { locale: Locale }) {
                     "_blank",
                     "noopener,noreferrer",
                   );
-                  trackEngagement("whatsapp", window.location.pathname);
+                  logPublicEngagement("whatsapp", window.location.pathname);
                 }}
               />
             </div>

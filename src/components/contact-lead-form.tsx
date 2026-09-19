@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { addAppointment } from "@/lib/store";
-import { trackEngagement } from "@/lib/seo-store";
+import { logPublicEngagement } from "@/components/engagement-tracker";
 import { HOME_DEST_SLUGS, SERVICES } from "@/lib/services";
 import { RegionCountryScroller } from "@/components/region-country-scroller";
 import { REGION_META, regionByCode, slugToRegion } from "@/lib/region-countries";
@@ -77,7 +77,7 @@ export function ContactLeadForm({ source }: { source: string }) {
         .join(" · "),
       locale,
     });
-    trackEngagement("form", source);
+    logPublicEngagement("form", source);
     setSent(true);
   };
 

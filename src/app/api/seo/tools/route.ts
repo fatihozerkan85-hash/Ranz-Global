@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { checkBacklink, crawlSite, listBots, listUptime, logBot, pingUptime, saveUptime, scanCompetitor } from "@/lib/seo-server";
+import { checkBacklink, crawlSite, listBots, listEngagement, listUptime, logBot, logEngagement, pingUptime, saveUptime, scanCompetitor } from "@/lib/seo-server";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -12,6 +12,7 @@ export async function GET(request: Request) {
   const action = new URL(request.url).searchParams.get("action");
   if (action === "bots") return noStore({ bots: await listBots() });
   if (action === "uptime") return noStore({ checks: await listUptime() });
+  if (action === "engagement") return noStore({ events: await listEngagement() });
   return noStore({ error: "Geçersiz istek." }, 400);
 }
 
@@ -32,6 +33,9 @@ export async function POST(request: Request) {
       const checks = await pingUptime(paths);
       await saveUptime(checks);
       return noStore({ checks });
+    }
+    if (action === "engagement") {
+      return noStore(await logEngagement({ type: String(body.type || ""), page: String(body.page || "/") }));
     }
     if (action === "bot") {
       const expected = process.env.CRON_SECRET || "local";

@@ -2,9 +2,11 @@ import { get, put } from "@vercel/blob";
 import { DEFAULT_GUIDES, DEFAULT_POSTS, SITE } from "./cms";
 import { SERVICES } from "./services";
 import { auditHtml, issuesFromUrls } from "./seo-audit";
-import type { CrawlRun, SeoIssue, UptimeCheck } from "./seo-store";
+import type { CrawlRun, EngagementEvent, SeoIssue, UptimeCheck } from "./seo-store";
 
 const BOTS_PATH = "ops/seo-bots.json";
+const ENGAGE_PATH = "ops/seo-engagement.json";
+const ENGAGE_TYPES = new Set(["whatsapp", "phone", "email", "form"]);
 
 export type SeoBotHit = { ua: string; path: string; at: string; tag: "ai" | "suspect" };
 
@@ -178,6 +180,37 @@ export async function logBot(hit: { ua: string; path: string; at?: string }) {
   const prev = await readBots();
   const next = [row, ...prev].slice(0, 250);
   await put(BOTS_PATH, JSON.stringify(next), {
+    access: "private",
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: "application/json",
+    cacheControlMaxAge: 0,
+  });
+  return row;
+}
+
+async function readEngagement(): Promise<EngagementEvent[]> {
+  try {
+    const result = await get(ENGAGE_PATH, { access: "private", useCache: false });
+    if (!result?.stream) return [];
+    const parsed = JSON.parse(await new Response(result.stream).text()) as EngagementEvent[];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export async function listEngagement() {
+  return readEngagement();
+}
+
+export async function logEngagement(hit: { type: string; page: string }) {
+  const type = ENGAGE_TYPES.has(hit.type) ? hit.type : null;
+  if (!type) throw new Error("Geçersiz etkileşim.");
+  const page = (hit.page || "/").slice(0, 180);
+  const row: EngagementEvent = { type, page, at: new Date().toISOString() };
+  const next = [row, ...(await readEngagement())].slice(0, 400);
+  await put(ENGAGE_PATH, JSON.stringify(next), {
     access: "private",
     addRandomSuffix: false,
     allowOverwrite: true,

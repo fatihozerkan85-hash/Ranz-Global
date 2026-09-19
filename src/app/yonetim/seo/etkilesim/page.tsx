@@ -5,21 +5,40 @@ import { SeoNav } from "@/components/seo-nav";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { getSeo, subscribeSeo } from "@/lib/seo-store";
-import type { SeoStore } from "@/lib/seo-store";
+import type { EngagementEvent, SeoStore } from "@/lib/seo-store";
 
 export default function EngagementPage() {
   const { locale } = useLocale();
   const [seo, setSeo] = useState<SeoStore | null>(null);
+  const [remote, setRemote] = useState<EngagementEvent[]>([]);
   useEffect(() => {
     const load = () => setSeo(getSeo());
     load();
     return subscribeSeo(load);
   }, []);
+  useEffect(() => {
+    void fetch("/api/seo/tools?action=engagement", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((json: { events?: EngagementEvent[] }) => {
+        if (json.events) setRemote(json.events);
+      })
+      .catch(() => undefined);
+  }, []);
+  const rows = useMemo(() => {
+    const merged = [...remote, ...(seo?.engagement ?? [])];
+    const seen = new Set<string>();
+    return merged.filter((e) => {
+      const key = `${e.at}|${e.type}|${e.page}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [remote, seo]);
   const counts = useMemo(() => {
     const map: Record<string, number> = {};
-    for (const e of seo?.engagement ?? []) map[e.type] = (map[e.type] || 0) + 1;
+    for (const e of rows) map[e.type] = (map[e.type] || 0) + 1;
     return map;
-  }, [seo]);
+  }, [rows]);
   return (
     <div>
       <SeoNav />
@@ -36,7 +55,7 @@ export default function EngagementPage() {
         ))}
       </div>
       <div className="mt-8 space-y-2">
-        {seo?.engagement.slice(0, 20).map((e, i) => (
+        {rows.slice(0, 20).map((e, i) => (
           <div key={`${e.at}-${i}`} className="flex justify-between rounded-xl border border-line bg-paper px-4 py-3 text-sm">
             <span>{e.type} · {e.page}</span>
             <span className="text-xs text-muted">{e.at.slice(11, 19)}</span>
