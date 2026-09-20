@@ -2,7 +2,7 @@ import { publicMeta } from "@/lib/seo-meta";
 
 export const metadata = publicMeta({
   title: "Blog",
-  description: "Vize evrakları, randevu hazırlığı ve danışmanlık notları. Onay garantisi yoktur.",
+  description: "Vize danışmanlığı, Kuzey Kıbrıs Schengen vize danışmanlığı ve evrak notları. Onay garantisi yoktur.",
   path: "/blog",
 });
 

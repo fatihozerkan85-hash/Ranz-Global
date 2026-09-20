@@ -69,6 +69,19 @@ function ServiceBody({ slug, ulke }: { slug: string; ulke?: string }) {
             {t(locale, "Mevcut müşteriyim — dosyama gir", "I’m a client — open my file")}
           </Link>
         </div>
+        <p className="mt-8 max-w-2xl text-sm leading-7">
+          <Link href="/blog/vize-danismanligi" className="text-gold-deep">
+            {t(locale, "Vize danışmanlığı", "Visa consultancy")}
+          </Link>
+          {slug === "schengen" ? (
+            <>
+              {" · "}
+              <Link href="/blog/kuzey-kibris-schengen-vize-danismanligi" className="text-gold-deep">
+                {t(locale, "Kuzey Kıbrıs Schengen vize danışmanlığı", "Northern Cyprus Schengen visa consultancy")}
+              </Link>
+            </>
+          ) : null}
+        </p>
       </section>
     </MarketingShell>
   );

@@ -275,7 +275,14 @@ export default function HomePage() {
               locale,
               "Dijital altyapımız sayesinde Türkiye ve KKTC genelinde vize danışmanlığı sağlıyoruz.",
               "We advise across Türkiye and the TRNC through a digital setup.",
-            )}
+            )}{" "}
+            <Link href="/blog/vize-danismanligi" className="text-gold-deep">
+              {t(locale, "Vize danışmanlığı", "Visa consultancy")}
+            </Link>
+            {" · "}
+            <Link href="/blog/kuzey-kibris-schengen-vize-danismanligi" className="text-gold-deep">
+              {t(locale, "Kuzey Kıbrıs Schengen vize danışmanlığı", "Northern Cyprus Schengen visa consultancy")}
+            </Link>
           </p>
           <div className="mt-8 grid gap-4 md:grid-cols-3">
             <article className="rounded-2xl border border-line bg-paper p-6">

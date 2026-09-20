@@ -2,6 +2,7 @@ import type { BlogArticle } from "./blog-article";
 import { previewBody, slugifyTopic, wordCount } from "./blog-article";
 import type { Locale } from "./types";
 import { getGuide, getPage, getPost, saveGuide, savePage, savePost, deletePost } from "./store";
+import { TARGET_KEYWORDS } from "./seo-keywords";
 
 const KEY = "ranz-seo-v2";
 const EVENT = "ranz-seo";
@@ -98,12 +99,28 @@ export type SeoStore = {
   ga4Connected: boolean;
 };
 
+function mergeKeywords(existing: KeywordRow[] | undefined, defaults: KeywordRow[]) {
+  const list = [...(existing ?? [])];
+  for (const row of defaults) {
+    if (!list.some((k) => k.query.toLowerCase() === row.query.toLowerCase())) list.push(row);
+  }
+  return list;
+}
+
 function seed(): SeoStore {
   return {
     crawls: [],
     issues: [],
     queue: [],
-    keywords: [],
+    keywords: TARGET_KEYWORDS.map((k) => ({
+      query: k.query,
+      locale: "TR" as const,
+      position: null,
+      clicks: 0,
+      impressions: 0,
+      volume: null,
+      kd: null,
+    })),
     competitors: [],
     bots: [],
     uptime: [],
@@ -135,7 +152,7 @@ function read(): SeoStore {
       crawls: parsed.crawls ?? base.crawls,
       issues: parsed.issues ?? base.issues,
       queue: parsed.queue ?? base.queue,
-      keywords: parsed.keywords ?? base.keywords,
+      keywords: mergeKeywords(parsed.keywords, base.keywords),
       competitors: parsed.competitors ?? base.competitors,
       bots: parsed.bots ?? base.bots,
       uptime: parsed.uptime ?? base.uptime,

@@ -1,6 +1,7 @@
 "use client";
 
 import { useParams } from "next/navigation";
+import Link from "next/link";
 import { MarketingShell, PageHero } from "@/components/marketing-shell";
 import { ArticleBody } from "@/components/article-body";
 import { useLocale } from "@/lib/locale";
@@ -32,6 +33,14 @@ export default function PostView() {
       <section className="mx-auto max-w-6xl px-5 py-14">
         {p.imageId ? <CmsImg id={p.imageId} alt={t(locale, p.coverAltTr, p.coverAltEn)} className="mb-8 max-h-96 w-full rounded-2xl object-cover" /> : null}
         <ArticleBody text={t(locale, p.bodyTr, p.bodyEn)} />
+        <div className="mt-10 flex flex-wrap gap-3">
+          <Link href="/hizmetler" className="btn">
+            {t(locale, "Hizmetler", "Services")}
+          </Link>
+          <Link href="/iletisim" className="btn btn-line">
+            {t(locale, "İletişim", "Contact")}
+          </Link>
+        </div>
       </section>
     </MarketingShell>
   );

@@ -212,6 +212,12 @@ export function SiteFooter() {
             <button type="button" className="hover:text-gold" onClick={openKesfet}>
               {t(locale, "Keşfet", "Explore")}
             </button>
+            <Link href="/hizmetler" className="hover:text-gold">
+              {t(locale, "Vize danışmanlığı", "Visa consultancy")}
+            </Link>
+            <Link href="/blog/kuzey-kibris-schengen-vize-danismanligi" className="hover:text-gold">
+              {t(locale, "KKTC Schengen", "TRNC Schengen")}
+            </Link>
             <Link href="/kvkk" className="hover:text-gold">
               {t(locale, "KVKK", "Data Notice")}
             </Link>

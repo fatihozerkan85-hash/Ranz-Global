@@ -90,6 +90,14 @@ export const FAQ_ITEMS: FaqItem[] = [
     aEn: "The written decision is yours. If you wish, we read the refusal grounds together; a new file can be opened as a separate service. Visa approval and official fee refunds are not in our hands.",
   },
   {
+    qTr: "Kuzey Kıbrıs’tan Schengen vize danışmanlığı alabilir miyim?",
+    qEn: "Can I get Schengen visa consultancy from Northern Cyprus?",
+    aTr:
+      "Evet. KKTC’den Schengen kısa konaklama dosyası dijital panelde hazırlanır. Başvuru yeri pasaport ve ikamete göre değişir; randevu ve harç resmi sistemdedir. Ayrıntı Kuzey Kıbrıs Schengen vize danışmanlığı yazısındadır. Onay garantisi yoktur.",
+    aEn:
+      "Yes. A Schengen short-stay file from the TRNC is prepared in the digital portal. Where you file depends on passport and residence; appointments and fees are official. Details are in the Northern Cyprus Schengen visa consultancy article. There is no approval promise.",
+  },
+  {
     qTr: "KKTC’de yaşayanlar hangi ülkelere başvurabilir?",
     qEn: "Which countries can TRNC residents apply for?",
     aTr: "KKTC’de yaşayan başvurular, vatandaşlık ve ikamet belgelerine göre yürür. İngiltere, ABD, Kanada ve Schengen için başvuru yeri ve merkez ülkeye göre değişir. Ön değerlendirmede bunu netleştiririz; her ülke her ikamet durumunu aynı kabul etmez.",

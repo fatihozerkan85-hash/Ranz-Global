@@ -1,4 +1,5 @@
 import type { BlogPost, CmsPage } from "./types";
+import { SEO_TARGET_POSTS } from "./seo-target-posts";
 
 export const SITE = {
   name: "Ranz Global",
@@ -28,10 +29,10 @@ export const DEFAULT_PAGES: CmsPage[] = [
     slug: "hizmetler",
     titleTr: "Hizmetler",
     titleEn: "Services",
-    descriptionTr: "Schengen turistik/ticari ve ABD B1/B2 ile F-1 öğrenci vize danışmanlığı.",
+    descriptionTr: "Vize danışmanlığı: Schengen, İngiltere, ABD, Kanada ve KKTC’den Schengen dosya hazırlığı.",
     descriptionEn: "Schengen tourist/business and US B1/B2 plus F-1 student visa consultancy.",
     bodyTr:
-      "Avrupa vizeleri: Schengen turistik ve ticari dosyalar için güncel evrak listesi, yükleme ve danışman kontrolü.\n\nAmerika vizeleri: B1/B2 ve F-1 öğrenci başvurularında DS-160, mali belgeler ve randevu hazırlığı takibi.\n\nDosya takibi: eksik evrak, revizyon ve onay notları tek panelde.",
+      "Avrupa vizeleri: Schengen turistik ve ticari dosyalar için güncel evrak listesi, yükleme ve danışman kontrolü. KKTC’den açılan dosyalar için Kuzey Kıbrıs Schengen vize danışmanlığı yazısına bakın.\n\nAmerika vizeleri: B1/B2 ve F-1 öğrenci başvurularında DS-160, mali belgeler ve randevu hazırlığı takibi.\n\nDosya takibi: eksik evrak, revizyon ve onay notları tek panelde. Genel çerçeve vize danışmanlığı yazısındadır.",
     bodyEn:
       "Europe visas: current checklists, uploads and advisor review for Schengen tourist and business files.\n\nUS visas: DS-160, financial evidence and interview prep tracking for B1/B2 and F-1.\n\nFile tracking: missing items, revisions and approval notes on one screen.",
     status: "published",
@@ -188,7 +189,7 @@ export const RETIRED_BLOG_SLUGS = new Set([
   "abd-b1b2-randevu-oncesi",
 ]);
 
-export const DEFAULT_POSTS: BlogPost[] = [];
+export const DEFAULT_POSTS: BlogPost[] = SEO_TARGET_POSTS;
 
 export function isListedBlogPost(post: { slug: string; status?: string }) {
   return post.status === "published" && !RETIRED_BLOG_SLUGS.has(post.slug);

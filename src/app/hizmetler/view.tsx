@@ -60,6 +60,20 @@ export default function ServicesView() {
         <StartApplicationLink className="btn">
           {t(locale, "Dosya açın", "Open a file")}
         </StartApplicationLink>
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <Link href="/blog/vize-danismanligi" className="rounded-2xl border border-line bg-paper p-6 hover:border-gold">
+            <h2 className="font-serif text-2xl">{t(locale, "Vize danışmanlığı", "Visa consultancy")}</h2>
+            <p className="mt-2 text-sm text-ink-soft">
+              {t(locale, "Ne yaptığımız, ne yapmadığımız ve dosyanın nasıl yürüdüğü.", "What we do, what we do not do, and how the file runs.")}
+            </p>
+          </Link>
+          <Link href="/blog/kuzey-kibris-schengen-vize-danismanligi" className="rounded-2xl border border-line bg-paper p-6 hover:border-gold">
+            <h2 className="font-serif text-2xl">{t(locale, "Kuzey Kıbrıs Schengen vize danışmanlığı", "Northern Cyprus Schengen visa consultancy")}</h2>
+            <p className="mt-2 text-sm text-ink-soft">
+              {t(locale, "KKTC’den Schengen kısa konaklama dosyası.", "Schengen short-stay files from the TRNC.")}
+            </p>
+          </Link>
+        </div>
       </section>
     </MarketingShell>
   );

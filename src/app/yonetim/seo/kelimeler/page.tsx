@@ -7,6 +7,8 @@ import { t } from "@/lib/i18n";
 import { addKeyword, getSeo, removeKeyword, subscribeSeo } from "@/lib/seo-store";
 import type { SeoStore } from "@/lib/seo-store";
 import { useGoogleSeo } from "@/lib/google-seo-client";
+import { TARGET_KEYWORDS } from "@/lib/seo-keywords";
+import Link from "next/link";
 
 export default function KeywordsPage() {
   const { locale } = useLocale();
@@ -32,8 +34,31 @@ export default function KeywordsPage() {
       impressions: Math.round(r.impressions),
       volume: null as number | null,
       kd: null as number | null,
+      href: TARGET_KEYWORDS.find((k) => k.query.toLowerCase() === (r.keys[0] || "").toLowerCase())?.href,
     }));
-    const extra = (seo?.keywords ?? []).filter((k) => !fromGsc.some((g) => g.query === k.query));
+    const extras = [
+      ...TARGET_KEYWORDS.map((k) => ({
+        query: k.query,
+        locale: "TR" as const,
+        position: null as number | null,
+        clicks: 0,
+        impressions: 0,
+        volume: null as number | null,
+        kd: null as number | null,
+        href: k.href,
+      })),
+      ...(seo?.keywords ?? []).map((k) => ({
+        ...k,
+        href: TARGET_KEYWORDS.find((t) => t.query.toLowerCase() === k.query.toLowerCase())?.href,
+      })),
+    ].filter((k) => !fromGsc.some((g) => g.query.toLowerCase() === k.query.toLowerCase()));
+    const seen = new Set<string>();
+    const extra = extras.filter((k) => {
+      const key = k.query.toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
     return [...fromGsc, ...extra];
   }, [google.gscQueries, seo]);
   const csv = () => {
@@ -49,7 +74,11 @@ export default function KeywordsPage() {
       <SeoNav />
       <h1 className="font-serif text-4xl">{t(locale, "Kelime ve sıra", "Keywords & ranks")}</h1>
       <p className="mt-2 text-sm text-ink-soft">
-        {t(locale, "Search Console’daki tıklama, gösterim ve ortalama sıra. Ek kelime elle izlenir.", "Clicks, impressions and average position from Search Console. Extra keywords can be tracked manually.")}
+        {t(
+          locale,
+          "Hedef kelimeler ve Search Console sırası. Kelimeyi buraya yazmak Google’da yayınlamaz; yanında bağlı sayfa vardır.",
+          "Target keywords and Search Console ranks. Adding a word here does not publish it on Google; the linked page does.",
+        )}
       </p>
       <form onSubmit={onSubmit} className="mt-6 flex gap-2">
         <input name="q" className="flex-1 rounded-full border border-line bg-paper px-4 py-2 text-sm" placeholder={t(locale, "Kelime ekle", "Add keyword")} />
@@ -68,6 +97,7 @@ export default function KeywordsPage() {
           <thead className="text-xs uppercase text-muted">
             <tr>
               <th className="px-4 py-3">{t(locale, "Kelime", "Query")}</th>
+              <th className="px-4 py-3">{t(locale, "Sayfa", "Page")}</th>
               <th className="px-4 py-3">{t(locale, "Sıra", "Pos")}</th>
               <th className="px-4 py-3">{t(locale, "Tıklama", "Clicks")}</th>
               <th className="px-4 py-3">{t(locale, "Gösterim", "Impr.")}</th>
@@ -78,6 +108,15 @@ export default function KeywordsPage() {
             {rows.map((k) => (
               <tr key={k.query} className="border-t border-line">
                 <td className="px-4 py-3">{k.query}</td>
+                <td className="px-4 py-3">
+                  {"href" in k && k.href ? (
+                    <Link href={k.href} className="text-gold-deep">
+                      {k.href}
+                    </Link>
+                  ) : (
+                    "—"
+                  )}
+                </td>
                 <td className="px-4 py-3">{k.position ?? "—"}</td>
                 <td className="px-4 py-3">{k.clicks}</td>
                 <td className="px-4 py-3">{k.impressions}</td>

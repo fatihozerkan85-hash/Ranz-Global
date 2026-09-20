@@ -5,6 +5,7 @@ import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { DISCLAIMER_EN, DISCLAIMER_TR } from "@/lib/faq";
 import { StartApplicationLink } from "@/components/start-application-link";
+import Link from "next/link";
 
 const TEAM = [
   { name: "Berat", roleTr: "Müşteri İlişkileri", roleEn: "Client relations" },
@@ -64,6 +65,15 @@ export default function AboutView() {
               "Ülkenizi seçin, ön değerlendirme yapın, ücreti görün, hesabınız açılsın, evrak listesi gelsin, belgelerinizi işaretleyin, danışman kontrol etsin, süreci panelden izleyin. Dijital altyapımız sayesinde Türkiye ve KKTC genelinde vize danışmanlığı sağlıyoruz.",
               "Choose a country, run a short assessment, see the fee, open an account, receive a list, mark documents, get advisor review, track the file. We advise across Türkiye and the TRNC through a digital setup.",
             )}
+          </p>
+          <p className="mt-3 max-w-2xl text-sm leading-7">
+            <Link href="/blog/vize-danismanligi" className="text-gold-deep">
+              {t(locale, "Vize danışmanlığı", "Visa consultancy")}
+            </Link>
+            {" · "}
+            <Link href="/blog/kuzey-kibris-schengen-vize-danismanligi" className="text-gold-deep">
+              {t(locale, "Kuzey Kıbrıs Schengen vize danışmanlığı", "Northern Cyprus Schengen visa consultancy")}
+            </Link>
           </p>
         </div>
         <div>

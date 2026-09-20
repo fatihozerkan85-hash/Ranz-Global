@@ -7,7 +7,7 @@ import HomeView from "./home-view";
 export const metadata = publicMeta({
   title: "Ranz Global · Travel & Visa",
   description:
-    "Türkiye ve KKTC’den İngiltere, ABD, Kanada, Schengen ve diğer vize dosyalarında dijital danışmanlık. Ranz Global vize onayı garantisi vermez.",
+    "Vize danışmanlığı: Türkiye ve KKTC’den İngiltere, ABD, Kanada, Schengen dosya hazırlığı. Kuzey Kıbrıs Schengen vize danışmanlığı dahildir. Onay garantisi yoktur.",
   path: "",
   absoluteTitle: true,
 });

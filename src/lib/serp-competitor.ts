@@ -32,10 +32,12 @@ export type SerpReport = {
 
 export const DEFAULT_SERP_QUERIES = [
   "vize danışmanlığı",
-  "ingiltere vizesi",
-  "abd vizesi",
-  "schengen vizesi",
-  "kanada vizesi",
+  "Kuzey Kıbrıs Schengen vize danışmanlığı",
+  "KKTC Schengen vize",
+  "Schengen vize danışmanlığı",
+  "İngiltere vize danışmanlığı",
+  "ABD vize danışmanlığı",
+  "Kanada vize danışmanlığı",
   "vize reddi",
 ];
 

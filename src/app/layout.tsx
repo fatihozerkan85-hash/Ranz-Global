@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     template: "%s · Ranz Global",
   },
   description:
-    "Dijital vize yönetim platformu ve uzman danışmanlık. Ranz Global vize onayı garantisi vermez.",
+    "Vize danışmanlığı ve dijital dosya takibi. Türkiye ve KKTC; Schengen, İngiltere, ABD, Kanada. Ranz Global vize onayı garantisi vermez.",
   robots: {
     index: true,
     follow: true,

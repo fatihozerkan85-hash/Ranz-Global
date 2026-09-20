@@ -36,6 +36,8 @@ export function OrganizationJsonLd() {
           "Canada",
         ],
         knowsAbout: [
+          "vize danışmanlığı",
+          "Kuzey Kıbrıs Schengen vize danışmanlığı",
           "Schengen visa",
           "US visa",
           "UAE visa",
