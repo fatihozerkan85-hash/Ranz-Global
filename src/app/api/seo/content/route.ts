@@ -40,7 +40,7 @@ export async function GET(request: Request) {
   const posts = await listBlogPosts();
   return noStore({
     posts: posts.filter(isListedBlogPost),
-    gemini: {
+    ai: {
       model: GEMINI_BLOG_MODEL,
       hasGatewayKey: Boolean(process.env.AI_GATEWAY_API_KEY),
       onVercel: process.env.VERCEL === "1",

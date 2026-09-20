@@ -58,7 +58,7 @@ export default function ContentQueue() {
       });
       const json = (await res.json()) as {
         article?: BlogArticle;
-        source?: "gemini" | "ai" | "fallback";
+        source?: "ai" | "fallback";
         warning?: string;
         error?: string;
       };
@@ -146,8 +146,8 @@ export default function ContentQueue() {
       <p className="mt-2 text-sm text-ink-soft">
         {t(
           locale,
-          "Konuyu yazın, Gemini gerçek bir blog yazısı üretsin. Onaylayınca /blog altında herkese açılır. Yayındaki yazıya yeniden Gemini yazılmaz.",
-          "Enter a topic; Gemini writes a real article. After you approve it, it goes live under /blog. Published items cannot be rewritten by Gemini.",
+          "Konuyu yazın, AI gerçek bir blog yazısı üretsin. Onaylayınca /blog altında herkese açılır. Yayındaki yazıya yeniden AI yazılmaz.",
+          "Enter a topic; AI writes a real article. After you approve it, it goes live under /blog. Published items cannot be rewritten by AI.",
         )}
       </p>
       {published && (

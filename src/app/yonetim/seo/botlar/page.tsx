@@ -36,8 +36,8 @@ export default function BotsPage() {
       <p className="mt-2 text-sm text-ink-soft">
         {t(
           locale,
-          "GPTBot, ClaudeBot, Gemini (Notebook, Deep Research, Vertex), Perplexity ve benzeri tarayıcılar canlı sitede loglanır. Google Arama botu burada görünmez.",
-          "GPTBot, ClaudeBot, Gemini (Notebook, Deep Research, Vertex), Perplexity and similar crawlers are logged on the live site. Google Search crawlers are not listed here.",
+          "GPTBot, ClaudeBot, Google AI (Notebook, Deep Research, Vertex), Perplexity ve benzeri tarayıcılar canlı sitede loglanır. Google Arama botu burada görünmez.",
+          "GPTBot, ClaudeBot, Google AI (Notebook, Deep Research, Vertex), Perplexity and similar crawlers are logged on the live site. Google Search crawlers are not listed here.",
         )}
       </p>
       <button type="button" className="mt-6 btn" disabled={busy} onClick={() => void refresh()}>

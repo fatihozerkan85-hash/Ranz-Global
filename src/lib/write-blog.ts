@@ -84,13 +84,13 @@ Yalnızca JSON döndür, anahtarlar: titleTr, titleEn, excerptTr, excerptEn, bod
       });
       const article = parseJsonArticle(loose.text);
       if (article && isUsableArticle(article)) return { article, model };
-      lastError = lastError || "Gemini JSON beklenen yazı şemasına uymadı.";
+      lastError = lastError || "AI JSON beklenen yazı şemasına uymadı.";
     } catch (error) {
       lastError = (error as Error).message || lastError;
       console.error("blog_gemini_failed", model, lastError);
     }
   }
-  return { article: null, error: lastError.slice(0, 280) || "Gemini yanıt vermedi." };
+  return { article: null, error: lastError.slice(0, 280) || "AI yanıt vermedi." };
 }
 
 function fallbackArticle(topic: string): BlogArticle {
@@ -224,15 +224,15 @@ function fallbackArticle(topic: string): BlogArticle {
 export async function writeBlogArticle(
   topic: string,
   locale: string,
-): Promise<{ article: BlogArticle; source: "gemini" | "fallback"; warning?: string; model: string }> {
+): Promise<{ article: BlogArticle; source: "ai" | "fallback"; warning?: string; model: string }> {
   const clean = topic.replace(/\s+/g, " ").trim();
   if (!clean) throw new Error("Konu gerekli.");
-  const gemini = await geminiArticle(clean, locale);
-  if (gemini.article) return { article: gemini.article, source: "gemini", model: gemini.model || GEMINI_BLOG_MODEL };
+  const generated = await geminiArticle(clean, locale);
+  if (generated.article) return { article: generated.article, source: "ai", model: generated.model || GEMINI_BLOG_MODEL };
   return {
     article: fallbackArticle(clean),
     source: "fallback",
     model: GEMINI_BLOG_MODEL,
-    warning: gemini.error || "Gemini yazmadı. Vercel AI Gateway’i açın veya AI_GATEWAY_API_KEY ekleyin.",
+    warning: generated.error || "AI yazmadı. Vercel AI Gateway’i açın veya AI_GATEWAY_API_KEY ekleyin.",
   };
 }
