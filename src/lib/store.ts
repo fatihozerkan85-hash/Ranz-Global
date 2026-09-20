@@ -173,7 +173,6 @@ function hydrateStore(parsed: Partial<Store>): Store {
   const users = mergeUsers(parsed.users).filter(
     (user) => user.role === "admin" || !deletedEmails.has(user.email.toLowerCase()),
   );
-  const staffIds = new Set(users.filter((u) => u.role === "staff").map((u) => u.id));
   const deletedApplicationIds = uniqueIds(parsed.deletedApplicationIds);
   const deletedAppointmentIds = uniqueIds(parsed.deletedAppointmentIds);
   const deletedRefusalIds = uniqueIds(parsed.deletedRefusalIds);
@@ -185,14 +184,14 @@ function hydrateStore(parsed: Partial<Store>): Store {
     applications: withoutDemoApplications(parsed.applications)
       .filter((a) => !deletedApps.has(a.id))
       .map((a) => {
-      const assignedTo = a.assignedTo && staffIds.has(a.assignedTo) ? a.assignedTo : "";
+      const assignedTo = a.assignedTo === "u-staff" ? "" : a.assignedTo || "";
       const advisor = users.find((u) => u.id === assignedTo);
       return {
         ...a,
         feeTry: a.feeTry ?? 0,
         paidTry: a.paidTry ?? 0,
         assignedTo,
-        advisorName: advisor?.name ?? (assignedTo ? a.advisorName : "Atanmadı"),
+        advisorName: advisor?.name ?? a.advisorName ?? (assignedTo ? a.advisorName : "Atanmadı"),
       };
     }),
     appointments: (parsed.appointments ?? [])
@@ -206,8 +205,8 @@ function hydrateStore(parsed: Partial<Store>): Store {
       .filter((row) => !deletedRets.has(row.id))
       .map((row) => ({
         ...row,
-        assignedTo: row.assignedTo && staffIds.has(row.assignedTo) ? row.assignedTo : "",
-        status: row.assignedTo && staffIds.has(row.assignedTo) ? "assigned" : "new",
+        assignedTo: row.assignedTo === "u-staff" ? "" : row.assignedTo || "",
+        status: row.assignedTo && row.assignedTo !== "u-staff" ? "assigned" : "new",
       })),
     pages: patchLegalPages(mergeBySlug(parsed.pages, DEFAULT_PAGES)),
     posts: mergeBySlug(parsed.posts, DEFAULT_POSTS).filter((p) => !RETIRED_BLOG_SLUGS.has(p.slug)),
@@ -435,13 +434,14 @@ export function nextAction(app: Application, locale: Locale) {
   return t(locale, "Dosyanız güncel", "Your file is up to date");
 }
 
-function deriveStatus(docs: DocumentItem[], previous?: AppStatus): AppStatus {
+function deriveStatus(docs: DocumentItem[], previous?: AppStatus, submitted?: boolean): AppStatus {
+  if (previous === "complete") return "complete";
   if (docs.some((d) => d.required && d.status === "rejected")) return "revision";
-  if (docs.some((d) => d.required && d.status === "empty")) return "missing";
-  if (docs.filter((d) => d.required).every((d) => d.status === "approved") && docs.some((d) => d.required)) {
-    return previous === "complete" ? "complete" : "ready";
-  }
-  return "review";
+  const required = docs.filter((d) => d.required);
+  if (required.length && required.every((d) => d.status === "approved")) return "ready";
+  if (submitted || docs.some((d) => d.status === "uploaded" || d.status === "approved")) return "review";
+  if (required.some((d) => d.status === "empty")) return "missing";
+  return previous === "draft" ? "draft" : "review";
 }
 
 export function uploadDocument(
@@ -460,7 +460,7 @@ export function uploadDocument(
   doc.filePathname = file?.pathname;
   doc.fileUrl = file?.url;
   doc.note = undefined;
-  app.status = deriveStatus(app.documents, app.status);
+  app.status = deriveStatus(app.documents, app.status, Boolean(app.submittedAt));
   app.timeline.unshift({
     at: nowStamp(),
     titleTr: "Evrak yüklendi",
@@ -478,7 +478,7 @@ export function submitDocuments(appId: string): string | null {
   const sentDocs = app.documents.filter((d) => d.status !== "empty");
   if (!sentDocs.length) return "Önce en az bir evrak yükleyin.";
   app.submittedAt = new Date().toISOString();
-  app.status = deriveStatus(app.documents, app.status);
+  app.status = deriveStatus(app.documents, app.status, true);
   app.timeline.unshift({
     at: nowStamp(),
     titleTr: "Evraklar gönderildi",
@@ -513,7 +513,7 @@ export function assignApplication(appId: string, staffId: string) {
   const previous = userById(app.assignedTo);
   app.assignedTo = staff.id;
   app.advisorName = staff.name;
-  app.status = deriveStatus(app.documents, app.status);
+  app.status = deriveStatus(app.documents, app.status, Boolean(app.submittedAt));
   app.timeline.unshift({
     at: nowStamp(),
     titleTr: "Danışman atandı",
@@ -541,7 +541,7 @@ export function reviewDocument(appId: string, key: string, status: "approved" | 
   if (!doc) return;
   doc.status = status;
   doc.note = note;
-  app.status = deriveStatus(app.documents, app.status);
+  app.status = deriveStatus(app.documents, app.status, Boolean(app.submittedAt));
   app.reviewedAt = new Date().toISOString();
   app.timeline.unshift({
     at: nowStamp(),
@@ -753,7 +753,7 @@ export function setStaffPassword(userId: string, password: string): string | nul
 function nowStamp() {
   const d = new Date();
   const pad = (n: number) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 
 export const DEMO_PASSWORD = "ranz2026";

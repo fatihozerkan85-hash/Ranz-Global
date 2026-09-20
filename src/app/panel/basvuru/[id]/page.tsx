@@ -39,6 +39,7 @@ export default function ApplicationPage() {
       setSentError(err);
       return;
     }
+    void import("@/lib/ops-client").then((mod) => mod.pushOpsNow());
     setSentMessage(
       t(locale, "Dosyanız değerlendirmeye başarıyla gönderilmiştir.", "Your file has been sent for review."),
     );

@@ -23,19 +23,91 @@ function uniqueEmails(lists: (string[] | undefined)[]) {
 }
 
 function appStamp(app: Application) {
-  return app.timeline[0]?.at || app.createdAt || "";
+  return app.timeline[0]?.at || app.submittedAt || app.createdAt || "";
 }
 
-function appWeight(app: Application) {
-  const filled = (app.documents ?? []).filter((d) => d.status !== "empty").length;
-  return (app.timeline?.length ?? 0) * 10 + filled;
+function later(a?: string, b?: string) {
+  if (!a) return b || "";
+  if (!b) return a;
+  return a >= b ? a : b;
 }
 
-function pickApp(a: Application, b: Application) {
-  const sa = appStamp(a);
-  const sb = appStamp(b);
-  if (sa !== sb) return sa > sb ? a : b;
-  return appWeight(a) >= appWeight(b) ? a : b;
+const DOC_RANK: Record<string, number> = {
+  empty: 0,
+  uploaded: 1,
+  rejected: 2,
+  approved: 3,
+};
+
+function mergeDocuments(a: Application["documents"] = [], b: Application["documents"] = []) {
+  const map = new Map<string, Application["documents"][number]>();
+  const order: string[] = [];
+  for (const doc of [...a, ...b]) {
+    if (!doc?.key) continue;
+    if (!map.has(doc.key)) order.push(doc.key);
+    const prev = map.get(doc.key);
+    if (!prev) {
+      map.set(doc.key, { ...doc });
+      continue;
+    }
+    const takeB = (DOC_RANK[doc.status] ?? 0) >= (DOC_RANK[prev.status] ?? 0);
+    const keep = takeB ? doc : prev;
+    const other = takeB ? prev : doc;
+    map.set(doc.key, {
+      ...keep,
+      fileName: keep.fileName || other.fileName,
+      filePathname: keep.filePathname || other.filePathname,
+      fileUrl: keep.fileUrl || other.fileUrl,
+      note: keep.note || other.note,
+    });
+  }
+  return order.map((key) => map.get(key)!);
+}
+
+function mergeTimeline(a: Application["timeline"] = [], b: Application["timeline"] = []) {
+  const map = new Map<string, (typeof a)[number]>();
+  for (const item of [...a, ...b]) {
+    if (!item) continue;
+    map.set(`${item.at}|${item.titleTr}`, item);
+  }
+  return [...map.values()].sort((x, y) => (y.at || "").localeCompare(x.at || ""));
+}
+
+function derivedFileStatus(app: Application): Application["status"] {
+  if (app.status === "complete") return "complete";
+  const docs = app.documents ?? [];
+  if (docs.some((d) => d.required && d.status === "rejected")) return "revision";
+  const required = docs.filter((d) => d.required);
+  if (required.length && required.every((d) => d.status === "approved")) return "ready";
+  if (app.submittedAt || docs.some((d) => d.status === "uploaded" || d.status === "approved")) return "review";
+  if (required.some((d) => d.status === "empty")) return "missing";
+  return app.status || "draft";
+}
+
+function pickApp(a: Application, b: Application): Application {
+  const newer = appStamp(a) >= appStamp(b) ? a : b;
+  const older = newer === a ? b : a;
+  const documents = mergeDocuments(a.documents, b.documents);
+  const assignedTo = newer.assignedTo || older.assignedTo || "";
+  const merged: Application = {
+    ...older,
+    ...newer,
+    documents,
+    timeline: mergeTimeline(a.timeline, b.timeline),
+    submittedAt: later(a.submittedAt, b.submittedAt) || undefined,
+    reviewedAt: later(a.reviewedAt, b.reviewedAt) || undefined,
+    assignedTo,
+    advisorName: assignedTo
+      ? newer.assignedTo
+        ? newer.advisorName
+        : older.advisorName || newer.advisorName
+      : newer.advisorName || older.advisorName,
+    feeTry: Math.max(a.feeTry || 0, b.feeTry || 0),
+    paidTry: Math.max(a.paidTry || 0, b.paidTry || 0),
+    appointment: newer.appointment || older.appointment,
+  };
+  merged.status = derivedFileStatus(merged);
+  return merged;
 }
 
 function pickUser(a: User, b: User): User {
