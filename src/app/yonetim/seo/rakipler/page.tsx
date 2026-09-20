@@ -131,8 +131,8 @@ export default function CompetitorsPage() {
         <p className="mt-2 text-sm text-ink-soft">
           {t(
             locale,
-            "SerpAPI ile Google’daki ilk 10 sonucu çeker. ranzglobal.com ile rakiplerin sırasını yan yana koyar. PDF indirilebilir. Vize onayı sözü yoktur.",
-            "Pulls Google’s top 10 via SerpAPI and compares ranzglobal.com with competitors. PDF download. Not a visa-approval promise.",
+            "SerpAPI ile Google’daki ilk 10 sonucu çeker. ranzglobal.com ile rakiplerin sırasını yan yana koyar. PDF’e Search Console ve Analytics’teki son 28 günlük istatistikler de eklenir. Vize onayı sözü yoktur.",
+            "Pulls Google’s top 10 via SerpAPI and compares ranzglobal.com with competitors. The PDF also includes the last 28 days of Search Console and Analytics stats. Not a visa-approval promise.",
           )}
         </p>
         {configured === false && (

@@ -8,6 +8,7 @@ import {
   type SerpReport,
 } from "@/lib/serp-competitor";
 import { serpReportPdf } from "@/lib/serp-report-pdf";
+import { googleSeoStatus } from "@/lib/google-seo";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -35,7 +36,8 @@ export async function POST(request: Request) {
     if (action === "pdf") {
       const report = body.report as SerpReport | undefined;
       if (!report?.queries?.length) return noStore({ error: "Önce analizi çalıştırın." }, 400);
-      const bytes = await serpReportPdf(report);
+      const analytics = await googleSeoStatus().catch(() => null);
+      const bytes = await serpReportPdf(report, analytics);
       const copy = new Uint8Array(bytes.byteLength);
       copy.set(bytes);
       return new NextResponse(copy, {
