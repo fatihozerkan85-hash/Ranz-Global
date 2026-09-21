@@ -150,6 +150,14 @@ export type HomeStep = {
   bodyEn: string;
 };
 
+export type HomeReview = {
+  id: string;
+  bodyTr: string;
+  bodyEn: string;
+  whoTr: string;
+  whoEn: string;
+};
+
 export type HomeContent = {
   heroTitleTr: string;
   heroTitleEn: string;
@@ -185,6 +193,7 @@ export type HomeContent = {
   trustTitleEn: string;
   trustBodyTr: string;
   trustBodyEn: string;
+  reviews: HomeReview[];
   galleryIds: string[];
   email: string;
   phone: string;

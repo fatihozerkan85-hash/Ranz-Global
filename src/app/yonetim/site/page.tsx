@@ -16,7 +16,7 @@ import {
   savePost,
 } from "@/lib/store";
 import { useGuides, useHome, useMedia, usePages, usePosts } from "@/lib/use-site";
-import type { BlogPost, CmsPage, HomeCard, HomeContent, HomeStep } from "@/lib/types";
+import type { BlogPost, CmsPage, HomeCard, HomeContent, HomeReview, HomeStep } from "@/lib/types";
 
 type Tab = "home" | "pages" | "guides" | "blog" | "media";
 
@@ -156,6 +156,82 @@ function CardList({
         }
       >
         {t(locale, "+ Kart ekle", "+ Add card")}
+      </button>
+    </div>
+  );
+}
+
+function ReviewList({
+  items,
+  onChange,
+}: {
+  items: HomeReview[];
+  onChange: (next: HomeReview[]) => void;
+}) {
+  const { locale } = useLocale();
+  return (
+    <div className="space-y-3">
+      {items.map((review, i) => (
+        <div key={review.id} className="space-y-2 rounded-xl border border-line p-3">
+          <div className="flex justify-end">
+            <button type="button" className="text-xs text-[#8a3b24]" onClick={() => onChange(items.filter((row) => row.id !== review.id))}>
+              {t(locale, "Sil", "Remove")}
+            </button>
+          </div>
+          <textarea
+            value={review.bodyTr}
+            onChange={(e) => {
+              const next = [...items];
+              next[i] = { ...review, bodyTr: e.target.value };
+              onChange(next);
+            }}
+            rows={3}
+            className="w-full rounded-lg border border-line bg-cream p-3 text-sm"
+            placeholder={t(locale, "Yorum TR", "Review TR")}
+          />
+          <textarea
+            value={review.bodyEn}
+            onChange={(e) => {
+              const next = [...items];
+              next[i] = { ...review, bodyEn: e.target.value };
+              onChange(next);
+            }}
+            rows={3}
+            className="w-full rounded-lg border border-line bg-cream p-3 text-sm"
+            placeholder={t(locale, "Yorum EN", "Review EN")}
+          />
+          <div className="grid gap-2 md:grid-cols-2">
+            <input
+              value={review.whoTr}
+              onChange={(e) => {
+                const next = [...items];
+                next[i] = { ...review, whoTr: e.target.value };
+                onChange(next);
+              }}
+              className="rounded-lg border border-line bg-cream px-3 py-2 text-sm"
+              placeholder={t(locale, "Şehir / imza TR", "City / name TR")}
+            />
+            <input
+              value={review.whoEn}
+              onChange={(e) => {
+                const next = [...items];
+                next[i] = { ...review, whoEn: e.target.value };
+                onChange(next);
+              }}
+              className="rounded-lg border border-line bg-cream px-3 py-2 text-sm"
+              placeholder={t(locale, "Şehir / imza EN", "City / name EN")}
+            />
+          </div>
+        </div>
+      ))}
+      <button
+        type="button"
+        className="text-sm text-gold-deep"
+        onClick={() =>
+          onChange([...items, { id: `r-${Date.now()}`, bodyTr: "", bodyEn: "", whoTr: "", whoEn: "" }])
+        }
+      >
+        {t(locale, "+ Yorum ekle", "+ Add review")}
       </button>
     </div>
   );
@@ -389,6 +465,11 @@ export default function SiteContentPage() {
           <Field label="Başlık TR" value={current.visaTitleTr} onChange={(v) => patchHome({ visaTitleTr: v })} />
           <Field label="Metin TR" value={current.visaLeadTr} onChange={(v) => patchHome({ visaLeadTr: v })} rows={3} />
           <CardList items={current.visaCards} onChange={(visaCards) => patchHome({ visaCards })} />
+          <h2 className="font-serif text-2xl">{t(locale, "Danışan Yorumları", "Client notes")}</h2>
+          <p className="text-xs text-muted">
+            {t(locale, "Anasayfada görünür. Kaydetmeden tarayıcıdan çıkmayın.", "Shown on the homepage. Save before leaving.")}
+          </p>
+          <ReviewList items={current.reviews ?? []} onChange={(reviews) => patchHome({ reviews })} />
           <h2 className="font-serif text-2xl">{t(locale, "İletişim ve alt bilgi", "Contact & footer")}</h2>
           <div className="grid gap-3 md:grid-cols-2">
             <Field label={t(locale, "E-posta", "Email")} value={current.email} onChange={(v) => patchHome({ email: v })} />

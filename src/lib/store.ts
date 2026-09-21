@@ -176,6 +176,9 @@ function patchHomeCopy(home: HomeContent): HomeContent {
   if (isPlaceholderPhone(next.phone)) {
     next = { ...next, phone: DEFAULT_HOME.phone };
   }
+  if (!Array.isArray(next.reviews)) {
+    next = { ...next, reviews: DEFAULT_HOME.reviews };
+  }
   return next;
 }
 
@@ -230,6 +233,7 @@ function hydrateStore(parsed: Partial<Store>): Store {
       steps: parsed.home?.steps ?? DEFAULT_HOME.steps,
       visaCards: mergeById(parsed.home?.visaCards, DEFAULT_HOME.visaCards),
       galleryIds: parsed.home?.galleryIds ?? DEFAULT_HOME.galleryIds,
+      reviews: Array.isArray(parsed.home?.reviews) ? parsed.home.reviews : DEFAULT_HOME.reviews,
     }),
     media: parsed.media ?? [],
     mailSettings: { ...defaultMailSettings(), ...(parsed.mailSettings ?? {}) },

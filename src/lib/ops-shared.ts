@@ -187,10 +187,15 @@ export function mergeOps(base: OpsPayload, incoming: OpsPayload): OpsPayload {
             !digits || digits === "902120000000" || digits === "2120000000"
               ? "+90 530 925 88 92"
               : incoming.home.phone;
-          if (incoming.home.ctaSecondaryTr === "Dosyama Gir") {
-            return { ...incoming.home, ctaSecondaryTr: "Müşteri Paneli", ctaSecondaryEn: "Client Portal", phone };
-          }
-          return phone === incoming.home.phone ? incoming.home : { ...incoming.home, phone };
+          const reviews = Array.isArray(incoming.home.reviews) ? incoming.home.reviews : base.home?.reviews;
+          return {
+            ...incoming.home,
+            phone,
+            ...(reviews ? { reviews } : {}),
+            ...(incoming.home.ctaSecondaryTr === "Dosyama Gir"
+              ? { ctaSecondaryTr: "Müşteri Paneli", ctaSecondaryEn: "Client Portal" }
+              : {}),
+          };
         })()
       : base.home,
     deletedApplicationIds,

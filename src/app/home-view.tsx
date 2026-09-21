@@ -33,96 +33,10 @@ const PIPELINE_PREVIEW = [
   { tr: "Başvuruya hazır", en: "Ready to apply", state: "todo" },
 ];
 
-const REVIEWS = [
-  {
-    id: "lefkosa-1",
-    tr: "Dosyam ne oldu diye sürekli yazmıyorum artık. Danışmanın notu zaten ekranda duruyor.",
-    en: "I don’t keep messaging to ask where my file is. The advisor’s note is already on the screen.",
-    whoTr: "Lefkoşa",
-    whoEn: "Nicosia",
-  },
-  {
-    id: "girne-1",
-    tr: "Evrakları evden yükledim. Liste de, düzeltme de oradan geldi; ofise uğramadım.",
-    en: "I uploaded the papers from home. The list and the corrections came there too; I didn’t go to an office.",
-    whoTr: "Girne",
-    whoEn: "Kyrenia",
-  },
-  {
-    id: "magusa-1",
-    tr: "Schengen’de ne eksikse yanında yazıyordu. Hangisini göndereceğimi sormama gerek kalmadı.",
-    en: "Whatever was missing for Schengen was written next to it. I didn’t have to ask what to send next.",
-    whoTr: "Gazimağusa",
-    whoEn: "Famagusta",
-  },
-  {
-    id: "lefkosa-2",
-    tr: "İngiltere listesi bana göre gelmiş. Sponsor kısmını ayrı tutmuşlar, ben karıştırırdım.",
-    en: "The UK list was made for my situation. They kept the sponsor part separate, which I would have mixed up.",
-    whoTr: "Lefkoşa",
-    whoEn: "Nicosia",
-  },
-  {
-    id: "guzelyurt",
-    tr: "WhatsApp’tan pdf kayboluyordu. Burada yüklediğim yerde duruyor, aramıyorum.",
-    en: "PDFs used to disappear on WhatsApp. Here they stay where I uploaded them, so I’m not hunting for files.",
-    whoTr: "Güzelyurt",
-    whoEn: "Morphou",
-  },
-  {
-    id: "iskele",
-    tr: "Nereye başvuracağımı ilk günden söylediler. Pasaportuma bakıp kestirmeden konuştular.",
-    en: "They told me on day one where I would file. They looked at my passport and didn’t leave it vague.",
-    whoTr: "İskele",
-    whoEn: "Trikomo",
-  },
-  {
-    id: "lefke",
-    tr: "Banka dökümünde bir ay yokmuş. Onu yazdılar, ben de tamamladım. Başka bir şey uydurmadılar.",
-    en: "One month was missing from the bank statements. They wrote that, I filled it in. They didn’t invent extra tasks.",
-    whoTr: "Lefke",
-    whoEn: "Lefka",
-  },
-  {
-    id: "girne-2",
-    tr: "İlk telefonda anlaşıldı: ödediğim danışmanlık ücreti. Konsolosluk ayrı, onu da söylediler.",
-    en: "It was clear on the first call: what I pay is consultancy. Consulate fees are extra, and they said so.",
-    whoTr: "Girne",
-    whoEn: "Kyrenia",
-  },
-  {
-    id: "istanbul",
-    tr: "Herkese aynı listeyi atmamışlar. Benim evraklar ayrı duruyordu, eksik olanlar da belliydi.",
-    en: "They didn’t send the same list to everyone. Mine was separate, and the gaps were obvious.",
-    whoTr: "İstanbul",
-    whoEn: "Istanbul",
-  },
-  {
-    id: "izmir",
-    tr: "ABD’de formla evrakın aynı şeyi anlatması lazımmış. Onu uyardılar, iyi oldu.",
-    en: "For the US, the form and the papers have to say the same thing. They flagged that, which helped.",
-    whoTr: "İzmir",
-    whoEn: "Izmir",
-  },
-  {
-    id: "antalya",
-    tr: "Sigorta mı otel mi önce, karıştırmıştım. Listede sırası vardı, ona baktım.",
-    en: "I had mixed up whether insurance or the hotel came first. The list had an order, so I followed that.",
-    whoTr: "Antalya",
-    whoEn: "Antalya",
-  },
-  {
-    id: "ankara",
-    tr: "Kanada listesini panelden gördüm. Vizeyi alırsınız demediler, adımları gösterdiler.",
-    en: "I saw the Canada list in the portal. They didn’t say I’d get the visa; they showed the steps.",
-    whoTr: "Ankara",
-    whoEn: "Ankara",
-  },
-];
-
 export default function HomePage() {
   const { locale } = useLocale();
   const home = useHome();
+  const reviews = (home.reviews ?? []).filter((r) => r.bodyTr.trim() || r.bodyEn.trim());
   const guides = useGuides().filter((g) => g.status === "published").slice(0, 6);
   const leads = t(locale, home.heroLeadTr, home.heroLeadEn).split("\n\n");
   const priced = PRICED_SLUGS.map((slug) => serviceBySlug(slug)!).filter(Boolean);
@@ -292,6 +206,7 @@ export default function HomePage() {
           <RefusalReviewForm source="/" />
         </section>
 
+        {reviews.length > 0 ? (
         <section className="border-y border-line bg-paper">
           <div className="mx-auto max-w-6xl px-5 py-16">
             <h2 className="font-serif text-3xl md:text-4xl">{t(locale, "Danışan Yorumları", "Client Notes")}</h2>
@@ -299,15 +214,16 @@ export default function HomePage() {
               {t(locale, "Süreç üzerine; vize sonucu vaadi yoktur.", "About the process; not a promise of a visa result.")}
             </p>
             <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {REVIEWS.map((r) => (
+              {reviews.map((r) => (
                 <article key={r.id} className="rounded-2xl border border-line bg-cream p-6">
-                  <p className="text-sm leading-7 text-ink-soft">{t(locale, r.tr, r.en)}</p>
+                  <p className="text-sm leading-7 text-ink-soft">{t(locale, r.bodyTr, r.bodyEn)}</p>
                   <p className="mt-4 text-xs text-muted">{t(locale, r.whoTr, r.whoEn)}</p>
                 </article>
               ))}
             </div>
           </div>
         </section>
+        ) : null}
 
         <FaqSection />
 
