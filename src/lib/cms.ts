@@ -1,6 +1,7 @@
 import type { BlogPost, CmsPage } from "./types";
 import { SEO_TARGET_POSTS } from "./seo-target-posts";
 import { VISA_GUIDES } from "./visa-guides";
+import { KVKK_BODY_EN, KVKK_DESCRIPTION_EN, KVKK_DESCRIPTION_TR, KVKK_TITLE_EN, KVKK_TITLE_TR, kvkkBodyTr } from "./kvkk";
 
 export const SITE = {
   name: "Ranz Global",
@@ -50,14 +51,12 @@ export const DEFAULT_PAGES: CmsPage[] = [
   },
   {
     slug: "kvkk",
-    titleTr: "KVKK Aydınlatma",
-    titleEn: "Personal data notice",
-    descriptionTr: "Kişisel verilerinizin işlenmesine ilişkin aydınlatma metni.",
-    descriptionEn: "Notice on the processing of your personal data.",
-    bodyTr:
-      "Ranz Global, vize danışmanlığı kapsamında ad, iletişim, dosya durumu ve yüklenen evrakları işler. Hesap ve dosya özeti tarayıcınızdaki yerel depoda (localStorage) durur. Yüklediğiniz PDF/JPEG/PNG belgeler Vercel Blob özel deposuna HTTPS ile aktarılır; doğrudan herkese açık bir bağlantı verilmez, indirme site üzerinden yapılır.\n\nŞifreleme iddiası kullanmıyoruz. Amaç yalnızca danışmanlık sürecini yürütmektir. Resmi aydınlatma metni ayrıca iletilebilir.",
-    bodyEn:
-      "Ranz Global processes name, contact, file status and uploaded documents for visa consultancy. Account and file summaries sit in your browser’s localStorage. PDF/JPEG/PNG files you upload go over HTTPS to a private Vercel Blob store; they are not given a public URL and are opened through this site.\n\nWe do not claim encryption. The purpose is to run the consultancy. A formal notice can be issued separately.",
+    titleTr: KVKK_TITLE_TR,
+    titleEn: KVKK_TITLE_EN,
+    descriptionTr: KVKK_DESCRIPTION_TR,
+    descriptionEn: KVKK_DESCRIPTION_EN,
+    bodyTr: kvkkBodyTr(),
+    bodyEn: KVKK_BODY_EN,
     status: "published",
   },
   {

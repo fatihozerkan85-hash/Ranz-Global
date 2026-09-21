@@ -153,8 +153,9 @@ function patchGuides(guides: CmsPage[]) {
 
 function patchLegalPages(pages: CmsPage[]) {
   return pages.map((page) => {
-    if (page.slug === "kvkk" && page.bodyTr.includes("yüklenmez")) {
-      return DEFAULT_PAGES.find((item) => item.slug === "kvkk") ?? page;
+    if (page.slug === "kvkk") {
+      const fresh = DEFAULT_PAGES.find((item) => item.slug === "kvkk");
+      return fresh ? { ...page, ...fresh, imageId: page.imageId } : page;
     }
     if (page.slug === "gizlilik" && !page.bodyTr.includes("Vercel Blob")) {
       return DEFAULT_PAGES.find((item) => item.slug === "gizlilik") ?? page;
