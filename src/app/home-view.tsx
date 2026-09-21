@@ -35,19 +35,88 @@ const PIPELINE_PREVIEW = [
 
 const REVIEWS = [
   {
-    tr: "Evrak listesi kişiye özel geldi; eksikler panelde net göründü.",
-    en: "The document list was personal; missing items were clear in the portal.",
-    who: "İstanbul",
-  },
-  {
+    id: "lefkosa-1",
     tr: "Danışman notunu aynı ekrandan okudum. Sürekli “dosyam ne durumda” yazmama gerek kalmadı.",
     en: "I read the advisor note on the same screen. I did not have to keep asking where the file stood.",
-    who: "Lefkoşa",
+    whoTr: "Lefkoşa",
+    whoEn: "Nicosia",
   },
   {
-    tr: "Ücretin danışmanlık olduğunu, konsolosluk harcının ayrı olduğunu baştan söylediler.",
-    en: "They said from the start that consultancy and consulate fees are separate.",
-    who: "İzmir",
+    id: "girne-1",
+    tr: "Girne’den evrak yükledim; ofise gitmeden liste ve revizyon paneldendi.",
+    en: "I uploaded from Kyrenia; the list and revisions were in the portal without visiting an office.",
+    whoTr: "Girne",
+    whoEn: "Kyrenia",
+  },
+  {
+    id: "magusa-1",
+    tr: "Gazimağusa’dan Schengen dosyasında hangi belgenin eksik olduğu işaretli durdu.",
+    en: "On a Schengen file from Famagusta, missing documents stayed clearly marked.",
+    whoTr: "Gazimağusa",
+    whoEn: "Famagusta",
+  },
+  {
+    id: "lefkosa-2",
+    tr: "Lefkoşa’dan İngiltere listesi kişiye özel geldi; sponsor maddesi ayrı yazılmıştı.",
+    en: "The UK list from Nicosia was personal; the sponsor item was written separately.",
+    whoTr: "Lefkoşa",
+    whoEn: "Nicosia",
+  },
+  {
+    id: "guzelyurt",
+    tr: "Güzelyurt’tan yükledim. WhatsApp’ta kaybolan evrak panelde durduğu için takip kolaydı.",
+    en: "I uploaded from Morphou. Papers that used to get lost on WhatsApp stayed in the portal, so tracking was easy.",
+    whoTr: "Güzelyurt",
+    whoEn: "Morphou",
+  },
+  {
+    id: "iskele",
+    tr: "İskele’den başvuru yerinin pasaporta göre değiştiğini baştan anlattılar; tahmin yürütmedim.",
+    en: "From Trikomo they explained up front that the filing place follows the passport; I did not have to guess.",
+    whoTr: "İskele",
+    whoEn: "Trikomo",
+  },
+  {
+    id: "lefke",
+    tr: "Lefke’den dijital yürüdü. Eksik ay banka dökümü revizyon olarak net düştü.",
+    en: "The file from Lefka ran digitally. A missing bank-statement month came back as a clear revision.",
+    whoTr: "Lefke",
+    whoEn: "Lefka",
+  },
+  {
+    id: "girne-2",
+    tr: "Ücretin danışmanlık olduğunu, konsolosluk harcının ayrı olduğunu Girne görüşmesinde baştan söylediler.",
+    en: "In the Kyrenia call they said from the start that consultancy and consulate fees are separate.",
+    whoTr: "Girne",
+    whoEn: "Kyrenia",
+  },
+  {
+    id: "istanbul",
+    tr: "Evrak listesi kişiye özel geldi; eksikler panelde net göründü.",
+    en: "The document list was personal; missing items were clear in the portal.",
+    whoTr: "İstanbul",
+    whoEn: "Istanbul",
+  },
+  {
+    id: "izmir",
+    tr: "İzmir’den ABD dosyasında DS-160 ile evrakın aynı hikâyeyi anlatması için not düştüler.",
+    en: "On a US file from Izmir they noted that DS-160 and the papers had to tell the same story.",
+    whoTr: "İzmir",
+    whoEn: "Izmir",
+  },
+  {
+    id: "antalya",
+    tr: "Antalya’dan Schengen sigorta ve rezervasyonu listeye işlendi; hangisinin önce gideceği karışmadı.",
+    en: "From Antalya, Schengen insurance and bookings were on the list; the order did not get mixed up.",
+    whoTr: "Antalya",
+    whoEn: "Antalya",
+  },
+  {
+    id: "ankara",
+    tr: "Ankara’dan Kanada ziyaretçi listesi panelde açıldı. Onay sözü yoktu; süreç adım adım durdu.",
+    en: "A Canada visitor list opened in the portal from Ankara. There was no approval promise; the steps stayed visible.",
+    whoTr: "Ankara",
+    whoEn: "Ankara",
   },
 ];
 
@@ -224,11 +293,11 @@ export default function HomePage() {
             <p className="mt-2 text-xs text-muted">
               {t(locale, "Süreç üzerine; vize sonucu vaadi yoktur.", "About the process; not a promise of a visa result.")}
             </p>
-            <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {REVIEWS.map((r) => (
-                <article key={r.who} className="rounded-2xl border border-line bg-cream p-6">
+                <article key={r.id} className="rounded-2xl border border-line bg-cream p-6">
                   <p className="text-sm leading-7 text-ink-soft">{t(locale, r.tr, r.en)}</p>
-                  <p className="mt-4 text-xs text-muted">{r.who}</p>
+                  <p className="mt-4 text-xs text-muted">{t(locale, r.whoTr, r.whoEn)}</p>
                 </article>
               ))}
             </div>
