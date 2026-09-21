@@ -1,4 +1,5 @@
 import { SITE } from "@/lib/cms";
+import { WHATSAPP_DISPLAY, WHATSAPP_E164 } from "@/lib/contact";
 import { FAQ_ITEMS } from "@/lib/faq";
 import type { Service } from "@/lib/services";
 
@@ -46,10 +47,13 @@ export function OrganizationJsonLd() {
           "UK visa",
           "Canada visa",
         ],
+        telephone: WHATSAPP_DISPLAY,
+        sameAs: [`https://wa.me/${WHATSAPP_E164}`],
         contactPoint: {
           "@type": "ContactPoint",
           contactType: "customer service",
           email: SITE.email,
+          telephone: WHATSAPP_DISPLAY,
           availableLanguage: ["Turkish", "English"],
         },
       }}

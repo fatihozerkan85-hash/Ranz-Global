@@ -4,7 +4,7 @@ import { MarketingShell, PageHero } from "@/components/marketing-shell";
 import { ContactLeadForm } from "@/components/contact-lead-form";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
-import { whatsappHref } from "@/lib/contact";
+import { WHATSAPP_DISPLAY, whatsappHref } from "@/lib/contact";
 import { useHome } from "@/lib/use-site";
 
 export default function ContactView() {
@@ -42,7 +42,7 @@ export default function ContactView() {
           <article className="rounded-2xl border border-line bg-paper p-6">
             <h2 className="font-serif text-2xl">WhatsApp</h2>
             <a href={whatsappHref(locale)} target="_blank" rel="noopener noreferrer" className="mt-3 block text-sm text-gold-deep">
-              {t(locale, "Sohbeti aç", "Open chat")}
+              {WHATSAPP_DISPLAY}
             </a>
           </article>
           <article className="rounded-2xl border border-line bg-paper p-6">

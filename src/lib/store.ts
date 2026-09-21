@@ -174,7 +174,7 @@ function patchHomeCopy(home: HomeContent): HomeContent {
     next = { ...next, ctaSecondaryTr: DEFAULT_HOME.ctaSecondaryTr, ctaSecondaryEn: DEFAULT_HOME.ctaSecondaryEn };
   }
   if (isPlaceholderPhone(next.phone)) {
-    next = { ...next, phone: "" };
+    next = { ...next, phone: DEFAULT_HOME.phone };
   }
   return next;
 }

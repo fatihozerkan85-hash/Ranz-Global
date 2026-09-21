@@ -87,7 +87,7 @@ export const DEFAULT_HOME: HomeContent = {
     "Register, sign in and upload the documents listed for you. Our specialist advisors review the file; you simply follow every step of the review.",
   galleryIds: [],
   email: "info@ranzglobal.com",
-  phone: "",
+  phone: "+90 530 925 88 92",
   cityTr: "İstanbul, Türkiye",
   cityEn: "Istanbul, Turkey",
   footerNoteTr:

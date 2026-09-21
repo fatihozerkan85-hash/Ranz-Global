@@ -7,7 +7,7 @@ export const SITE = {
   taglineTr: "Travel & Visa",
   taglineEn: "Travel & Visa",
   email: "info@ranzglobal.com",
-  phoneDisplay: "",
+  phoneDisplay: "+90 530 925 88 92",
   cityTr: "İstanbul, Türkiye",
   cityEn: "Istanbul, Turkey",
   url: "https://www.ranzglobal.com",

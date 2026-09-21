@@ -183,7 +183,10 @@ export function mergeOps(base: OpsPayload, incoming: OpsPayload): OpsPayload {
     home: incoming.home
       ? (() => {
           const digits = (incoming.home.phone || "").replace(/\D/g, "");
-          const phone = !digits || digits === "902120000000" || digits === "2120000000" ? "" : incoming.home.phone;
+          const phone =
+            !digits || digits === "902120000000" || digits === "2120000000"
+              ? "+90 530 925 88 92"
+              : incoming.home.phone;
           if (incoming.home.ctaSecondaryTr === "Dosyama Gir") {
             return { ...incoming.home, ctaSecondaryTr: "Müşteri Paneli", ctaSecondaryEn: "Client Portal", phone };
           }
