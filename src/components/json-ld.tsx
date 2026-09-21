@@ -108,7 +108,7 @@ export function ServiceJsonLd({ service }: { service: Service }) {
         offers: service.fee
           ? {
               "@type": "Offer",
-              priceCurrency: service.fee.includes("EUR") ? "EUR" : "USD",
+              priceCurrency: /euro|eur/i.test(service.fee) ? "EUR" : "USD",
               price: service.fee.replace(/[^\d.]/g, "") || undefined,
               description: "Ranz Global danışmanlık ücreti. Konsolosluk ve merkez harçları ayrıdır.",
             }

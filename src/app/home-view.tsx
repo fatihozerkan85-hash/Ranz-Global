@@ -194,16 +194,21 @@ export default function HomePage() {
               <Link key={s.slug} href={`/hizmet/${s.slug}`} className="flex flex-wrap items-center justify-between gap-2 px-4 py-4 hover:bg-cream sm:px-5">
                 <span className="flex min-w-0 items-center gap-2">
                   <CountryFlag code={s.flag} title={t(locale, s.titleTr, s.titleEn)} />
-                  <span className="min-w-0 break-words">{t(locale, s.titleTr.replace(" Vizesi", ""), s.titleEn.replace(" Visa", ""))}</span>
+                  <span className="min-w-0 break-words">
+                    {t(
+                      locale,
+                      s.feeListTr ?? s.titleTr.replace(" Vizesi", ""),
+                      s.feeListEn ?? s.titleEn.replace(" Visa", ""),
+                    )}
+                  </span>
                 </span>
                 <strong className="shrink-0">{s.fee}</strong>
               </Link>
             ))}
           </div>
           <p className="mt-6 text-sm">
-            {t(locale, "Diğer Ülkeler İçin:", "For Other Countries:")}{" "}
             <Link href="#iletisim" className="text-gold-deep">
-              {t(locale, "Fiyat Al", "Request A Fee")}
+              {t(locale, "Diğer ülkeler için lütfen fiyat alınız", "Please request a quote for other countries")}
             </Link>
           </p>
           <p className="mt-4 max-w-2xl text-xs leading-5 text-muted">{t(locale, FEE_DISCLAIMER_TR, FEE_DISCLAIMER_EN)}</p>

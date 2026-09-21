@@ -38,7 +38,7 @@ function ServiceBody({ slug, ulke }: { slug: string; ulke?: string }) {
           <h2 className="mt-4 font-serif text-2xl text-ink-soft">{t(locale, service.visaTr, service.visaEn)}</h2>
           <p className="mt-6 text-lg">
             {t(locale, "Ranz Global danışmanlık ücreti", "Ranz Global consultancy fee")}:{" "}
-            <strong>{service.fee || t(locale, "Fiyat al", "Request a fee")}</strong>
+            <strong>{service.fee || t(locale, "Lütfen fiyat alınız", "Please request a quote")}</strong>
           </p>
           {regional && region && (
             <div className="mt-8">

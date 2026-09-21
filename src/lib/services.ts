@@ -48,7 +48,8 @@ export type Service = {
   visaTr: string;
   visaEn: string;
   fee: string;
-  feeNoteTr?: string;
+  feeListTr?: string;
+  feeListEn?: string;
   destId: string;
   quizKey: string;
 };
@@ -59,9 +60,11 @@ export const SERVICES: Service[] = [
     flag: "gb",
     titleTr: "İngiltere Vizesi",
     titleEn: "UK Visa",
-    visaTr: "Ziyaretçi Vizesi (Standard Visitor)",
-    visaEn: "Standard Visitor Visa",
+    visaTr: "6 aylık Ziyaretçi Vizesi (Standard Visitor)",
+    visaEn: "6-month Standard Visitor Visa",
     fee: "350 USD",
+    feeListTr: "İngiltere 6 aylık",
+    feeListEn: "UK 6-month",
     destId: "uk",
     quizKey: "uk",
   },
@@ -94,7 +97,7 @@ export const SERVICES: Service[] = [
     titleEn: "Schengen Visa",
     visaTr: "Kısa Konaklama (C tipi)",
     visaEn: "Short-stay (type C)",
-    fee: "320 EUR",
+    fee: "320 Euro",
     destId: "schengen",
     quizKey: "schengen",
   },
@@ -105,7 +108,7 @@ export const SERVICES: Service[] = [
     titleEn: "Germany Visa",
     visaTr: "Schengen kısa konaklama",
     visaEn: "Schengen short-stay",
-    fee: "320 EUR",
+    fee: "320 Euro",
     destId: "schengen",
     quizKey: "schengen",
   },
@@ -116,7 +119,7 @@ export const SERVICES: Service[] = [
     titleEn: "Denmark Visa",
     visaTr: "Schengen kısa konaklama",
     visaEn: "Schengen short-stay",
-    fee: "320 EUR",
+    fee: "320 Euro",
     destId: "schengen",
     quizKey: "schengen",
   },
@@ -149,7 +152,9 @@ export const SERVICES: Service[] = [
     titleEn: "UAE / Dubai Visa",
     visaTr: "Turistik vize",
     visaEn: "Tourist visa",
-    fee: "",
+    fee: "150 USD",
+    feeListTr: "Dubai",
+    feeListEn: "Dubai",
     destId: "uae",
     quizKey: "uae",
   },
@@ -177,7 +182,7 @@ export const SERVICES: Service[] = [
   },
 ];
 
-export const PRICED_SLUGS: ServiceSlug[] = ["ingiltere", "abd", "almanya", "danimarka"];
+export const PRICED_SLUGS: ServiceSlug[] = ["abd", "ingiltere", "kanada", "schengen", "dubai"];
 
 export const HOME_DEST_SLUGS: ServiceSlug[] = [
   "ingiltere",
