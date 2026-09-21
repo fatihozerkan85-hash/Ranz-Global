@@ -1,5 +1,6 @@
 import type { BlogPost, CmsPage } from "./types";
 import { SEO_TARGET_POSTS } from "./seo-target-posts";
+import { VISA_GUIDES } from "./visa-guides";
 
 export const SITE = {
   name: "Ranz Global",
@@ -73,116 +74,24 @@ export const DEFAULT_PAGES: CmsPage[] = [
   },
 ];
 
-export const DEFAULT_GUIDES: CmsPage[] = [
-  {
-    slug: "schengen",
-    titleTr: "Schengen Vize Rehberi",
-    titleEn: "Schengen Visa Guide",
-    descriptionTr: "Schengen turistik ve ticari başvurularda evrak çerçevesi.",
-    descriptionEn: "Document framework for Schengen tourist and business applications.",
-    bodyTr:
-      "Schengen kısa konaklama vizelerinde pasaport süresi, biyometrik fotoğraf, seyahat sağlık sigortası, uçuş ve konaklama rezervasyonu ile mali döküm temel belgelerdir. Ticari dosyalarda davet mektubu ve şirket evrakı zorunlu hale gelir.\n\nAracı kullanmak vize alma şansını artırmaz; resmi karar konsolosluğa aittir.",
-    bodyEn:
-      "For Schengen short-stay visas, passport validity, biometric photo, travel insurance, flight and hotel reservations and bank statements are core. Business files add invitation and company papers.\n\nUsing an intermediary does not increase the chance of a visa; the decision is official.",
-    status: "published",
-  },
-  {
-    slug: "abd",
-    titleTr: "ABD Vize Rehberi",
-    titleEn: "USA Visa Guide",
-    descriptionTr: "B1/B2 ve F-1 öğrenci dosyalarında izlenen evraklar.",
-    descriptionEn: "Documents tracked for B1/B2 and F-1 student files.",
-    bodyTr:
-      "B1/B2 için DS-160 onay sayfası, fotoğraf, randevu teyidi, mali belgeler ve seyahat planı izlenir. F-1’de I-20, SEVIS ödemesi ve kabul mektubu eklenir.\n\nRandevu sistemi resmi makamlara aittir.",
-    bodyEn:
-      "B1/B2 files track DS-160 confirmation, photo, appointment, finances and itinerary. F-1 adds I-20, SEVIS payment and admission letter.\n\nAppointment systems belong to official authorities.",
-    status: "published",
-  },
-  {
-    slug: "2026-ingiltere-vizesi-evraklar",
-    titleTr: "2026 İngiltere Vizesi İçin Gerekli Evraklar",
-    titleEn: "Documents For A 2026 UK Visa",
-    descriptionTr: "Ziyaretçi dosyasında pasaport, döküm, bağ ve konaklama nasıl durur.",
-    descriptionEn: "How passport, statements, ties and accommodation sit in a visitor file.",
-    bodyTr:
-      "İngiltere Standard Visitor dosyasında pasaport, seyahat planı, konaklama, birkaç aylık banka dökümü ve bağlar birlikte okunur. Çalışan, şirket sahibi, emekli veya sponsorlu olmanıza göre liste değişir. Tek bir evrak şablonu yoktur.\n\nRanz Global panelinde size özel madde listesi açılır.",
-    bodyEn:
-      "A UK Standard Visitor file is read as passport, itinerary, stay, several months of statements and ties together. The list changes if you are employed, a business owner, retired or sponsored.\n\nYour personal list opens in the Ranz Global portal.",
-    status: "published",
-  },
-  {
-    slug: "abd-vizesi-mulakat",
-    titleTr: "ABD Vizesi Mülakatında Ne Sorulur?",
-    titleEn: "What Is Asked At A US Visa Interview?",
-    descriptionTr: "DS-160, mali tablo ve seyahat planının aynı hikâyeyi anlatması.",
-    descriptionEn: "DS-160, finances and itinerary should tell the same story.",
-    bodyTr:
-      "Mülakat resmi süreçtir. Sık bakılan konular seyahat amacı, dönüş bağı ve mali yeterliliktir. Danışmanlık tarafında DS-160 ile evrakların çelişmemesi hedeflenir. Ranz Global mülakatı sizin yerinize yapmaz.",
-    bodyEn:
-      "The interview is official. Purpose, ties and funds are commonly tested. We keep DS-160 and documents consistent. Ranz Global does not attend the interview in your place.",
-    status: "published",
-  },
-  {
-    slug: "schengen-banka-hesabi",
-    titleTr: "Schengen Vizesi Banka Hesabında Ne Kadar Para Olmalı?",
-    titleEn: "How Much Money For A Schengen Visa Bank Account?",
-    descriptionTr: "Sihirli bir tutar yoktur; tutarlılık ve kaynak önemlidir.",
-    descriptionEn: "There is no magic figure; consistency and source of funds matter.",
-    bodyTr:
-      "Schengen’de günlük harcama varsayımı ülkeye göre değişir. Bakiyenin rezervasyon, gelir ve seyahat süresiyle uyumu bakılır. Ani yüklü para veya eksik ay dökümü sık revizyon nedenidir. Kesin bir euro rakamı vaat etmeyiz.",
-    bodyEn:
-      "Schengen daily-cost assumptions vary by country. The balance must match bookings, income and trip length. Sudden deposits or missing months are common issues. We do not promise a euro figure.",
-    status: "published",
-  },
-  {
-    slug: "vize-reddi-sonrasi",
-    titleTr: "Vize Reddinden Sonra Tekrar Başvuru Yapılabilir Mi?",
-    titleEn: "Can You Apply Again After A Visa Refusal?",
-    descriptionTr: "Çoğu ülkede mümkündür; önceki gerekçe dosyada durur.",
-    descriptionEn: "Usually yes; the previous grounds stay on the file.",
-    bodyTr:
-      "Yeniden başvuru mümkündür. Aynı gerekçeyi tekrar etmek risklidir. Ret yazısını okuyup yeni dosyayı ona göre kurarız. Onay yine garanti değildir.",
-    bodyEn:
-      "A new application is possible. Repeating the same grounds is risky. We read the letter and rebuild the file. Approval is still not guaranteed.",
-    status: "published",
-  },
-  {
-    slug: "sirket-sahipleri-ingiltere",
-    titleTr: "Şirket Sahipleri İçin İngiltere Vizesi Evrakları",
-    titleEn: "UK Visa Documents For Company Owners",
-    descriptionTr: "Şirket evrakı, hesap hareketi ve kişisel bağlar birlikte durur.",
-    descriptionEn: "Company papers, account activity and personal ties sit together.",
-    bodyTr:
-      "Şirket sahibinde vergi levhası, faaliyet, imza sirküleri ve şirket/kişisel hesap dökümü sık istenir. Kişisel bağlar da gösterilir. Liste dosyaya göredir.",
-    bodyEn:
-      "Owners often need tax plate, activity papers, signature circular and company/personal statements, plus personal ties. The list follows the file.",
-    status: "published",
-  },
-  {
-    slug: "calismayan-vize",
-    titleTr: "Çalışmayan Biri Vize Alabilir Mi?",
-    titleEn: "Can Someone Who Is Not Working Get A Visa?",
-    descriptionTr: "Gelir kaynağı, sponsor ve dönüş bağı net olmalıdır.",
-    descriptionEn: "Source of funds, a sponsor and return ties must be clear.",
-    bodyTr:
-      "Çalışmamak tek başına ret demek değildir. Sponsor, birikim ve bağlar açık durmalıdır. Sonuç resmi makama aittir.",
-    bodyEn:
-      "Not working is not an automatic refusal. Sponsor, savings and ties must be clear. The decision is official.",
-    status: "published",
-  },
-  {
-    slug: "sponsorlu-vize",
-    titleTr: "Sponsorlu Vize Başvurusu Nasıl Yapılır?",
-    titleEn: "How Does A Sponsored Visa Application Work?",
-    descriptionTr: "Sponsorun kimliği, mali belgesi ve ilişki kanıtı dosyada durur.",
-    descriptionEn: "The sponsor’s identity, finances and proof of relationship sit on the file.",
-    bodyTr:
-      "Sponsor dilekçesi, kimlik ve mali belgeler ile sizin bağlarınız birlikte okunur. Sponsor sizin yerinize başvuran olmaz; dosyayı güçlendirir.",
-    bodyEn:
-      "A sponsor letter, ID and finances are read with your own ties. The sponsor does not become the applicant; they support the file.",
-    status: "published",
-  },
-];
+export const DEFAULT_GUIDES: CmsPage[] = VISA_GUIDES.map((g) => ({
+  slug: g.slug,
+  titleTr: g.titleTr,
+  titleEn: g.titleEn,
+  descriptionTr: g.descriptionTr,
+  descriptionEn: g.descriptionEn,
+  bodyTr: g.blocks
+    .filter((b) => b.type === "p")
+    .slice(0, 2)
+    .map((b) => ("tr" in b ? b.tr : ""))
+    .join("\n\n"),
+  bodyEn: g.blocks
+    .filter((b) => b.type === "p")
+    .slice(0, 2)
+    .map((b) => ("en" in b ? b.en : ""))
+    .join("\n\n"),
+  status: "published" as const,
+}));
 
 export const RETIRED_BLOG_SLUGS = new Set([
   "schengen-evragi-nasil-hazirlanir",

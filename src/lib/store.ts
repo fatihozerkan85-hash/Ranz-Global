@@ -139,6 +139,18 @@ function mergeBySlug<T extends { slug: string }>(existing: T[] | undefined, defa
   return list;
 }
 
+function patchGuides(guides: CmsPage[]) {
+  const fresh = new Map(DEFAULT_GUIDES.map((g) => [g.slug, g]));
+  const next = guides.map((g) => {
+    const hit = fresh.get(g.slug);
+    return hit ? { ...g, ...hit, imageId: g.imageId } : g;
+  });
+  for (const g of DEFAULT_GUIDES) {
+    if (!next.some((row) => row.slug === g.slug)) next.push(g);
+  }
+  return next;
+}
+
 function patchLegalPages(pages: CmsPage[]) {
   return pages.map((page) => {
     if (page.slug === "kvkk" && page.bodyTr.includes("yüklenmez")) {
@@ -210,7 +222,7 @@ function hydrateStore(parsed: Partial<Store>): Store {
       })),
     pages: patchLegalPages(mergeBySlug(parsed.pages, DEFAULT_PAGES)),
     posts: mergeBySlug(parsed.posts, DEFAULT_POSTS).filter((p) => !RETIRED_BLOG_SLUGS.has(p.slug)),
-    guides: mergeBySlug(parsed.guides, DEFAULT_GUIDES),
+    guides: patchGuides(mergeBySlug(parsed.guides, DEFAULT_GUIDES)),
     home: patchHomeCopy({
       ...DEFAULT_HOME,
       ...parsed.home,

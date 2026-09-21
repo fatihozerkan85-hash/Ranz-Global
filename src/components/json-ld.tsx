@@ -174,6 +174,23 @@ export function BlogListJsonLd({
   );
 }
 
+export function GuideFaqJsonLd({ items }: { items: { qTr: string; aTr: string }[] }) {
+  if (!items.length) return null;
+  return (
+    <JsonLd
+      data={{
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: items.map((item) => ({
+          "@type": "Question",
+          name: item.qTr,
+          acceptedAnswer: { "@type": "Answer", text: item.aTr },
+        })),
+      }}
+    />
+  );
+}
+
 export function BreadcrumbJsonLd({ items }: { items: { name: string; path: string }[] }) {
   return (
     <JsonLd

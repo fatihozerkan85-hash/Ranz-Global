@@ -1,8 +1,9 @@
 import { publicMeta } from "@/lib/seo-meta";
 
 export const metadata = publicMeta({
-  title: "Vize rehberi",
-  description: "Schengen, ABD ve diğer ülke vize evrak rehberleri. Resmi karar konsolosluğa aittir.",
+  title: "Vize Rehberi",
+  description:
+    "Schengen, ABD, İngiltere evrak rehberleri: banka, mülakat, ret ve sponsor. Karar resmi makama aittir.",
   path: "/vize-rehberi",
 });
 
