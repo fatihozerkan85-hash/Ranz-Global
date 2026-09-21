@@ -3,6 +3,7 @@ import { SEO_TARGET_POSTS } from "./seo-target-posts";
 import { VISA_GUIDES } from "./visa-guides";
 import { COMPANY, COMPANY_CITY_EN, COMPANY_CITY_TR } from "./company";
 import { KVKK_BODY_EN, KVKK_DESCRIPTION_EN, KVKK_DESCRIPTION_TR, KVKK_TITLE_EN, KVKK_TITLE_TR, kvkkBodyTr } from "./kvkk";
+import { PRIVACY_BODY_EN, PRIVACY_DESCRIPTION_EN, PRIVACY_DESCRIPTION_TR, PRIVACY_TITLE_EN, PRIVACY_TITLE_TR, privacyBodyTr } from "./privacy";
 
 export const SITE = {
   name: COMPANY.brandShort,
@@ -64,20 +65,12 @@ export const DEFAULT_PAGES: CmsPage[] = [
   },
   {
     slug: "gizlilik",
-    titleTr: "Gizlilik politikası",
-    titleEn: "Privacy policy",
-    descriptionTr: "Ranz Global gizlilik politikası.",
-    descriptionEn: "Ranz Global privacy policy.",
-    bodyTr: `Dil ve oturum için tarayıcı depolaması kullanılır. İletişim formu kayıtları bu tarayıcıdaki yerel depoda tutulur. Yüklenen evraklar Vercel Blob özel deposunda saklanır. Üçüncü taraf reklam çerezi yok. Analitik bağlanırsa ayrıca bildirilir.
-
-Veri sorumlusu: ${COMPANY.legalName}. ${COMPANY.brandNoteTr}
-Adres: ${COMPANY.address}. ${COMPANY.tradeRegistry}. ${COMPANY.taxOffice}, VKN ${COMPANY.taxNo}.
-Ayrıntı KVKK aydınlatma metnindedir.`,
-    bodyEn: `Browser storage is used for language and session. Contact form records stay in local storage on this browser. Uploaded documents are stored in a private Vercel Blob store. No third-party ad cookies. Analytics, if added, will be disclosed.
-
-Controller: ${COMPANY.legalName}. ${COMPANY.brandNoteEn}
-Address: ${COMPANY.address}. ${COMPANY.tradeRegistry}. Tax no ${COMPANY.taxNo}.
-Details are in the KVKK notice.`,
+    titleTr: PRIVACY_TITLE_TR,
+    titleEn: PRIVACY_TITLE_EN,
+    descriptionTr: PRIVACY_DESCRIPTION_TR,
+    descriptionEn: PRIVACY_DESCRIPTION_EN,
+    bodyTr: privacyBodyTr(),
+    bodyEn: PRIVACY_BODY_EN,
     status: "published",
   },
 ];
