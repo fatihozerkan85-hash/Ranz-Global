@@ -1,14 +1,16 @@
+import { COMPANY } from "./company";
+
 export const KVKK_UPDATED_AT = "21 Eylül 2026";
 
 export const KVKK_TITLE_TR = "Kişisel Verilerin Korunması ve İşlenmesi Hakkında Aydınlatma Metni";
 export const KVKK_TITLE_EN = "Notice on the Protection and Processing of Personal Data";
 
 export const KVKK_CONTROLLER = {
-  name: "Ranz Global",
-  brand: "Ranz Global – Travel & Visa",
-  address: "İstanbul, Türkiye",
-  email: "info@ranzglobal.com",
-  web: "www.ranzglobal.com",
+  name: COMPANY.legalName,
+  brand: COMPANY.brand,
+  address: COMPANY.address,
+  email: COMPANY.email,
+  web: COMPANY.web,
 };
 
 export type KvkkBlock =
@@ -25,7 +27,7 @@ const intro: KvkkBlock[] = [
   { type: "p", tr: `Son güncelleme: ${KVKK_UPDATED_AT}` },
   {
     type: "p",
-    tr: "Ranz Global – Travel & Visa (“Ranz Global”) olarak kişisel verilerinizin gizliliğine ve güvenliğine önem veriyoruz.",
+    tr: `${COMPANY.brandNoteTr} ${COMPANY.legalName} olarak kişisel verilerinizin gizliliğine ve güvenliğine önem veriyoruz.`,
   },
   {
     type: "p",
@@ -41,10 +43,13 @@ export const KVKK_SECTIONS: KvkkSection[] = [
       {
         type: "ul",
         items: [
-          `${KVKK_CONTROLLER.name}`,
-          `Marka: ${KVKK_CONTROLLER.brand}`,
-          `Adres: ${KVKK_CONTROLLER.address}`,
-          `E-posta: ${KVKK_CONTROLLER.email}`,
+          COMPANY.legalNameCaps,
+          COMPANY.brandNoteTr,
+          `Adres: ${COMPANY.address}`,
+          `Ticaret sicili: ${COMPANY.tradeRegistry}`,
+          `Vergi dairesi: ${COMPANY.taxOffice}`,
+          `Vergi kimlik no: ${COMPANY.taxNo}`,
+          `E-posta: ${COMPANY.email}`,
         ],
       },
       { type: "p", tr: "tarafından işlenebilmektedir." },
@@ -418,9 +423,13 @@ export const KVKK_SECTIONS: KvkkSection[] = [
       {
         type: "ul",
         items: [
-          KVKK_CONTROLLER.name,
-          `Adres: ${KVKK_CONTROLLER.address}`,
-          `E-posta: ${KVKK_CONTROLLER.email}`,
+          COMPANY.legalNameCaps,
+          COMPANY.brandNoteTr,
+          `Adres: ${COMPANY.address}`,
+          `Ticaret sicili: ${COMPANY.tradeRegistry}`,
+          `Vergi dairesi: ${COMPANY.taxOffice}`,
+          `Vergi kimlik no: ${COMPANY.taxNo}`,
+          `E-posta: ${COMPANY.email}`,
         ],
       },
       { type: "p", tr: "üzerinden, ilgili mevzuatta öngörülen usullere uygun şekilde iletebilirsiniz." },
@@ -458,9 +467,11 @@ export const KVKK_SECTIONS: KvkkSection[] = [
       {
         type: "ul",
         items: [
-          KVKK_CONTROLLER.brand,
-          `E-posta: ${KVKK_CONTROLLER.email}`,
-          `Web: ${KVKK_CONTROLLER.web}`,
+          COMPANY.legalName,
+          COMPANY.brand,
+          COMPANY.brandNoteTr,
+          `E-posta: ${COMPANY.email}`,
+          `Web: ${COMPANY.web}`,
         ],
       },
     ],
@@ -496,15 +507,17 @@ export function kvkkBodyTr() {
   return parts.join("\n\n");
 }
 
-export const KVKK_BODY_EN = `This page is the official KVKK disclosure of Ranz Global – Travel & Visa. The Turkish text prevails.
+export const KVKK_BODY_EN = `This page is the official KVKK disclosure. The Turkish text prevails.
 
 Last updated: 21 September 2026.
 
-Controller: ${KVKK_CONTROLLER.name}. Address: ${KVKK_CONTROLLER.address}. Email: ${KVKK_CONTROLLER.email}. Website: ${KVKK_CONTROLLER.web}.
+Controller: ${COMPANY.legalName}. ${COMPANY.brandNoteEn}
+Address: ${COMPANY.address}. Trade registry: ${COMPANY.tradeRegistry}. Tax office: ${COMPANY.taxOffice}. Tax no: ${COMPANY.taxNo}.
+Email: ${COMPANY.email}. Website: ${COMPANY.web}.
 
-We process personal data to provide visa and travel consultancy, run the client portal, communicate with you, handle payments and meet legal duties. We do not ask for internet-banking passwords or card PIN codes. Visa decisions belong to official authorities. Ranz Global does not guarantee visa approval.
+We process personal data to provide visa and travel consultancy, run the client portal, communicate with you, handle payments and meet legal duties. We do not ask for internet-banking passwords or card PIN codes. Visa decisions belong to official authorities. Approval is not guaranteed.
 
-To exercise KVKK rights, write to ${KVKK_CONTROLLER.email}.`;
+To exercise KVKK rights, write to ${COMPANY.email}.`;
 
 export const KVKK_DESCRIPTION_TR =
   "Ranz Global KVKK aydınlatma metni: veri sorumlusu, işleme amaçları, aktarım, saklama ve ilgili kişi hakları.";

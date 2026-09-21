@@ -1,4 +1,4 @@
-export type FaqExtra = { uk?: string; usa?: string; schengen?: string };
+import { COMPANY } from "./company";
 
 export type FaqItem = {
   qTr: string;
@@ -106,10 +106,10 @@ export const FAQ_ITEMS: FaqItem[] = [
 ];
 
 export const DISCLAIMER_TR =
-  "Ranz Global, konsolosluklar ve resmi vize başvuru merkezlerinden bağımsız özel bir danışmanlık şirketidir. Nihai vize kararı ilgili ülkenin yetkili makamlarına aittir. Ranz Global vize onayı garantisi vermez.";
+  `${COMPANY.brandNoteTr} ${COMPANY.legalName}; konsolosluklar ve resmi vize başvuru merkezlerinden bağımsız özel bir danışmanlık şirketidir. Nihai vize kararı ilgili ülkenin yetkili makamlarına aittir. Ranz Global vize onayı garantisi vermez.`;
 
 export const DISCLAIMER_EN =
-  "Ranz Global is a private consultancy, independent of consulates and official visa application centres. The final visa decision belongs to the competent authorities of the destination country. Ranz Global does not guarantee visa approval.";
+  `${COMPANY.brandNoteEn} ${COMPANY.legalName} is a private consultancy, independent of consulates and official visa application centres. The final visa decision belongs to the competent authorities of the destination country. Ranz Global does not guarantee visa approval.`;
 
 export const UPLOAD_NOTICE_TR =
   "Belgeleriniz vize danışmanlık sürecini yürütmek için işlenir. Dosya HTTPS ile Vercel Blob deposuna (özel erişim) yüklenir; panelde ad, durum ve dosya yolu tarayıcı deposunda kalır. Giriş çerezi olmadığı için indirme adresi rastgele sonek ile korunur; şifreleme iddiası kullanmıyoruz.";

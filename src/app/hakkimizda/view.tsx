@@ -32,8 +32,8 @@ export default function AboutView() {
           <p className="mt-4 max-w-2xl text-sm leading-7 text-ink-soft">
             {t(
               locale,
-              "Ranz Global, geleneksel vize danışmanlığını dijital altyapı ile birleştiren yeni nesil bir vize yönetim platformudur. Konsolosluk, VFS veya devlet kurumu değiliz.",
-              "Ranz Global is a next-generation visa management platform that combines traditional visa consultancy with digital infrastructure. We are not a consulate, VAC or government office.",
+              "Ranz Global, geleneksel vize danışmanlığını dijital altyapı ile birleştiren yeni nesil bir vize yönetim platformudur. Konsolosluk, VFS veya devlet kurumu değiliz. Ranz Global – Travel & Visa, BP Grup Turizm Eğitim Danışmanlık Ticaret Limited Şirketi’nin tescilli markasıdır.",
+              "Ranz Global is a next-generation visa management platform that combines traditional visa consultancy with digital infrastructure. We are not a consulate, VAC or government office. Ranz Global – Travel & Visa is the registered trademark of BP Grup Turizm Eğitim Danışmanlık Ticaret Limited Şirketi.",
             )}
           </p>
         </div>

@@ -157,8 +157,13 @@ function patchLegalPages(pages: CmsPage[]) {
       const fresh = DEFAULT_PAGES.find((item) => item.slug === "kvkk");
       return fresh ? { ...page, ...fresh, imageId: page.imageId } : page;
     }
-    if (page.slug === "gizlilik" && !page.bodyTr.includes("Vercel Blob")) {
-      return DEFAULT_PAGES.find((item) => item.slug === "gizlilik") ?? page;
+    if (page.slug === "gizlilik") {
+      const fresh = DEFAULT_PAGES.find((item) => item.slug === "gizlilik");
+      return fresh ? { ...page, ...fresh, imageId: page.imageId } : page;
+    }
+    if (page.slug === "hakkimizda" && !page.bodyTr.includes("tescilli markası")) {
+      const fresh = DEFAULT_PAGES.find((item) => item.slug === "hakkimizda");
+      return fresh ? { ...page, ...fresh, imageId: page.imageId } : page;
     }
     return page;
   });
@@ -176,6 +181,12 @@ function patchHomeCopy(home: HomeContent): HomeContent {
   }
   if (isPlaceholderPhone(next.phone)) {
     next = { ...next, phone: DEFAULT_HOME.phone };
+  }
+  if (next.cityTr === "İstanbul, Türkiye" || !next.cityTr) {
+    next = { ...next, cityTr: DEFAULT_HOME.cityTr, cityEn: DEFAULT_HOME.cityEn };
+  }
+  if (!next.footerNoteTr.includes("tescilli markası")) {
+    next = { ...next, footerNoteTr: DEFAULT_HOME.footerNoteTr, footerNoteEn: DEFAULT_HOME.footerNoteEn };
   }
   if (!Array.isArray(next.reviews)) {
     next = { ...next, reviews: DEFAULT_HOME.reviews };

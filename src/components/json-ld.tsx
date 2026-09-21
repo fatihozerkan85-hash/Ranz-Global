@@ -1,3 +1,4 @@
+import { COMPANY } from "@/lib/company";
 import { SITE } from "@/lib/cms";
 import { WHATSAPP_DISPLAY, WHATSAPP_E164 } from "@/lib/contact";
 import { FAQ_ITEMS } from "@/lib/faq";
@@ -15,14 +16,19 @@ export function OrganizationJsonLd() {
         "@type": "TravelAgency",
         "@id": `${SITE.url}/#org`,
         name: SITE.name,
+        legalName: COMPANY.legalName,
+        alternateName: COMPANY.brand,
         url: SITE.url,
         email: SITE.email,
         logo: `${SITE.url}/logo.jpg`,
         image: `${SITE.url}/logo.jpg`,
         slogan: "Travel & Visa",
+        taxID: COMPANY.taxNo,
         address: {
           "@type": "PostalAddress",
-          addressLocality: "İstanbul",
+          streetAddress: COMPANY.street,
+          addressLocality: COMPANY.city,
+          addressRegion: COMPANY.district,
           addressCountry: "TR",
         },
         areaServed: [

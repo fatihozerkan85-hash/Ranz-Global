@@ -1,16 +1,19 @@
 import type { BlogPost, CmsPage } from "./types";
 import { SEO_TARGET_POSTS } from "./seo-target-posts";
 import { VISA_GUIDES } from "./visa-guides";
+import { COMPANY, COMPANY_CITY_EN, COMPANY_CITY_TR } from "./company";
 import { KVKK_BODY_EN, KVKK_DESCRIPTION_EN, KVKK_DESCRIPTION_TR, KVKK_TITLE_EN, KVKK_TITLE_TR, kvkkBodyTr } from "./kvkk";
 
 export const SITE = {
-  name: "Ranz Global",
+  name: COMPANY.brandShort,
+  legalName: COMPANY.legalName,
   taglineTr: "Travel & Visa",
   taglineEn: "Travel & Visa",
-  email: "info@ranzglobal.com",
+  email: COMPANY.email,
   phoneDisplay: "+90 530 925 88 92",
-  cityTr: "İstanbul, Türkiye",
-  cityEn: "Istanbul, Turkey",
+  cityTr: COMPANY_CITY_TR,
+  cityEn: COMPANY_CITY_EN,
+  address: COMPANY.address,
   url: "https://www.ranzglobal.com",
 };
 
@@ -22,9 +25,9 @@ export const DEFAULT_PAGES: CmsPage[] = [
     descriptionTr: "Ranz Global, Avrupa ve Amerika vize danışmanlığında evrak sürecini sadeleştirir.",
     descriptionEn: "Ranz Global simplifies document preparation for Europe and US visa consultancy.",
     bodyTr:
-      "Ranz Global, geleneksel vize danışmanlığını dijital altyapı ile birleştiren yeni nesil bir vize yönetim platformudur. Türkiye ve KKTC genelinde dijital altyapımız ve uzman danışmanlarımızla hizmet veriyoruz.\n\nKonsolosluk kararı resmi makamlara aittir. Bizim işimiz, dosyanızın eksiksiz, tutarlı ve takip edilebilir olmasını sağlamaktır.",
+      "Ranz Global, geleneksel vize danışmanlığını dijital altyapı ile birleştiren yeni nesil bir vize yönetim platformudur. Türkiye ve KKTC genelinde dijital altyapımız ve uzman danışmanlarımızla hizmet veriyoruz.\n\nRanz Global – Travel & Visa, BP Grup Turizm Eğitim Danışmanlık Ticaret Limited Şirketi’nin tescilli markasıdır.\n\nKonsolosluk kararı resmi makamlara aittir. Bizim işimiz, dosyanızın eksiksiz, tutarlı ve takip edilebilir olmasını sağlamaktır.",
     bodyEn:
-      "Ranz Global is a next-generation visa management platform that combines traditional visa consultancy with digital infrastructure. We serve across Türkiye and the TRNC through our platform and specialist advisors.\n\nConsular decisions belong to official authorities. Our work is to keep your file complete, consistent and trackable.",
+      "Ranz Global is a next-generation visa management platform that combines traditional visa consultancy with digital infrastructure. We serve across Türkiye and the TRNC through our platform and specialist advisors.\n\nRanz Global – Travel & Visa is the registered trademark of BP Grup Turizm Eğitim Danışmanlık Ticaret Limited Şirketi.\n\nConsular decisions belong to official authorities. Our work is to keep your file complete, consistent and trackable.",
     status: "published",
   },
   {
@@ -65,10 +68,16 @@ export const DEFAULT_PAGES: CmsPage[] = [
     titleEn: "Privacy policy",
     descriptionTr: "Ranz Global gizlilik politikası.",
     descriptionEn: "Ranz Global privacy policy.",
-    bodyTr:
-      "Dil ve oturum için tarayıcı depolaması kullanılır. İletişim formu kayıtları bu tarayıcıdaki yerel depoda tutulur. Yüklenen evraklar Vercel Blob özel deposunda saklanır. Üçüncü taraf reklam çerezi yok. Analitik bağlanırsa ayrıca bildirilir.",
-    bodyEn:
-      "Browser storage is used for language and session. Contact form records stay in local storage on this browser. Uploaded documents are stored in a private Vercel Blob store. No third-party ad cookies. Analytics, if added, will be disclosed.",
+    bodyTr: `Dil ve oturum için tarayıcı depolaması kullanılır. İletişim formu kayıtları bu tarayıcıdaki yerel depoda tutulur. Yüklenen evraklar Vercel Blob özel deposunda saklanır. Üçüncü taraf reklam çerezi yok. Analitik bağlanırsa ayrıca bildirilir.
+
+Veri sorumlusu: ${COMPANY.legalName}. ${COMPANY.brandNoteTr}
+Adres: ${COMPANY.address}. ${COMPANY.tradeRegistry}. ${COMPANY.taxOffice}, VKN ${COMPANY.taxNo}.
+Ayrıntı KVKK aydınlatma metnindedir.`,
+    bodyEn: `Browser storage is used for language and session. Contact form records stay in local storage on this browser. Uploaded documents are stored in a private Vercel Blob store. No third-party ad cookies. Analytics, if added, will be disclosed.
+
+Controller: ${COMPANY.legalName}. ${COMPANY.brandNoteEn}
+Address: ${COMPANY.address}. ${COMPANY.tradeRegistry}. Tax no ${COMPANY.taxNo}.
+Details are in the KVKK notice.`,
     status: "published",
   },
 ];

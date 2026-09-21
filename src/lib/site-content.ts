@@ -1,4 +1,5 @@
 import type { HomeContent } from "./types";
+import { COMPANY, COMPANY_CITY_EN, COMPANY_CITY_TR } from "./company";
 
 export const DEFAULT_HOME: HomeContent = {
   heroTitleTr: "Vize Sürecinizi Ranz Global ile Güvenle Yönetin",
@@ -172,12 +173,12 @@ export const DEFAULT_HOME: HomeContent = {
     },
   ],
   galleryIds: [],
-  email: "info@ranzglobal.com",
+  email: COMPANY.email,
   phone: "+90 530 925 88 92",
-  cityTr: "İstanbul, Türkiye",
-  cityEn: "Istanbul, Turkey",
+  cityTr: COMPANY_CITY_TR,
+  cityEn: COMPANY_CITY_EN,
   footerNoteTr:
-    "Ranz Global, konsolosluklar ve resmi vize başvuru merkezlerinden bağımsız özel bir danışmanlık şirketidir. Nihai vize kararı ilgili ülkenin yetkili makamlarına aittir. Ranz Global vize onayı garantisi vermez.",
+    `${COMPANY.brandNoteTr} ${COMPANY.legalName}; konsolosluklar ve resmi vize başvuru merkezlerinden bağımsız özel bir danışmanlık şirketidir. Nihai vize kararı ilgili ülkenin yetkili makamlarına aittir. Ranz Global vize onayı garantisi vermez.`,
   footerNoteEn:
-    "Ranz Global is a private consultancy, independent of consulates and official visa application centres. The final visa decision belongs to the competent authorities. Ranz Global does not guarantee visa approval.",
+    `${COMPANY.brandNoteEn} ${COMPANY.legalName} is a private consultancy, independent of consulates and official visa application centres. The final visa decision belongs to the competent authorities. Ranz Global does not guarantee visa approval.`,
 };

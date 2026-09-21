@@ -5,13 +5,13 @@ import { ContactLeadForm } from "@/components/contact-lead-form";
 import { useLocale } from "@/lib/locale";
 import { t } from "@/lib/i18n";
 import { WHATSAPP_DISPLAY, whatsappHref } from "@/lib/contact";
+import { COMPANY } from "@/lib/company";
 import { useHome } from "@/lib/use-site";
 
 export default function ContactView() {
   const { locale } = useLocale();
   const home = useHome();
-  const email = home?.email ?? "info@ranzglobal.com";
-  const city = home ? t(locale, home.cityTr, home.cityEn) : t(locale, "İstanbul, Türkiye", "Istanbul, Turkey");
+  const email = home?.email ?? COMPANY.email;
   return (
     <MarketingShell>
       <PageHero
@@ -47,7 +47,8 @@ export default function ContactView() {
           </article>
           <article className="rounded-2xl border border-line bg-paper p-6">
             <h2 className="font-serif text-2xl">{t(locale, "Ofis", "Office")}</h2>
-            <p className="mt-3 text-sm text-ink-soft">{city}</p>
+            <p className="mt-3 text-sm leading-6 text-ink-soft">{COMPANY.address}</p>
+            <p className="mt-2 text-xs leading-5 text-muted">{t(locale, COMPANY.brandNoteTr, COMPANY.brandNoteEn)}</p>
           </article>
         </div>
       </section>

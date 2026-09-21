@@ -14,6 +14,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { StartApplicationLink } from "@/components/start-application-link";
 import { KesfetDialog, openKesfet } from "@/components/kesfet-dialog";
 import { DISCLAIMER_EN, DISCLAIMER_TR } from "@/lib/faq";
+import { COMPANY } from "@/lib/company";
 
 export { BrandMark };
 
@@ -239,7 +240,10 @@ export function SiteFooter() {
           </div>
         </div>
         <p className="mt-8 max-w-3xl text-xs leading-6 text-cream/55">{t(locale, DISCLAIMER_TR, DISCLAIMER_EN)}</p>
-        <p className="mt-3 text-xs leading-5 text-cream/45">
+        <p className="mt-3 max-w-3xl text-xs leading-5 text-cream/45">
+          {t(locale, COMPANY.brandNoteTr, COMPANY.brandNoteEn)}
+        </p>
+        <p className="mt-2 text-xs leading-5 text-cream/45">
           {t(
             locale,
             "Ranz Global özel bir danışmanlık firmasıdır; konsolosluk veya devlet kurumu değildir.",
